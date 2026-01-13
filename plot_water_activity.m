@@ -139,6 +139,9 @@ gamma_MgNO32 = RH_MgNO32 ./ x_water_MgNO32;
 gamma_LiOH = RH_LiOH ./ x_water_LiOH;
 gamma_NaOH = RH_NaOH ./ x_water_NaOH;
 
+x_water_LiCl
+plot(x_water_LiCl, gamma_LiCl, 'LineWidth', 2.5, 'DisplayName', 'LiCl', 'color', [0, 0.5, 0])
+
 %% FIGURE 1: Activity Coefficient vs Mole Fraction
 figure('Position', [100, 100, 900, 700]);
 hold on; grid on; box on;

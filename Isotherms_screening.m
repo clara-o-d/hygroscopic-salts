@@ -145,17 +145,23 @@ plot(RH_LiBr,U_LiBr_gg,'color',[0.3010, 0.7450, 0.9330])
 %plot(RH_ZnBr2,U_ZnBr2_gg,'color',[0.4660 0.6740 0.1880])
 %plot(RH_ZnI2,U_ZnI2_gg,'--','color',[0.9290 0.6940 0.1250])
 plot(RH_HCl,U_HCl_gg)
-plot(RH_MgNO32,U_MgNO32_gg,'color',[0 1 1])
+%plot(RH_MgNO32,U_MgNO32_gg,'color',[0 1 1])
 %plot(RH_LiOH,U_LiOH_gg,'color',[1 0 1])
 %plot(RH_ZnI2,U_ZnI2_gg,'--','color',[0.9290 0.6940 0.1250])
 plot(RH_NaOH,U_NaOH_gg,'color',[1 0 1])
+
+xlabel('Relative Humidity (RH)')
+ylabel('Uptake (g/g)')
+title('Water Uptake vs Relative Humidity')
+legend('LiCl', 'CaCl_2', 'MgCl_2', 'LiBr', 'HCl', 'Mg(NO_3)_2', 'NaOH', 'Location', 'best', 'Interpreter', 'tex')
+grid on
 
 set(gcf,'color','w');
 
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 5 4]; 
-print('Uptake_screening_gg','-dtiff','-r600')
+print('Uptake_screening_gg','-dpng','-r600')
 close all 
 
 %% Uptake mol/mol
@@ -169,14 +175,20 @@ plot(RH_ZnCl2*100,U_ZnCl2_molmol,'color',[0.6350 0.0780 0.1840])
 plot(RH_LiI*100,U_LiI_molmol,'color',[0.4940 0.1840 0.5560])
 plot(RH_ZnBr2*100,U_ZnBr2_molmol,'color',[0.4660 0.6740 0.1880])
 plot(RH_HCl*100,U_HCl_molmol)
-plot(RH_MgNO32*100,U_MgNO32_molmol,'color',[0 1 1])
+%plot(RH_MgNO32*100,U_MgNO32_molmol,'color',[0 1 1])
 plot(RH_LiOH*100,U_LiOH_molmol,'color',[1 0 1])
 plot(RH_ZnI2*100,U_ZnI2_molmol,'--','color',[0.9290 0.6940 0.1250])
 plot(RH_NaOH*100,U_NaOH_molmol,'color',[1 0 1])
+
+xlabel('Relative Humidity (%)')
+ylabel('Uptake (mol/mol)')
+title('Water Uptake vs Relative Humidity')
+legend('LiCl', 'CaCl_2', 'MgCl_2', 'LiBr', 'ZnCl_2', 'LiI', 'ZnBr_2', 'HCl', 'Mg(NO_3)_2', 'LiOH', 'ZnI_2', 'NaOH', 'Location', 'best', 'Interpreter', 'tex')
+grid on
 
 set(gcf,'color','w');
 
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 5/1.6 4/1.6]; 
-print('Uptake_screening_molmol','-dtiff','-r600')
+print('Uptake_screening_molmol','-dpng','-r600')
