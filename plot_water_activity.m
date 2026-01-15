@@ -142,10 +142,26 @@ gamma_NaOH = RH_NaOH ./ x_water_NaOH;
 x_water_LiCl
 plot(x_water_LiCl, gamma_LiCl, 'LineWidth', 2.5, 'DisplayName', 'LiCl', 'color', [0, 0.5, 0])
 
+%% Calculate Polynomial Fit for "Average"
+% Concatenate all RH (in percent) and Gamma values
+all_RH_percent = [RH_LiCl, RH_CaCl2, RH_MgCl2, RH_LiBr, RH_ZnCl2, ...
+                  RH_LiI, RH_ZnBr2, RH_ZnI2, RH_HCl, RH_MgNO32, ...
+                  RH_LiOH, RH_NaOH] * 100;
+              
+all_gamma = [gamma_LiCl, gamma_CaCl2, gamma_MgCl2, gamma_LiBr, gamma_ZnCl2, ...
+             gamma_LiI, gamma_ZnBr2, gamma_ZnI2, gamma_HCl, gamma_MgNO32, ...
+             gamma_LiOH, gamma_NaOH];
+
+% Compute degree-2 polynomial
+p = polyfit(all_RH_percent, all_gamma, 2);
+
+% Generate points for plotting the fit line
+x_fit = linspace(0, 100, 200);
+y_fit = polyval(p, x_fit);
+
 %% FIGURE 1: Activity Coefficient vs Mole Fraction
 figure('Position', [100, 100, 900, 700]);
 hold on; grid on; box on;
-
 plot(x_water_LiCl, gamma_LiCl, 'LineWidth', 2.5, 'DisplayName', 'LiCl', 'color', [0, 0.5, 0])
 plot(x_water_CaCl2, gamma_CaCl2, 'LineWidth', 2.5, 'DisplayName', 'CaCl_2', 'color', [0.9290 0.6940 0.1250])
 plot(x_water_MgCl2, gamma_MgCl2, 'LineWidth', 2.5, 'DisplayName', 'MgCl_2', 'color', [0.8500 0.3250 0.0980])
@@ -159,7 +175,6 @@ plot(x_water_MgNO32, gamma_MgNO32, 'LineWidth', 2.5, 'DisplayName', 'Mg(NO_3)_2'
 plot(x_water_LiOH, gamma_LiOH, 'LineWidth', 2.5, 'DisplayName', 'LiOH', 'color', [1 0 1])
 plot(x_water_NaOH, gamma_NaOH, 'LineWidth', 2.5, 'DisplayName', 'NaOH', 'color', [0.75 0 0.75])
 plot([0.5 1], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
-
 xlabel('Mole Fraction of Water (x_w)', 'FontSize', 14, 'FontWeight', 'bold')
 ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
 title('Water Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
@@ -168,47 +183,46 @@ xlim([0.5 1.0])
 ylim([0 1.2])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
-
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
 print('Activity_Coefficient_vs_Mole_Fraction', '-dpng', '-r600')
 savefig('Activity_Coefficient_vs_Mole_Fraction.fig')
 
-% %% FIGURE 2: Activity Coefficient vs Relative Humidity
-% figure('Position', [100, 100, 900, 700]);
-% hold on; grid on; box on;
-% 
-% plot(RH_LiCl*100, gamma_LiCl, 'LineWidth', 2.5, 'DisplayName', 'LiCl', 'color', [0, 0.5, 0])
-% plot(RH_CaCl2*100, gamma_CaCl2, 'LineWidth', 2.5, 'DisplayName', 'CaCl_2', 'color', [0.9290 0.6940 0.1250])
-% plot(RH_MgCl2*100, gamma_MgCl2, 'LineWidth', 2.5, 'DisplayName', 'MgCl_2', 'color', [0.8500 0.3250 0.0980])
-% plot(RH_LiBr*100, gamma_LiBr, 'LineWidth', 2.5, 'DisplayName', 'LiBr', 'color', [0.3010, 0.7450, 0.9330])
-% plot(RH_ZnCl2*100, gamma_ZnCl2, 'LineWidth', 2.5, 'DisplayName', 'ZnCl_2', 'color', [0.6350 0.0780 0.1840])
-% plot(RH_LiI*100, gamma_LiI, 'LineWidth', 2.5, 'DisplayName', 'LiI', 'color', [0.4940 0.1840 0.5560])
-% plot(RH_ZnBr2*100, gamma_ZnBr2, 'LineWidth', 2.5, 'DisplayName', 'ZnBr_2', 'color', [0.4660 0.6740 0.1880])
-% plot(RH_ZnI2*100, gamma_ZnI2, 'LineWidth', 2.5, 'DisplayName', 'ZnI_2', 'LineStyle', '--', 'color', [0.9290 0.6940 0.1250])
-% plot(RH_HCl*100, gamma_HCl, 'LineWidth', 2.5, 'DisplayName', 'HCl', 'color', [0, 0.4470, 0.7410])
-% plot(RH_MgNO32*100, gamma_MgNO32, 'LineWidth', 2.5, 'DisplayName', 'Mg(NO_3)_2', 'color', [0 1 1])
-% plot(RH_LiOH*100, gamma_LiOH, 'LineWidth', 2.5, 'DisplayName', 'LiOH', 'color', [1 0 1])
-% plot(RH_NaOH*100, gamma_NaOH, 'LineWidth', 2.5, 'DisplayName', 'NaOH', 'color', [0.75 0 0.75])
-% plot([0 100], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
-% 
-% xlabel('Relative Humidity (%)', 'FontSize', 14, 'FontWeight', 'bold')
-% ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
-% title('Water Activity Coefficient vs Relative Humidity', 'FontSize', 16, 'FontWeight', 'bold')
-% legend('Location', 'northeast', 'FontSize', 11)
-% xlim([0 100])
-% ylim([0 1.2])
-% set(gca, 'FontSize', 12)
-% set(gcf, 'color', 'w');
-% 
-% fig = gcf;
-% fig.PaperUnits = 'inches';
-% fig.PaperPosition = [0 0 9 7]; 
-% print('Activity_Coefficient_vs_RH', '-dpng', '-r600')
-% savefig('Activity_Coefficient_vs_RH.fig')
-% 
-% disp('Plots generated successfully!')
-% disp('  - Activity_Coefficient_vs_Mole_Fraction.png')
-% disp('  - Activity_Coefficient_vs_RH.png')
+%% FIGURE 2: Activity Coefficient vs Relative Humidity
+figure('Position', [100, 100, 900, 700]);
+hold on; grid on; box on;
+plot(RH_LiCl*100, gamma_LiCl, 'LineWidth', 2.5, 'DisplayName', 'LiCl', 'color', [0, 0.5, 0])
+plot(RH_CaCl2*100, gamma_CaCl2, 'LineWidth', 2.5, 'DisplayName', 'CaCl_2', 'color', [0.9290 0.6940 0.1250])
+plot(RH_MgCl2*100, gamma_MgCl2, 'LineWidth', 2.5, 'DisplayName', 'MgCl_2', 'color', [0.8500 0.3250 0.0980])
+plot(RH_LiBr*100, gamma_LiBr, 'LineWidth', 2.5, 'DisplayName', 'LiBr', 'color', [0.3010, 0.7450, 0.9330])
+plot(RH_ZnCl2*100, gamma_ZnCl2, 'LineWidth', 2.5, 'DisplayName', 'ZnCl_2', 'color', [0.6350 0.0780 0.1840])
+plot(RH_LiI*100, gamma_LiI, 'LineWidth', 2.5, 'DisplayName', 'LiI', 'color', [0.4940 0.1840 0.5560])
+plot(RH_ZnBr2*100, gamma_ZnBr2, 'LineWidth', 2.5, 'DisplayName', 'ZnBr_2', 'color', [0.4660 0.6740 0.1880])
+plot(RH_ZnI2*100, gamma_ZnI2, 'LineWidth', 2.5, 'DisplayName', 'ZnI_2', 'LineStyle', '--', 'color', [0.9290 0.6940 0.1250])
+plot(RH_HCl*100, gamma_HCl, 'LineWidth', 2.5, 'DisplayName', 'HCl', 'color', [0, 0.4470, 0.7410])
+plot(RH_MgNO32*100, gamma_MgNO32, 'LineWidth', 2.5, 'DisplayName', 'Mg(NO_3)_2', 'color', [0 1 1])
+plot(RH_LiOH*100, gamma_LiOH, 'LineWidth', 2.5, 'DisplayName', 'LiOH', 'color', [1 0 1])
+plot(RH_NaOH*100, gamma_NaOH, 'LineWidth', 2.5, 'DisplayName', 'NaOH', 'color', [0.75 0 0.75])
 
+% Plot the Average Fit Line
+plot(x_fit, y_fit, 'k:', 'LineWidth', 3, 'DisplayName', 'Average')
+
+plot([0 100], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
+xlabel('Relative Humidity (%)', 'FontSize', 14, 'FontWeight', 'bold')
+ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
+title('Water Activity Coefficient vs Relative Humidity', 'FontSize', 16, 'FontWeight', 'bold')
+legend('Location', 'northeast', 'FontSize', 11)
+xlim([0 100])
+ylim([0 1.2])
+set(gca, 'FontSize', 12)
+set(gcf, 'color', 'w');
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 9 7]; 
+print('Activity_Coefficient_vs_RH', '-dpng', '-r600')
+savefig('Activity_Coefficient_vs_RH.fig')
+
+disp('Plots generated successfully!')
+disp('  - Activity_Coefficient_vs_Mole_Fraction.png')
+disp('  - Activity_Coefficient_vs_RH.png')
