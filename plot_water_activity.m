@@ -142,22 +142,62 @@ gamma_NaOH = RH_NaOH ./ x_water_NaOH;
 x_water_LiCl
 plot(x_water_LiCl, gamma_LiCl, 'LineWidth', 2.5, 'DisplayName', 'LiCl', 'color', [0, 0.5, 0])
 
-%% Calculate Polynomial Fit for "Average"
-% Concatenate all RH (in percent) and Gamma values
-all_RH_percent = [RH_LiCl, RH_CaCl2, RH_MgCl2, RH_LiBr, RH_ZnCl2, ...
-                  RH_LiI, RH_ZnBr2, RH_ZnI2, RH_HCl, RH_MgNO32, ...
-                  RH_LiOH, RH_NaOH] * 100;
-              
-all_gamma = [gamma_LiCl, gamma_CaCl2, gamma_MgCl2, gamma_LiBr, gamma_ZnCl2, ...
-             gamma_LiI, gamma_ZnBr2, gamma_ZnI2, gamma_HCl, gamma_MgNO32, ...
-             gamma_LiOH, gamma_NaOH];
+%% Calculate Constrained Weighted Polynomial Fit
+% Define the salts to include in the fit (Exclude MgNO32)
+fit_salts = {'LiCl', 'CaCl2', 'MgCl2', 'LiBr', 'ZnCl2', ...
+             'LiI', 'ZnBr2', 'ZnI2', 'HCl', 'LiOH', 'NaOH'};
 
-% Compute degree-2 polynomial
-p = polyfit(all_RH_percent, all_gamma, 2);
+% Initialize container arrays for fitting
+all_RH_fit = [];
+all_gamma_fit = [];
+all_weights = [];
 
-% Generate points for plotting the fit line
-x_fit = linspace(0, 100, 200);
-y_fit = polyval(p, x_fit);
+% Loop through salts to aggregate data and calculate weights
+for k = 1:length(fit_salts)
+    salt_name = fit_salts{k};
+    
+    % Dynamically fetch the RH and Gamma vectors from the workspace
+    % (Assumes variable naming convention RH_Name and gamma_Name)
+    rh_vec = eval(['RH_' salt_name]);
+    gamma_vec = eval(['gamma_' salt_name]);
+    
+    % Calculate the Range of RH for this salt to use as weight
+    rh_range = max(rh_vec) - min(rh_vec);
+    
+    % Assign weight (range) to every point in this dataset
+    w_vec = ones(size(rh_vec)) * rh_range;
+    
+    % Append to master lists (Convert RH to %)
+    all_RH_fit = [all_RH_fit, rh_vec * 100]; 
+    all_gamma_fit = [all_gamma_fit, gamma_vec];
+    all_weights = [all_weights, w_vec];
+end
+
+% --- Perform Constrained Least Squares ---
+% Quadratic Model: y = a*x^2 + b*x + c
+% Constraint: Pass through (100, 1) -> 1 = a(10000) + b(100) + c
+% Solve for c: c = 1 - 10000a - 100b
+% Substitute c back into model: 
+% y = a*x^2 + b*x + (1 - 10000a - 100b)
+% Rearrange to isolate a and b:
+% y - 1 = a(x^2 - 10000) + b(x - 100)
+
+% Prepare matrices for linear regression (Y = X*Beta)
+Y_vec = all_gamma_fit' - 1;
+X_mat = [(all_RH_fit.^2 - 10000)', (all_RH_fit - 100)'];
+
+% Solve using lscov (Weighted Least Squares)
+% lscov minimizes (B - A*x)'*diag(w)*(B - A*x)
+coeffs = lscov(X_mat, Y_vec, all_weights');
+
+% Extract parameters
+a_fit = coeffs(1);
+b_fit = coeffs(2);
+c_fit = 1 - 10000*a_fit - 100*b_fit;
+
+% Generate fit line points
+x_fit_line = linspace(0, 100, 200);
+y_fit_line = a_fit * x_fit_line.^2 + b_fit * x_fit_line + c_fit;
 
 %% FIGURE 1: Activity Coefficient vs Mole Fraction
 figure('Position', [100, 100, 900, 700]);
@@ -206,7 +246,7 @@ plot(RH_LiOH*100, gamma_LiOH, 'LineWidth', 2.5, 'DisplayName', 'LiOH', 'color', 
 plot(RH_NaOH*100, gamma_NaOH, 'LineWidth', 2.5, 'DisplayName', 'NaOH', 'color', [0.75 0 0.75])
 
 % Plot the Average Fit Line
-plot(x_fit, y_fit, 'k:', 'LineWidth', 3, 'DisplayName', 'Average')
+plot(x_fit_line, y_fit_line, 'k:', 'LineWidth', 3, 'DisplayName', 'Average')
 
 plot([0 100], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
 xlabel('Relative Humidity (%)', 'FontSize', 14, 'FontWeight', 'bold')
