@@ -17,11 +17,24 @@ function polynomial_fitter_tabs()
         % Extract Data
         name = solutes(i).name;
         XY = solutes(i).data;
+        degree = solutes(i).degree;
         x = XY(:, 1);
         y = XY(:, 2);
         
-        % Perform Fit (4th Order)
-        [p, S] = polyfit(x, y, 4);
+        % Perform Fit (4th Order, unless )
+        if check_constraints(i)
+            % --- CONSTRAINED FIT (Intercept forced to 1) ---  # NOT USED
+            % 1. Create Design Matrix (x^4 down to x^1, NO column of ones)
+            M = [x.^4, x.^3, x.^2, x];
+            % 2. Solve for coefficients using matrix division (\)
+            coeffs = M \ (y - 1);
+            % 3. Construct the full polynomial vector p
+            p = [coeffs', 1];
+            % 4. Manually calculate S.normr for your R^2 calc later
+            S.normr = norm(y - polyval(p, x));
+        else
+            [p, S] = polyfit(x, y, degree);
+        end
         
         % Generate Smooth Fit Line (Strictly within data range - NO EXTRAPOLATION)
         x_fit = linspace(min(x), max(x), 200);
@@ -82,10 +95,17 @@ end
 % ==========================================
 %           DATA SECTION
 % ==========================================
-function solutes = load_all_data()
+function solute_fixed_intercept = check_constraints(i)
     % Just copy-paste this block for each new solute and increment the index (i)
+    solutes_with_fixed_intercept = [false,false,false,false,false,false,false];
+    solute_fixed_intercept = solutes_with_fixed_intercept(i);
+end
+function solutes = load_all_data()
+    standard_degree = 4;
+
     i = 1;
     solutes(i).name = 'NaCl';
+    solutes(i).degree = standard_degree;
     solutes(i).data = [
         0.011553555	0.9934
         0.017230794	0.99
@@ -105,6 +125,7 @@ function solutes = load_all_data()
 
     i = i + 1;
     solutes(i).name = 'CsCl';
+    solutes(i).degree = standard_degree;
     solutes(i).data = [
         0.239366969	0.993
         0.320671385	0.99
@@ -121,14 +142,10 @@ function solutes = load_all_data()
         0.896417029	0.833
         0.904222197	0.817
     ];
-    
-    % --- PASTE NEXT DATA HERE ---
-    % i = i + 1;
-    % solutes(i).name = 'Solute C';
-    % solutes(i).data = [ ... ];
 
     i = i + 1;
     solutes(i).name = 'NH4Cl';
+    solutes(i).degree = standard_degree;
     solutes(i).data = [
         0.03078762	0.993
         0.045481299	0.99
@@ -148,6 +165,7 @@ function solutes = load_all_data()
 
     i = i + 1;
     solutes(i).name = 'KCl';
+    solutes(i).degree = standard_degree;
     solutes(i).data = [
         0.058116552	0.9935
         0.084713208	0.9903
@@ -164,6 +182,7 @@ function solutes = load_all_data()
 
     i = i + 1;
     solutes(i).name = 'NaNO3';
+    solutes(i).degree = standard_degree;
     solutes(i).data = [
         0.004073519	0.9996
         0.019694343	0.9983
@@ -181,6 +200,7 @@ function solutes = load_all_data()
 
     i = i + 1;
     solutes(i).name = 'AgNO3';
+    solutes(i).degree = standard_degree;
     solutes(i).data = [
         0.444222535	0.986
         0.615408929	0.974
@@ -210,6 +230,7 @@ function solutes = load_all_data()
 
     i = i + 1;
     solutes(i).name = 'KI';
+    solutes(i).degree = standard_degree;
     solutes(i).data = [
         0.001527241	1
         0.003049825	0.9999
