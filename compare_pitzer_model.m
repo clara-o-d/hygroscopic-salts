@@ -2,6 +2,9 @@ close all
 clear
 clc 
 
+% Add calculate_mf folder to path
+addpath('calculate_mf');
+
 T = 25; % Temperature in Celsius
 MWw = 18;
 

@@ -2,6 +2,9 @@ close all
 clear
 clc
 
+% Add calculate_mf folder to path
+addpath('calculate_mf');
+
 % This script plots water activity coefficient versus mean charge density
 % Charge density is calculated as z/r^3 where z is charge and r is ionic radius
 % Mean charge density is the average of cation and anion charge densities
