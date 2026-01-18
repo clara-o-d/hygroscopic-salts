@@ -12,7 +12,7 @@ A_1 = -0.2293;
 A_0 = 1;
 f = @(xi) RH - A_0 - A_1.*xi - A_2.*xi.^2 - A_3.*xi.^3 - A_4.*xi.^4;
 mf = robust_fzero(f, 0.0308, 0.4880, 0.25);
-if mf > 0.4880
+if RH < 0.76   % mf > 0.4880
     error("below deliquescence relative humidity")
 end 
 end
