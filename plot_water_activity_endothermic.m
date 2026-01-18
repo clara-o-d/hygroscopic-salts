@@ -11,7 +11,7 @@ MWw = 18.015;
 %% NaCl
 MW_NaCl = 58.443;
 % Output Range from fit: [0.7620, 0.9934]
-RH_NaCl = linspace(0.765, 0.99, 100);
+RH_NaCl = linspace(0.765, 0.9934, 100);
 
 for i = 1:length(RH_NaCl)
     % Note: T is implicit in the specific function for this salt (25C)
@@ -23,7 +23,7 @@ end
 %% KCl
 MW_KCl = 74.551;
 % Output Range from fit: [0.8520, 0.9935]
-RH_KCl = linspace(0.855, 0.99, 100);
+RH_KCl = linspace(0.852, 0.9935, 100);
 
 for i = 1:length(RH_KCl)
     mf_salt_KCl(i) = calculate_mf_KCl_(RH_KCl(i));
@@ -34,7 +34,7 @@ end
 %% NH4Cl
 MW_NH4Cl = 53.491;
 % Output Range from fit: [0.8120, 0.9930]
-RH_NH4Cl = linspace(0.815, 0.99, 100);
+RH_NH4Cl = linspace(0.812, 0.993, 100);
 
 for i = 1:length(RH_NH4Cl)
     mf_salt_NH4Cl(i) = calculate_mf_NH4Cl_(RH_NH4Cl(i));
@@ -42,21 +42,21 @@ for i = 1:length(RH_NH4Cl)
     x_water_NH4Cl(i) = (mf_water_NH4Cl(i) / MWw) / ((mf_water_NH4Cl(i) / MWw) + (mf_salt_NH4Cl(i) / MW_NH4Cl));
 end
 
-% %% CsCl
-% MW_CsCl = 168.363;
-% % Output Range from fit: [0.8170, 0.9930]
-% RH_CsCl = linspace(0.82, 0.99, 100);
-% 
-% for i = 1:length(RH_CsCl)
-%     mf_salt_CsCl(i) = calculate_mf_CsCl_(RH_CsCl(i));
-%     mf_water_CsCl(i) = 1 - mf_salt_CsCl(i);
-%     x_water_CsCl(i) = (mf_water_CsCl(i) / MWw) / ((mf_water_CsCl(i) / MWw) + (mf_salt_CsCl(i) / MW_CsCl));
-% end
+%% CsCl
+MW_CsCl = 168.363;
+% Output Range from fit: [0.8170, 0.9930]
+RH_CsCl = linspace(0.817, 0.993, 100);
+
+for i = 1:length(RH_CsCl)
+    mf_salt_CsCl(i) = calculate_mf_CsCl_(RH_CsCl(i));
+    mf_water_CsCl(i) = 1 - mf_salt_CsCl(i);
+    x_water_CsCl(i) = (mf_water_CsCl(i) / MWw) / ((mf_water_CsCl(i) / MWw) + (mf_salt_CsCl(i) / MW_CsCl));
+end
 
 %% NaNO3
 MW_NaNO3 = 84.994;
 % Output Range from fit: [0.9701, 0.9996]
-RH_NaNO3 = linspace(0.971, 0.999, 100);
+RH_NaNO3 = linspace(0.9701, 0.9996, 100);
 
 for i = 1:length(RH_NaNO3)
     mf_salt_NaNO3(i) = calculate_mf_NaNO3_(RH_NaNO3(i));
@@ -67,7 +67,7 @@ end
 %% AgNO3
 MW_AgNO3 = 169.87;
 % Output Range from fit: [0.8620, 0.9860]
-RH_AgNO3 = linspace(0.865, 0.985, 100);
+RH_AgNO3 = linspace(0.862, 0.986, 100);
 
 for i = 1:length(RH_AgNO3)
     mf_salt_AgNO3(i) = calculate_mf_AgNO3_(RH_AgNO3(i));
@@ -77,8 +77,8 @@ end
 
 %% KI
 MW_KI = 165.998;
-% Output Range from fit: [0.9737, 1.0000]
-RH_KI = linspace(0.975, 0.999, 100);
+% Output Range from fit: [0.9737, 1.0000] ?
+RH_KI = linspace(0.97, 0.999, 100);
 
 for i = 1:length(RH_KI)
     mf_salt_KI(i) = calculate_mf_KI_(RH_KI(i));
@@ -187,7 +187,7 @@ plot(RH_AgNO3*100, gamma_AgNO3, 'LineWidth', 2.5, 'DisplayName', 'AgNO_3','color
 plot(RH_KI*100,    gamma_KI,    'LineWidth', 2.5, 'DisplayName', 'KI',    'color', [0.6350 0.0780 0.1840])
 
 % Plot the Average Fit Line
-plot(x_fit_line, y_fit_line, 'k:', 'LineWidth', 3, 'DisplayName', 'Average')
+% plot(x_fit_line, y_fit_line, 'k:', 'LineWidth', 3, 'DisplayName', 'Average')
 
 plot([0 100], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
 xlabel('Relative Humidity (%)', 'FontSize', 14, 'FontWeight', 'bold')
