@@ -138,8 +138,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('Activity_Coefficient_vs_Charge_Density', '-dpng', '-r600')
-savefig('Activity_Coefficient_vs_Charge_Density.fig')
+print('figures/Activity_Coefficient_vs_Charge_Density', '-dpng', '-r600')
+savefig('figures/Activity_Coefficient_vs_Charge_Density.fig')
 
 %% Create second plot: Water Activity Coefficient vs Mean Charge per Molar Mass
 figure('Position', [100, 100, 900, 700]);
@@ -170,8 +170,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('Activity_Coefficient_vs_Charge_per_MW', '-dpng', '-r600')
-savefig('Activity_Coefficient_vs_Charge_per_MW.fig')
+print('figures/Activity_Coefficient_vs_Charge_per_MW', '-dpng', '-r600')
+savefig('figures/Activity_Coefficient_vs_Charge_per_MW.fig')
 
 %% Display results table
 fprintf('\n=== Water Activity Coefficient vs Mean Charge Density ===\n');
@@ -210,7 +210,7 @@ for i = 1:n_salts
 end
 
 fprintf('\nPlots generated successfully!\n');
-fprintf('  - Activity_Coefficient_vs_Charge_Density.png\n');
-fprintf('  - Activity_Coefficient_vs_Charge_Density.fig\n');
-fprintf('  - Activity_Coefficient_vs_Charge_per_MW.png\n');
-fprintf('  - Activity_Coefficient_vs_Charge_per_MW.fig\n');
+fprintf('  - figures/Activity_Coefficient_vs_Charge_Density.png\n');
+fprintf('  - figures/Activity_Coefficient_vs_Charge_Density.fig\n');
+fprintf('  - figures/Activity_Coefficient_vs_Charge_per_MW.png\n');
+fprintf('  - figures/Activity_Coefficient_vs_Charge_per_MW.fig\n');

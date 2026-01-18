@@ -176,8 +176,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 12 9]; 
-print('Pitzer_Comparison_Water_Activity', '-dpng', '-r600')
-savefig('Pitzer_Comparison_Water_Activity.fig')
+print('figures/Pitzer_Comparison_Water_Activity', '-dpng', '-r600')
+savefig('figures/Pitzer_Comparison_Water_Activity.fig')
 
 %% Figure 2: Osmotic Coefficient Comparison
 figure('Position', [100, 100, 1200, 900]);
@@ -257,8 +257,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 12 9]; 
-print('Pitzer_Comparison_Osmotic_Coefficient', '-dpng', '-r600')
-savefig('Pitzer_Comparison_Osmotic_Coefficient.fig')
+print('figures/Pitzer_Comparison_Osmotic_Coefficient', '-dpng', '-r600')
+savefig('figures/Pitzer_Comparison_Osmotic_Coefficient.fig')
 
 %% Figure 3: Residual Analysis (Relative Error)
 figure('Position', [100, 100, 1200, 900]);
@@ -326,14 +326,14 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 12 9]; 
-print('Pitzer_Comparison_Residuals', '-dpng', '-r600')
-savefig('Pitzer_Comparison_Residuals.fig')
+print('figures/Pitzer_Comparison_Residuals', '-dpng', '-r600')
+savefig('figures/Pitzer_Comparison_Residuals.fig')
 
 disp('Pitzer model comparison completed successfully!')
 disp('Generated files:')
-disp('  - Pitzer_Comparison_Water_Activity.png')
-disp('  - Pitzer_Comparison_Osmotic_Coefficient.png')
-disp('  - Pitzer_Comparison_Residuals.png')
+disp('  - figures/Pitzer_Comparison_Water_Activity.png')
+disp('  - figures/Pitzer_Comparison_Osmotic_Coefficient.png')
+disp('  - figures/Pitzer_Comparison_Residuals.png')
 
 %% Print statistical summary
 fprintf('\n=== STATISTICAL SUMMARY ===\n\n')

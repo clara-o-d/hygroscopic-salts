@@ -164,7 +164,7 @@ set(gcf,'color','w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 5 4]; 
-print('Uptake_screening_gg','-dpng','-r600')
+print('figures/Uptake_screening_gg','-dpng','-r600')
 close all 
 
 %% Uptake mol/mol
@@ -194,4 +194,4 @@ set(gcf,'color','w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 5/1.6 4/1.6]; 
-print('Uptake_screening_molmol','-dpng','-r600')
+print('figures/Uptake_screening_molmol','-dpng','-r600')
