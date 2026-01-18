@@ -173,7 +173,7 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('figures/Activity_Coefficient_vs_Mole_Fraction_New', '-dpng', '-r600')
+print('figures/Activity_Coefficient_vs_Mole_Fraction_Endothermic', '-dpng', '-r600')
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity
 figure('Position', [100, 100, 900, 700]);
@@ -201,8 +201,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('figures/Activity_Coefficient_vs_RH_New', '-dpng', '-r600')
+print('figures/Activity_Coefficient_vs_RH_Endothermic', '-dpng', '-r600')
 
 disp('Plots generated successfully!')
-disp('  - figures/Activity_Coefficient_vs_Mole_Fraction_New.png')
-disp('  - figures/Activity_Coefficient_vs_RH_New.png')
+disp('  - figures/Activity_Coefficient_vs_Mole_Fraction_Endothermic.png')
+disp('  - figures/Activity_Coefficient_vs_RH_Endothermic.png')

@@ -1,0 +1,18 @@
+function mf = calculate_mf_Na2SO4_(RH)
+% Fit on data range: MassFrac [0.1007, 0.7706] -> RH [0.8990, 0.9957]
+if RH < 0.8990
+    error("Input RH (%.4f) is below the lower fit limit for Na2SO4 (0.8990)", RH);
+end
+if RH > 1 
+    error("RH should be 0 < RH < 1");
+end 
+
+A_4 = -1.39;
+A_3 = 1.853;
+A_2 = -0.9275;
+A_1 = 0.1343;
+A_0 = 0.9895;
+
+f = @(xi) RH - A_0 - A_1.*xi - A_2.*xi.^2 - A_3.*xi.^3 - A_4.*xi.^4;
+mf = robust_fzero(f, 0, 1, 0.4);
+end
