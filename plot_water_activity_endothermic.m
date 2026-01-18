@@ -90,7 +90,7 @@ end
 gamma_NaCl  = RH_NaCl  ./ x_water_NaCl;
 gamma_KCl   = RH_KCl   ./ x_water_KCl;
 gamma_NH4Cl = RH_NH4Cl ./ x_water_NH4Cl;
-% gamma_CsCl  = RH_CsCl  ./ x_water_CsCl;
+gamma_CsCl  = RH_CsCl  ./ x_water_CsCl;
 gamma_NaNO3 = RH_NaNO3 ./ x_water_NaNO3;
 gamma_AgNO3 = RH_AgNO3 ./ x_water_AgNO3;
 gamma_KI    = RH_KI    ./ x_water_KI;
