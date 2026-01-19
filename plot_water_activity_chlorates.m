@@ -32,15 +32,28 @@ for i = 1:length(RH_LiClO4)
         ((mf_water_LiClO4(i) / MWw) + (mf_salt_LiClO4(i) / MW_LiClO4));
 end
 
+%% 3. KClO3
+MW_KClO3 = 122.55;
+% Fit valid: [0.9800, 0.9936]
+RH_KClO3 = linspace(0.981, 0.993, 100);
+
+for i = 1:length(RH_KClO3)
+    mf_salt_KClO3(i) = calculate_mf_KClO3(RH_KClO3(i));
+    mf_water_KClO3(i) = 1 - mf_salt_KClO3(i);
+    x_water_KClO3(i) = (mf_water_KClO3(i) / MWw) / ...
+        ((mf_water_KClO3(i) / MWw) + (mf_salt_KClO3(i) / MW_KClO3));
+end
+
 
 %% Calculate Activity Coefficients (gamma_w = a_w / x_w)
 gamma_NaClO4 = RH_NaClO4 ./ x_water_NaClO4;
 gamma_LiClO4 = RH_LiClO4 ./ x_water_LiClO4;
+gamma_KClO3  = RH_KClO3  ./ x_water_KClO3;
 
 
-%% Calculate Average Perchlorate Fit
+%% Calculate Average Chlorate Fit
 % Define the salts to include in the average
-fit_salts = {'NaClO4', 'LiClO4'};
+fit_salts = {'NaClO4', 'LiClO4', 'KClO3'};
 
 all_RH_fit = [];
 all_gamma_fit = [];
@@ -73,48 +86,50 @@ x_fit_line = linspace(75, 100, 200); % Plot range
 y_fit_line = a_fit * x_fit_line.^2 + b_fit * x_fit_line + c_fit;
 
 
-%% FIGURE 1: Activity Coefficient vs Mole Fraction (Perchlorates)
+%% FIGURE 1: Activity Coefficient vs Mole Fraction (Chlorates)
 figure('Position', [100, 100, 900, 700]);
 hold on; grid on; box on;
 
 plot(x_water_NaClO4, gamma_NaClO4, 'LineWidth', 2.5, 'DisplayName', 'NaClO_4', 'color', [0.75, 0, 0])
 plot(x_water_LiClO4, gamma_LiClO4, 'LineWidth', 2.5, 'DisplayName', 'LiClO_4', 'color', [0, 0.5, 0])
+plot(x_water_KClO3,  gamma_KClO3,  'LineWidth', 2.5, 'DisplayName', 'KClO_3',  'color', [0, 0, 0.75])
 
 plot([0.5 1], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
 
 xlabel('Mole Fraction of Water (x_w)', 'FontSize', 14, 'FontWeight', 'bold')
 ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
-title('Perchlorate Solutions: Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
+title('Chlorate Solutions: Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 1)
-xlim([0.7 1.0]) % Perchlorates have wider range
+xlim([0.7 1.0]) % Chlorates have wider range
 ylim([0.9 1.5])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print('figures/Activity_Coefficient_vs_Mole_Fraction_Perchlorates', '-dpng', '-r600')
+print('figures/Activity_Coefficient_vs_Mole_Fraction_Chlorates', '-dpng', '-r600')
 
 
-%% FIGURE 2: Activity Coefficient vs Relative Humidity (Perchlorates)
+%% FIGURE 2: Activity Coefficient vs Relative Humidity (Chlorates)
 figure('Position', [150, 150, 900, 700]);
 hold on; grid on; box on;
 
 plot(RH_NaClO4*100, gamma_NaClO4, 'LineWidth', 2.5, 'DisplayName', 'NaClO_4', 'color', [0.75, 0, 0])
 plot(RH_LiClO4*100, gamma_LiClO4, 'LineWidth', 2.5, 'DisplayName', 'LiClO_4', 'color', [0, 0.5, 0])
+plot(RH_KClO3*100,  gamma_KClO3,  'LineWidth', 2.5, 'DisplayName', 'KClO_3',  'color', [0, 0, 0.75])
 
 % Average Line
-plot(x_fit_line, y_fit_line, 'k:', 'LineWidth', 3, 'DisplayName', 'Perchlorate Average')
+plot(x_fit_line, y_fit_line, 'k:', 'LineWidth', 3, 'DisplayName', 'Chlorate Average')
 
 plot([0 100], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
 
 xlabel('Relative Humidity (%)', 'FontSize', 14, 'FontWeight', 'bold')
 ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
-title('Perchlorate Solutions: Activity Coefficient vs RH', 'FontSize', 16, 'FontWeight', 'bold')
+title('Chlorate Solutions: Activity Coefficient vs RH', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 1)
-xlim([75 100]) % Perchlorates have wider RH range
+xlim([75 100]) % Chlorates have wider RH range
 ylim([0.9 1.5])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print('figures/Activity_Coefficient_vs_RH_Perchlorates', '-dpng', '-r600')
+print('figures/Activity_Coefficient_vs_RH_Chlorates', '-dpng', '-r600')
 
-disp('Perchlorate plots generated successfully!')
+disp('Chlorate plots generated successfully!')
