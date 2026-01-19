@@ -1,4 +1,9 @@
 function mf = calculate_mf_ZnBr(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % This function calculates the mass fraction of Zinc Bromide as a
 % function of the Relative Humidity at a temperature of 25C
 % Function coming from isopiestic data (H2SO4) from DOI	https://doi.org/10.1039/TF9403600733

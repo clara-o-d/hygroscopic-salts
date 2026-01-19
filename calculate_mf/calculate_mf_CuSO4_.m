@@ -1,4 +1,9 @@
 function mf = calculate_mf_CuSO4_(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.2205, 0.6644] -> RH [0.9750, 0.9963]
 if RH < 0.9750
     error("Input RH (%.4f) is below the lower fit limit for CuSO4 (0.9750)", RH);

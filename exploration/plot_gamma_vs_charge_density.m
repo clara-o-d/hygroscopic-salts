@@ -2,8 +2,10 @@ close all
 clear
 clc
 
-% Add calculate_mf folder to path
-addpath('calculate_mf');
+% Add calculate_mf and util folders to path
+[filepath,~,~] = fileparts(mfilename('fullpath'));
+addpath(fullfile(filepath, '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', 'util'));
 
 % This script plots water activity coefficient versus mean charge density
 % Charge density is calculated as z/r^3 where z is charge and r is ionic radius
@@ -138,8 +140,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('figures/Activity_Coefficient_vs_Charge_Density', '-dpng', '-r600')
-savefig('figures/Activity_Coefficient_vs_Charge_Density.fig')
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Charge_Density'), '-dpng', '-r600')
+savefig(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Charge_Density.fig'))
 
 %% Create second plot: Water Activity Coefficient vs Mean Charge per Molar Mass
 figure('Position', [100, 100, 900, 700]);
@@ -170,8 +172,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('figures/Activity_Coefficient_vs_Charge_per_MW', '-dpng', '-r600')
-savefig('figures/Activity_Coefficient_vs_Charge_per_MW.fig')
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Charge_per_MW'), '-dpng', '-r600')
+savefig(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Charge_per_MW.fig'))
 
 %% Display results table
 fprintf('\n=== Water Activity Coefficient vs Mean Charge Density ===\n');

@@ -1,4 +1,9 @@
 function mf = calculate_mf_Na2SO4_(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.1007, 0.7706] -> RH [0.8990, 0.9957]
 if RH < 0.8990
     error("Input RH (%.4f) is below the lower fit limit for Na2SO4 (0.8990)", RH);

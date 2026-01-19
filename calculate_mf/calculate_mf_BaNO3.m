@@ -1,4 +1,9 @@
 function mf = calculate_mf_BaNO3(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.2749, 0.6026] -> RH [0.9859, 0.9958]
 if RH < 0.9859
     error("Input RH (%.4f) is below the lower fit limit for Ba(NO3)2 (0.9859)", RH);

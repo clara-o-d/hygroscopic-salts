@@ -1,4 +1,9 @@
 function mf = calculate_mf_NaI(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.5560, 0.9128] -> RH [0.5801, 0.9669]
 if RH < 0.5801
     error("Input RH (%.4f) is below the lower fit limit for NaI (0.5801)", RH);

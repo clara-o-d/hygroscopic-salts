@@ -1,4 +1,9 @@
 function mf = calculate_mf_CaI2(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.8451, 0.9332] -> RH [0.8321, 0.9524]
 if RH < 0.8321
     error("Input RH (%.4f) is below the lower fit limit for CaI2 (0.8321)", RH);

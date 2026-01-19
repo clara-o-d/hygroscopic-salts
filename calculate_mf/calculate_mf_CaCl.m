@@ -1,4 +1,9 @@
 function mf = calculate_mf_CaCl(RH, T)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % This function calculates the mass fraction of Calcium Chloride as a
 % function of the vapor partial pressure and Temperature 
 % Function from: https://doi.org/10.1016/j.ijthermalsci.2003.09.003

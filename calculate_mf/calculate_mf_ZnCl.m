@@ -1,4 +1,9 @@
 function mf = calculate_mf_ZnCl(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % This function calculates the mass fraction of Zinc Chloride as a
 % function of the Relative Humidity at a temperature of 60C
 % Fit on pressure data from: https://pubs.acs.org/doi/pdf/10.1021/ic50195a058

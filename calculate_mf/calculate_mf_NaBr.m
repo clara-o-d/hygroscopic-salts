@@ -1,4 +1,9 @@
 function mf = calculate_mf_NaBr(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.5407, 0.8243] -> RH [0.6133, 0.9290]
 if RH < 0.6133
     error("Input RH (%.4f) is below the lower fit limit for NaBr (0.6133)", RH);

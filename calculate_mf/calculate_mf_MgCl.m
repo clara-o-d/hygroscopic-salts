@@ -1,4 +1,9 @@
 function mf = calculate_mf_MgCl(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % This function calculates the mass fraction of Magnesium Cloride as a
 % function of the Relative Humidity at a temperature of 20-24C
 % Fit on data from: https://doi.org/10.1080/027868299304219

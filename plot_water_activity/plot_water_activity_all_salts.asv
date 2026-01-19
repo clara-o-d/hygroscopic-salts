@@ -1,0 +1,245 @@
+close all 
+clear
+clc 
+
+% Add calculate_mf and util folders to path
+[filepath,~,~] = fileparts(mfilename('fullpath'));
+addpath(fullfile(filepath, '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', 'util'));
+
+T = 25; 
+MWw = 18.015;
+
+% Define all salts with their molecular weights and valid RH ranges
+% Format: {salt_name, MW, RH_min, RH_max, function_name, function_args}
+% function_args: 0 = no args, 1 = needs T, 2 = other
+
+salt_data = {
+    % Endothermic salts
+    {'NaCl', 58.443, 0.73, 0.9934, 'calculate_mf_NaCl_', 0};
+    {'KCl', 74.551, 0.83, 0.9935, 'calculate_mf_KCl_', 0};
+    {'NH4Cl', 53.491, 0.76, 0.993, 'calculate_mf_NH4Cl_', 0};
+    {'CsCl', 168.363, 0.817, 0.993, 'calculate_mf_CsCl_', 0};
+    {'NaNO3', 85.00, 0.71, 0.9996, 'calculate_mf_NaNO3_', 0};
+    {'AgNO3', 169.87, 0.862, 0.986, 'calculate_mf_AgNO3_', 0};
+    {'KI', 165.998, 0.65, 0.999, 'calculate_mf_KI_', 0};
+    {'LiNO3', 68.95, 0.7353, 0.9967, 'calculate_mf_LiNO3', 0};
+    {'KNO3', 101.10, 0.9315, 0.9967, 'calculate_mf_KNO3', 0};
+    {'NaClO4', 122.44, 0.7775, 0.9869, 'calculate_mf_NaClO4', 0};
+    {'KClO3', 122.55, 0.9800, 0.9936, 'calculate_mf_KClO3', 0};
+    {'NaBr', 102.89, 0.6133, 0.9290, 'calculate_mf_NaBr', 0};
+    {'NaI', 149.89, 0.5801, 0.9669, 'calculate_mf_NaI', 0};
+    {'KBr', 119.00, 0.8325, 0.9528, 'calculate_mf_KBr', 0};
+    {'RbCl', 120.92, 0.7423, 0.9527, 'calculate_mf_RbCl', 0};
+    {'CsBr', 212.81, 0.8475, 0.9482, 'calculate_mf_CsBr', 0};
+    {'CsI', 259.81, 0.9124, 0.9624, 'calculate_mf_CsI', 0};
+    
+    % Exothermic salts
+    {'LiCl', 42.4, 0.12, 0.9, 'calculate_mf_LiCl', 1};
+    {'LiOH', 24, 0.85, 0.9, 'calculate_mf_LiOH', 0};
+    {'NaOH', 40, 0.23, 0.9, 'calculate_mf_NaOH', 0};
+    {'HCl', 36.5, 0.17, 0.9, 'calculate_mf_HCl', 0};
+    {'CaCl2', 111, 0.31, 0.9, 'calculate_mf_CaCl', 1};
+    {'MgCl2', 95.2, 0.33, 0.9, 'calculate_mf_MgCl', 0};
+    {'MgNO3', 148.3, 0.55, 0.9, 'calculate_mf_MgNO3', 0};
+    {'LiBr', 86.85, 0.07, 0.9, 'calculate_mf_LiBr', 0};
+    {'ZnCl2', 136.3, 0.07, 0.8, 'calculate_mf_ZnCl', 0};
+    {'ZnI2', 319.18, 0.25, 0.9, 'calculate_mf_ZnI', 0};
+    {'ZnBr2', 225.2, 0.08, 0.85, 'calculate_mf_ZnBr', 0};
+    {'LiI', 133.85, 0.18, 0.9, 'calculate_mf_LiI', 0};
+    
+    % Sulfates
+    {'Na2SO4', 142.04, 0.8990, 0.9957, 'calculate_mf_Na2SO4_', 0};
+    {'K2SO4', 174.26, 0.9720, 0.9958, 'calculate_mf_K2SO4_', 0};
+    {'NH42SO4', 132.14, 0.8310, 0.9959, 'calculate_mf_NH42SO4_', 0};
+    {'MgSO4', 120.37, 0.9050, 0.9960, 'calculate_mf_MgSO4_', 0};
+    {'MnSO4', 151.00, 0.8620, 0.9961, 'calculate_mf_MnSO4_', 0};
+    {'Li2SO4', 109.94, 0.8530, 0.9956, 'calculate_mf_Li2SO4_', 0};
+    {'NiSO4', 154.75, 0.9390, 0.9962, 'calculate_mf_NiSO4_', 0};
+    {'CuSO4', 159.61, 0.9750, 0.9963, 'calculate_mf_CuSO4_', 0};
+    {'ZnSO4', 161.44, 0.9130, 0.9962, 'calculate_mf_ZnSO4_', 0};
+    
+    % Nitrates (additional)
+    {'BaNO3', 261.34, 0.9859, 0.9958, 'calculate_mf_BaNO3', 0};
+    {'CaNO3', 164.09, 0.6464, 0.9955, 'calculate_mf_CaNO3', 0};
+    
+    % Halides (additional)
+    {'CaBr2', 199.89, 0.6395, 0.9540, 'calculate_mf_CaBr2', 0};
+    {'CaI2', 293.89, 0.8321, 0.9524, 'calculate_mf_CaI2', 0};
+    {'SrCl2', 158.53, 0.8059, 0.9778, 'calculate_mf_SrCl2', 0};
+    {'SrBr2', 247.43, 0.7776, 0.9571, 'calculate_mf_SrBr2', 0};
+    {'SrI2', 341.43, 0.6785, 0.9569, 'calculate_mf_SrI2', 0};
+    {'BaCl2', 208.23, 0.9375, 0.9731, 'calculate_mf_BaCl2', 0};
+    {'BaBr2', 297.14, 0.8221, 0.9587, 'calculate_mf_BaBr2', 0};
+    
+    % Chlorates
+    {'LiClO4', 106.39, 0.7775, 0.9869, 'calculate_mf_LiClO4', 0};
+};
+
+% Process each salt
+num_points = 100;
+all_salts_data = struct();
+
+% Verify salt_data structure
+if isempty(salt_data)
+    error('salt_data is empty!');
+end
+
+for s = 1:length(salt_data)
+    salt_name = salt_data{s}{1};
+    MW = salt_data{s}{2};
+    RH_min = salt_data{s}{3};
+    RH_max = salt_data{s}{4};
+    func_name = salt_data{s}{5};
+    func_args = salt_data{s}{6};
+    
+    % Create RH vector
+    RH_vec = linspace(RH_min + 0.001, RH_max - 0.001, num_points);
+    
+    % Initialize arrays
+    mf_salt = zeros(size(RH_vec));
+    mf_water = zeros(size(RH_vec));
+    x_water = zeros(size(RH_vec));
+    
+    % Calculate for each RH value
+    success = true;
+    for i = 1:length(RH_vec)
+        try
+            if func_args == 1
+                % Function needs temperature
+                mf_salt(i) = feval(func_name, RH_vec(i), T);
+            else
+                % Function doesn't need temperature
+                mf_salt(i) = feval(func_name, RH_vec(i));
+            end
+            mf_water(i) = 1 - mf_salt(i);
+            x_water(i) = (mf_water(i) / MWw) / ...
+                ((mf_water(i) / MWw) + (mf_salt(i) / MW));
+        catch ME
+            % Skip this salt if there's an error
+            warning('Error processing %s at RH=%.4f: %s', salt_name, RH_vec(i), ME.message);
+            success = false;
+            break;
+        end
+    end
+    
+    if success
+        % Calculate Activity Coefficient (gamma_w = a_w / x_w)
+        gamma_w = RH_vec ./ x_water;
+        
+        % Store data
+        all_salts_data.(salt_name) = struct();
+        all_salts_data.(salt_name).RH = RH_vec;
+        all_salts_data.(salt_name).x_water = x_water;
+        all_salts_data.(salt_name).gamma_w = gamma_w;
+        all_salts_data.(salt_name).mf_water = mf_water;
+        all_salts_data.(salt_name).mf_salt = mf_salt;
+        all_salts_data.(salt_name).MW = MW;
+        all_salts_data.(salt_name).display_name = salt_name;
+    end
+end
+
+% Get list of successfully processed salts
+salt_names = fieldnames(all_salts_data);
+num_salts = length(salt_names);
+
+fprintf('Successfully processed %d salts\n', num_salts);
+
+% Generate distinct colors for all salts using HSV color space
+% This ensures maximum visual separation between colors
+colors = zeros(num_salts, 3);
+
+% Use golden angle (137.508°) for optimal color distribution around color wheel
+golden_angle = 0.38196601125;  % = (sqrt(5)-1)/2, complementary to golden ratio
+
+for i = 1:num_salts
+    % Distribute hues evenly using golden angle
+    hue = mod((i-1) * golden_angle, 1.0);
+    
+    % Vary saturation in a pattern (0.6 to 1.0) for distinction
+    % Alternate between high and medium saturation
+    sat_cycle = mod(i, 3);
+    if sat_cycle == 1
+        saturation = 0.85 + 0.15 * sin(i * 0.5);  % High saturation: 0.85-1.0
+    elseif sat_cycle == 2
+        saturation = 0.70 + 0.15 * cos(i * 0.3);  % Medium-high: 0.70-0.85
+    else
+        saturation = 0.55 + 0.20 * sin(i * 0.7);  % Medium: 0.55-0.75
+    end
+    saturation = max(0.5, min(1.0, saturation));  % Clamp to [0.5, 1.0]
+    
+    % Vary brightness (value) for additional distinction
+    val_cycle = mod(i, 4);
+    if val_cycle == 1
+        value = 0.90 + 0.10 * cos(i * 0.4);       % Very bright: 0.90-1.0
+    elseif val_cycle == 2
+        value = 0.80 + 0.15 * sin(i * 0.6);       % Bright: 0.80-0.95
+    elseif val_cycle == 3
+        value = 0.70 + 0.20 * cos(i * 0.5);       % Medium-bright: 0.70-0.90
+    else
+        value = 0.65 + 0.25 * sin(i * 0.8);       % Medium: 0.65-0.90
+    end
+    value = max(0.65, min(1.0, value));           % Clamp to [0.65, 1.0]
+    
+    % Convert HSV to RGB
+    colors(i,:) = hsv2rgb([hue, saturation, value]);
+end
+
+% Ensure colors are distinct by checking minimum distance (optional refinement)
+% For very large numbers, we could add more sophisticated color optimization
+
+%% FIGURE 1: Activity Coefficient vs Mole Fraction
+figure('Position', [100, 100, 1200, 800]);
+hold on; grid on; box on;
+
+for s = 1:num_salts
+    salt_name = salt_names{s};
+    data = all_salts_data.(salt_name);
+    plot(data.x_water, data.gamma_w, 'LineWidth', 2.5, ...
+         'DisplayName', data.display_name, 'color', colors(s,:));
+end
+
+plot([0.3 1], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
+xlabel('Mole Fraction of Water (x_w)', 'FontSize', 14, 'FontWeight', 'bold')
+ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
+title('Water Activity Coefficient vs Mole Fraction for All Salts', 'FontSize', 16, 'FontWeight', 'bold')
+legend('Location', 'best', 'FontSize', 8, 'NumColumns', 3)
+xlim([0.3 1.0])
+ylim([0 2.5])
+set(gca, 'FontSize', 12)
+set(gcf, 'color', 'w');
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 12 8]; 
+
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction_All_Salts'), '-dpng', '-r600')
+
+%% FIGURE 2: Activity Coefficient vs Relative Humidity
+figure('Position', [150, 150, 1200, 800]);
+hold on; grid on; box on;
+
+for s = 1:num_salts
+    salt_name = salt_names{s};
+    data = all_salts_data.(salt_name);
+    plot(data.RH*100, data.gamma_w, 'LineWidth', 2.5, ...
+         'DisplayName', data.display_name, 'color', colors(s,:));
+end
+
+plot([0 100], [1 1], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)')
+xlabel('Relative Humidity (%)', 'FontSize', 14, 'FontWeight', 'bold')
+ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
+title('Water Activity Coefficient vs Relative Humidity for All Salts', 'FontSize', 16, 'FontWeight', 'bold')
+legend('Location', 'best', 'FontSize', 8, 'NumColumns', 3)
+xlim([0 100])
+ylim([0 2.5])
+set(gca, 'FontSize', 12)
+set(gcf, 'color', 'w');
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 12 8]; 
+
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH_All_Salts'), '-dpng', '-r600')
+
+disp('Plots generated successfully!')
+disp('  - figures/Activity_Coefficient_vs_Mole_Fraction_All_Salts.png')
+disp('  - figures/Activity_Coefficient_vs_RH_All_Salts.png')

@@ -1,4 +1,9 @@
 function mf = calculate_mf_KNO3(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.0537, 0.6651] -> RH [0.9315, 0.9967]
 if RH < 0.9315
     error("Input RH (%.4f) is below the lower fit limit for KNO3 (0.9315)", RH);

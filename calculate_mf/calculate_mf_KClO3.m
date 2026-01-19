@@ -1,4 +1,9 @@
 function mf = calculate_mf_KClO3(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.1429, 0.3685] -> RH [0.9800, 0.9936]
 if RH < 0.9800
     error("Input RH (%.4f) is below the lower fit limit for KClO3 (0.9800)", RH);

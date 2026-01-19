@@ -1,4 +1,9 @@
 function mf = calculate_mf_CsI(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.8344, 0.9067] -> RH [0.9124, 0.9624]
 if RH < 0.9124
     error("Input RH (%.4f) is below the lower fit limit for CsI (0.9124)", RH);

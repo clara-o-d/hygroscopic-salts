@@ -1,4 +1,9 @@
 function mf = calculate_mf_K2SO4_(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.1442, 0.5742] -> RH [0.9720, 0.9958]
 if RH < 0.9720
     error("Input RH (%.4f) is below the lower fit limit for K2SO4 (0.9720)", RH);

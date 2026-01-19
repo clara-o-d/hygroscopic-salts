@@ -2,8 +2,10 @@ close all
 clear
 clc 
 
-% Add calculate_mf folder to path
-addpath('calculate_mf');
+% Add calculate_mf and util folders to path
+[filepath,~,~] = fileparts(mfilename('fullpath'));
+addpath(fullfile(filepath, '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', 'util'));
 
 T = 25; 
 MWw = 18;
@@ -229,8 +231,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('figures/Activity_Coefficient_vs_Mole_Fraction', '-dpng', '-r600')
-savefig('figures/Activity_Coefficient_vs_Mole_Fraction.fig')
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction'), '-dpng', '-r600')
+savefig(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction.fig'))
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity
 figure('Position', [100, 100, 900, 700]);
@@ -263,8 +265,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('figures/Activity_Coefficient_vs_RH', '-dpng', '-r600')
-savefig('figures/Activity_Coefficient_vs_RH.fig')
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH'), '-dpng', '-r600')
+savefig(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH.fig'))
 
 disp('Plots generated successfully!')
 disp('  - figures/Activity_Coefficient_vs_Mole_Fraction.png')

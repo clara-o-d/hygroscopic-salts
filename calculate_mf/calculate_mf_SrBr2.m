@@ -1,4 +1,9 @@
 function mf = calculate_mf_SrBr2(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.7311, 0.9190] -> RH [0.7776, 0.9571]
 if RH < 0.7776
     error("Input RH (%.4f) is below the lower fit limit for SrBr2 (0.7776)", RH);

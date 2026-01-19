@@ -2,8 +2,10 @@ close all
 clear
 clc 
 
-% Add calculate_mf folder to path (ensure your functions are here)
-addpath('calculate_mf');
+% Add calculate_mf and util folders to path
+[filepath,~,~] = fileparts(mfilename('fullpath'));
+addpath(fullfile(filepath, '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', 'util'));
 
 T = 25; 
 MWw = 18.015;
@@ -147,7 +149,7 @@ ylim([0.9 1.5])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print('figures/Activity_Coefficient_vs_Mole_Fraction_Nitrates', '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction_Nitrates'), '-dpng', '-r600')
 
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity (Nitrates)
@@ -175,6 +177,6 @@ ylim([0.9 1.5])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print('figures/Activity_Coefficient_vs_RH_Nitrates', '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH_Nitrates'), '-dpng', '-r600')
 
 disp('Nitrate plots generated successfully!')

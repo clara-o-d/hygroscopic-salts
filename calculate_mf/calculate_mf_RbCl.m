@@ -1,4 +1,9 @@
 function mf = calculate_mf_RbCl(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.5479, 0.8494] -> RH [0.7423, 0.9527]
 if RH < 0.7423
     error("Input RH (%.4f) is below the lower fit limit for RbCl (0.7423)", RH);

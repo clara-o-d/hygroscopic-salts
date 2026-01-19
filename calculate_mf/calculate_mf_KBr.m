@@ -1,4 +1,9 @@
 function mf = calculate_mf_KBr(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.4966, 0.7737] -> RH [0.8325, 0.9528]
 if RH < 0.8325
     error("Input RH (%.4f) is below the lower fit limit for KBr (0.8325)", RH);

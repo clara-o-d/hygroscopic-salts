@@ -1,4 +1,9 @@
 function mf = calculate_mf_BaCl2(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.5481, 0.7696] -> RH [0.9375, 0.9731]
 if RH < 0.9375
     error("Input RH (%.4f) is below the lower fit limit for BaCl2 (0.9375)", RH);

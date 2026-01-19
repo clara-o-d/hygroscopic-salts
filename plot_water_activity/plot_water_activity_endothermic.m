@@ -2,8 +2,10 @@ close all
 clear
 clc 
 
-% Add calculate_mf folder to path
-addpath('calculate_mf');
+% Add calculate_mf and util folders to path
+[filepath,~,~] = fileparts(mfilename('fullpath'));
+addpath(fullfile(filepath, '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', 'util'));
 
 T = 25; 
 MWw = 18.015;
@@ -282,14 +284,14 @@ xlabel('Mole Fraction of Water (x_w)', 'FontSize', 14, 'FontWeight', 'bold')
 ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
 title('Water Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10)
-xlim([0.8 1.0]) % Adjusted xlim since these salts are mostly soluble/high aw
-ylim([0.9 1.1])
+xlim([0.2 1.0]) % Adjusted xlim since these salts are mostly soluble/high aw
+ylim([0.9 2.5])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('figures/Activity_Coefficient_vs_Mole_Fraction_Endothermic', '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction_Endothermic'), '-dpng', '-r600')
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity
 figure('Position', [100, 100, 900, 700]);
@@ -322,14 +324,14 @@ xlabel('Relative Humidity (%)', 'FontSize', 14, 'FontWeight', 'bold')
 ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'bold')
 title('Water Activity Coefficient vs Relative Humidity', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10)
-xlim([55 100]) % Adjusted xlim to include all data ranges
-ylim([0.9 1.1])
+xlim([50 100]) % Adjusted xlim to include all data ranges
+ylim([0.9 2.0])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print('figures/Activity_Coefficient_vs_RH_Endothermic', '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH_Endothermic'), '-dpng', '-r600')
 
 disp('Plots generated successfully!')
 disp('  - figures/Activity_Coefficient_vs_Mole_Fraction_Endothermic.png')

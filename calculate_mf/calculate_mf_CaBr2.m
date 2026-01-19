@@ -1,4 +1,9 @@
 function mf = calculate_mf_CaBr2(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.6905, 0.9107] -> RH [0.6395, 0.9540]
 if RH < 0.6395
     error("Input RH (%.4f) is below the lower fit limit for CaBr2 (0.6395)", RH);

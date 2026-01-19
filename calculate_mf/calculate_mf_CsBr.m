@@ -1,4 +1,9 @@
 function mf = calculate_mf_CsBr(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.7979, 0.9367] -> RH [0.8475, 0.9482]
 if RH < 0.8475
     error("Input RH (%.4f) is below the lower fit limit for CsBr (0.8475)", RH);

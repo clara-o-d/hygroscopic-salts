@@ -1,4 +1,9 @@
 function mf = calculate_mf_CaNO3(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.1300, 0.8997] -> RH [0.6464, 0.9955]
 if RH < 0.6464
     error("Input RH (%.4f) is below the lower fit limit for Ca(NO3)2 (0.6464)", RH);

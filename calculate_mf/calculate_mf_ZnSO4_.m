@@ -1,4 +1,9 @@
 function mf = calculate_mf_ZnSO4_(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.2244, 0.8127] -> RH [0.9130, 0.9962]
 if RH < 0.9130
     error("Input RH (%.4f) is below the lower fit limit for ZnSO4 (0.9130)", RH);

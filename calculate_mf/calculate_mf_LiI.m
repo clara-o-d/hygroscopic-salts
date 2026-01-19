@@ -1,4 +1,9 @@
 function mf = calculate_mf_LiI(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % This function calculates the mass fraction of Lithium Iodide as a
 % function of the Relative Humidity at a temperature of 30C
 % Fit on vapour pressure data at 30C from: https://pubs.acs.org/doi/pdf/10.1021/je00060a020

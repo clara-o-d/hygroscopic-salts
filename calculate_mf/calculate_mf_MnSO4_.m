@@ -1,4 +1,9 @@
 function mf = calculate_mf_MnSO4_(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.2020, 0.8351] -> RH [0.8620, 0.9961]
 if RH < 0.8620
     error("Input RH (%.4f) is below the lower fit limit for MnSO4 (0.8620)", RH);

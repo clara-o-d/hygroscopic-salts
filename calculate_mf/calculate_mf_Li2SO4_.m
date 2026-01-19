@@ -1,4 +1,9 @@
 function mf = calculate_mf_Li2SO4_(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.0629, 0.6681] -> RH [0.8530, 0.9956]
 if RH < 0.8530
     error("Input RH (%.4f) is below the lower fit limit for Li2SO4 (0.8530)", RH);

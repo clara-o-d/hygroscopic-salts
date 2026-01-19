@@ -1,4 +1,9 @@
 function mf = calculate_mf_NaClO4(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.1586, 0.8033] -> RH [0.7775, 0.9869]
 if RH < 0.7775
     error("Input RH (%.4f) is below the lower fit limit for NaClO4 (0.7775)", RH);

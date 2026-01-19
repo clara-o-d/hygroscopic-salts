@@ -1,4 +1,9 @@
 function mf = calculate_mf_CsCl_(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % This function calculates the mass fraction of Cesium Chloride as a
 % function of the Relative Humidity at a temperature of 25C
 % Fit on water activity data at 25C from: 

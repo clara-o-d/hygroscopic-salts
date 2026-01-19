@@ -1,4 +1,9 @@
 function mf = calculate_mf_NH42SO4_(RH)
+% Add util folder to path if needed
+if ~exist('robust_fzero', 'file')
+    [filepath,~,~] = fileparts(mfilename('fullpath'));
+    addpath(fullfile(filepath, '..', 'util'));
+end
 % Fit on data range: MassFrac [0.0884, 0.8289] -> RH [0.8310, 0.9959]
 if RH < 0.8310
     error("Input RH (%.4f) is below the lower fit limit for (NH4)2SO4 (0.8310)", RH);
