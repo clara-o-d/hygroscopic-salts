@@ -12,7 +12,7 @@ MWw = 18.015;
 
 %% 1. NaNO3
 MW_NaNO3 = 85.00;
-% Fit valid: [0.7100, 0.9996] (from calculate_mf_NaNO3_)
+% Fit valid: [0.9701, 0.9996] (from calculate_mf_NaNO3_)
 RH_NaNO3 = linspace(0.711, 0.999, 100); 
 
 for i = 1:length(RH_NaNO3)
@@ -44,6 +44,18 @@ for i = 1:length(RH_LiNO3)
     mf_water_LiNO3(i) = 1 - mf_salt_LiNO3(i);
     x_water_LiNO3(i) = (mf_water_LiNO3(i) / MWw) / ...
         ((mf_water_LiNO3(i) / MWw) + (mf_salt_LiNO3(i) / MW_LiNO3));
+end
+
+%% 3b. NH4NO3
+MW_NH4NO3 = 80.043;
+% Fit valid: [0.118, 0.732]
+RH_NH4NO3 = linspace(0.118, 0.732, 100);
+
+for i = 1:length(RH_NH4NO3)
+    mf_salt_NH4NO3(i) = calculate_mf_NH4NO3(RH_NH4NO3(i));
+    mf_water_NH4NO3(i) = 1 - mf_salt_NH4NO3(i);
+    x_water_NH4NO3(i) = (mf_water_NH4NO3(i) / MWw) / ...
+        ((mf_water_NH4NO3(i) / MWw) + (mf_salt_NH4NO3(i) / MW_NH4NO3));
 end
 
 %% 4. KNO3
@@ -87,6 +99,7 @@ end
 gamma_NaNO3 = RH_NaNO3 ./ x_water_NaNO3;
 gamma_AgNO3 = RH_AgNO3 ./ x_water_AgNO3;
 gamma_LiNO3 = RH_LiNO3 ./ x_water_LiNO3;
+gamma_NH4NO3 = RH_NH4NO3 ./ x_water_NH4NO3;
 gamma_KNO3  = RH_KNO3  ./ x_water_KNO3;
 gamma_BaNO3 = RH_BaNO3 ./ x_water_BaNO3;
 gamma_CaNO3 = RH_CaNO3 ./ x_water_CaNO3;
@@ -94,7 +107,7 @@ gamma_CaNO3 = RH_CaNO3 ./ x_water_CaNO3;
 
 %% Calculate Average Nitrate Fit
 % Define the salts to include in the average
-fit_salts = {'NaNO3', 'AgNO3', 'LiNO3', 'KNO3', 'BaNO3', 'CaNO3'};
+fit_salts = {'NaNO3', 'AgNO3', 'LiNO3', 'NH4NO3', 'KNO3', 'BaNO3', 'CaNO3'};
 
 all_RH_fit = [];
 all_gamma_fit = [];
@@ -134,6 +147,7 @@ hold on; grid on; box on;
 plot(x_water_NaNO3, gamma_NaNO3, 'LineWidth', 2.5, 'DisplayName', 'NaNO_3', 'color', [0.75, 0, 0])
 plot(x_water_AgNO3, gamma_AgNO3, 'LineWidth', 2.5, 'DisplayName', 'AgNO_3', 'color', [0.5, 0.5, 0.5])
 plot(x_water_LiNO3, gamma_LiNO3, 'LineWidth', 2.5, 'DisplayName', 'LiNO_3', 'color', [0, 0.5, 0])
+plot(x_water_NH4NO3, gamma_NH4NO3, 'LineWidth', 2.5, 'DisplayName', 'NH_4NO_3', 'color', [0.75, 0.5, 0])
 plot(x_water_KNO3,  gamma_KNO3,  'LineWidth', 2.5, 'DisplayName', 'KNO_3',  'color', [0, 0.75, 0.75])
 plot(x_water_BaNO3, gamma_BaNO3, 'LineWidth', 2.5, 'DisplayName', 'Ba(NO_3)_2', 'color', [0.5, 0, 0.5])
 plot(x_water_CaNO3, gamma_CaNO3, 'LineWidth', 2.5, 'DisplayName', 'Ca(NO_3)_2', 'color', [0.8, 0.4, 0])
@@ -159,6 +173,7 @@ hold on; grid on; box on;
 plot(RH_NaNO3*100, gamma_NaNO3, 'LineWidth', 2.5, 'DisplayName', 'NaNO_3', 'color', [0.75, 0, 0])
 plot(RH_AgNO3*100, gamma_AgNO3, 'LineWidth', 2.5, 'DisplayName', 'AgNO_3', 'color', [0.5, 0.5, 0.5])
 plot(RH_LiNO3*100, gamma_LiNO3, 'LineWidth', 2.5, 'DisplayName', 'LiNO_3', 'color', [0, 0.5, 0])
+plot(RH_NH4NO3*100, gamma_NH4NO3, 'LineWidth', 2.5, 'DisplayName', 'NH_4NO_3', 'color', [0.75, 0.5, 0])
 plot(RH_KNO3*100,  gamma_KNO3,  'LineWidth', 2.5, 'DisplayName', 'KNO_3',  'color', [0, 0.75, 0.75])
 plot(RH_BaNO3*100, gamma_BaNO3, 'LineWidth', 2.5, 'DisplayName', 'Ba(NO_3)_2', 'color', [0.5, 0, 0.5])
 plot(RH_CaNO3*100, gamma_CaNO3, 'LineWidth', 2.5, 'DisplayName', 'Ca(NO_3)_2', 'color', [0.8, 0.4, 0])

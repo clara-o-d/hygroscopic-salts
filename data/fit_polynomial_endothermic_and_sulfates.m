@@ -476,6 +476,27 @@ function solutes = load_all_data()
     ];
 
     i = i + 1;
+    solutes(i).name = 'NH4NO3';
+    solutes(i).degree = standard_degree;
+    solutes(i).data = [
+0.545629	0.7320
+0.566500	0.7150
+0.581323	0.7060
+0.596944	0.6970
+0.605073	0.6860
+0.613427	0.6760
+0.622014	0.6650
+0.630846	0.6540
+0.639932	0.6450
+0.649283	0.6290
+0.658912	0.6200
+0.747608	0.5190
+0.847419	0.3920
+0.898850	0.2920
+1.000000	0.1180
+    ];
+
+    i = i + 1;
     solutes(i).name = 'Ba(NO3)2';
     solutes(i).degree = standard_degree;
     solutes(i).data = [

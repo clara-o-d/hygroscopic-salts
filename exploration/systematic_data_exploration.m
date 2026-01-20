@@ -27,9 +27,17 @@ addpath(fullfile(filepath, '..', 'util'));
 % Open output file for writing analysis results
 output_filename = fullfile(filepath, 'systematic_exploration_results.txt');
 fid_out = fopen(output_filename, 'w');
+if fid_out == -1
+    warning('Could not open output file for writing. Only printing to console.');
+    fid_out = 1;  % Use stdout
+end
 
 % Define helper function to write to both console and file
-write_output = @(varargin) cellfun(@(x) fprintf(x, varargin{:}), {1, fid_out}, 'UniformOutput', false);
+if fid_out == 1
+    write_output = @(varargin) fprintf(varargin{:});
+else
+    write_output = @(varargin) cellfun(@(x) fprintf(x, varargin{:}), {1, fid_out}, 'UniformOutput', false);
+end
 
 % Write header to file
 write_output('\n========================================\n');
@@ -94,7 +102,7 @@ salt_props = containers.Map();
 
 % Alkali metal chlorides
 salt_props('LiCl') = {'Li', 1, 1, 'Cl', 1, 1, -37.0, 'exothermic_halide'};
-salt_props('NaCl') = {'Na', 1, 1, 'Cl', 1, 1, 3.9, 'endothermic_halide'};
+salt_props('NaCl') = {'Na', 1, 1, 'Cl', 1, 1, -3.9, 'exothermic_halide'};
 salt_props('KCl') = {'K', 1, 1, 'Cl', 1, 1, 17.2, 'endothermic_halide'};
 salt_props('RbCl') = {'Rb', 1, 1, 'Cl', 1, 1, 17.3, 'endothermic_halide'};
 salt_props('CsCl') = {'Cs', 1, 1, 'Cl', 1, 1, 17.8, 'endothermic_halide'};
@@ -134,6 +142,7 @@ salt_props('ZnI2') = {'Zn', 2, 1, 'I', 1, 2, -52.3, 'exothermic_halide'};
 salt_props('LiNO3') = {'Li', 1, 1, 'NO3', 1, 1, -2.5, 'endothermic_nitrate'};
 salt_props('NaNO3') = {'Na', 1, 1, 'NO3', 1, 1, 20.5, 'endothermic_nitrate'};
 salt_props('KNO3') = {'K', 1, 1, 'NO3', 1, 1, 34.9, 'endothermic_nitrate'};
+salt_props('NH4NO3') = {'NH4', 1, 1, 'NO3', 1, 1, 25.7, 'endothermic_nitrate'};
 salt_props('AgNO3') = {'Ag', 1, 1, 'NO3', 1, 1, 22.6, 'endothermic_nitrate'};
 salt_props('Ca(NO3)2') = {'Ca', 2, 1, 'NO3', 1, 2, -19.2, 'exothermic_nitrate'};
 salt_props('Mg(NO3)2') = {'Mg', 2, 1, 'NO3', 1, 2, -90.9, 'exothermic_nitrate'};
@@ -161,6 +170,59 @@ salt_props('NaClO4') = {'Na', 1, 1, 'ClO4', 1, 1, 13.9, 'endothermic_oxyanion'};
 salt_props('LiClO4') = {'Li', 1, 1, 'ClO4', 1, 1, -32.6, 'exothermic_oxyanion'};
 
 write_output('Salt properties database built (%d salts)\n\n', salt_props.Count);
+
+% Define valid RH ranges for each salt (from save_all_data_to_csv.m)
+% Format: {salt_name, RH_min, RH_max}
+salt_RH_ranges = containers.Map();
+salt_RH_ranges('NaCl') = [0.765, 0.99];
+salt_RH_ranges('KCl') = [0.855, 0.99];
+salt_RH_ranges('NH4Cl') = [0.815, 0.99];
+salt_RH_ranges('CsCl') = [0.82, 0.99];
+salt_RH_ranges('NaNO3') = [0.971, 0.995];
+salt_RH_ranges('AgNO3') = [0.865, 0.99];
+salt_RH_ranges('KI') = [0.975, 0.995];
+salt_RH_ranges('LiNO3') = [0.736, 0.99];
+salt_RH_ranges('KNO3') = [0.932, 0.995];
+salt_RH_ranges('NaClO4') = [0.778, 0.99];
+salt_RH_ranges('KClO3') = [0.981, 0.995];
+salt_RH_ranges('NaBr') = [0.614, 0.99];
+salt_RH_ranges('NaI') = [0.581, 0.99];
+salt_RH_ranges('KBr') = [0.833, 0.99];
+salt_RH_ranges('RbCl') = [0.743, 0.99];
+salt_RH_ranges('CsBr') = [0.848, 0.99];
+salt_RH_ranges('CsI') = [0.913, 0.995];
+salt_RH_ranges('LiCl') = [0.12, 0.9];
+salt_RH_ranges('LiOH') = [0.85, 0.9];
+salt_RH_ranges('NaOH') = [0.23, 0.9];
+salt_RH_ranges('HCl') = [0.17, 0.9];
+salt_RH_ranges('CaCl2') = [0.31, 0.9];
+salt_RH_ranges('MgCl2') = [0.33, 0.9];
+salt_RH_ranges('MgNO3') = [0.55, 0.9];
+salt_RH_ranges('LiBr') = [0.07, 0.9];
+salt_RH_ranges('ZnCl2') = [0.07, 0.8];
+salt_RH_ranges('ZnI2') = [0.25, 0.9];
+salt_RH_ranges('ZnBr2') = [0.08, 0.85];
+salt_RH_ranges('LiI') = [0.18, 0.9];
+salt_RH_ranges('Na2SO4') = [0.8990, 0.9957];
+salt_RH_ranges('K2SO4') = [0.9720, 0.9958];
+salt_RH_ranges('NH42SO4') = [0.8310, 0.9959];
+salt_RH_ranges('MgSO4') = [0.9050, 0.9960];
+salt_RH_ranges('MnSO4') = [0.8620, 0.9961];
+salt_RH_ranges('Li2SO4') = [0.8530, 0.9956];
+salt_RH_ranges('NiSO4') = [0.9390, 0.9962];
+salt_RH_ranges('CuSO4') = [0.9750, 0.9963];
+salt_RH_ranges('ZnSO4') = [0.9130, 0.9962];
+salt_RH_ranges('NH4NO3') = [0.118, 0.732];
+salt_RH_ranges('BaNO3') = [0.9859, 0.9958];
+salt_RH_ranges('CaNO3') = [0.6464, 0.9955];
+salt_RH_ranges('CaBr2') = [0.6395, 0.9540];
+salt_RH_ranges('CaI2') = [0.8321, 0.9524];
+salt_RH_ranges('SrCl2') = [0.8059, 0.9778];
+salt_RH_ranges('SrBr2') = [0.7776, 0.9571];
+salt_RH_ranges('SrI2') = [0.6785, 0.9569];
+salt_RH_ranges('BaCl2') = [0.9375, 0.9731];
+salt_RH_ranges('BaBr2') = [0.8221, 0.9587];
+salt_RH_ranges('LiClO4') = [0.7775, 0.9869];
 
 %% Calculate derived properties for each salt
 write_output('Calculating derived properties...\n');
@@ -252,65 +314,142 @@ for i = 1:n_salts
         salt_analysis(i).ionic_strength_factor = NaN;
     end
     
-    % Statistical properties from data
-    salt_analysis(i).molality_range = [min(salt_data.Molality_mol_per_kg), ...
-                                       max(salt_data.Molality_mol_per_kg)];
-    salt_analysis(i).RH_range = [min(salt_data.RH_Water_Activity), ...
-                                 max(salt_data.RH_Water_Activity)];
-    salt_analysis(i).gamma_range = [min(salt_data.Activity_Coefficient_Water), ...
-                                    max(salt_data.Activity_Coefficient_Water)];
+    % Get valid RH range for this salt
+    if isKey(salt_RH_ranges, salt_name)
+        salt_analysis(i).valid_RH_range = salt_RH_ranges(salt_name);
+    else
+        % If not in database, use data-derived range
+        salt_analysis(i).valid_RH_range = [min(salt_data.RH_Water_Activity), ...
+                                           max(salt_data.RH_Water_Activity)];
+    end
     
-    % Mean values
-    salt_analysis(i).mean_molality = mean(salt_data.Molality_mol_per_kg);
-    salt_analysis(i).mean_RH = mean(salt_data.RH_Water_Activity);
-    salt_analysis(i).mean_gamma = mean(salt_data.Activity_Coefficient_Water);
+    % Filter data to only include points within valid RH range
+    RH_valid_mask = salt_data.RH_Water_Activity >= salt_analysis(i).valid_RH_range(1) & ...
+                    salt_data.RH_Water_Activity <= salt_analysis(i).valid_RH_range(2);
     
-    % Deviation from ideality
-    salt_analysis(i).mean_deviation_from_ideal = salt_analysis(i).mean_gamma - 1.0;
+    salt_data_valid = salt_data(RH_valid_mask, :);
     
-    % Store full data arrays
-    salt_analysis(i).molality = salt_data.Molality_mol_per_kg;
-    salt_analysis(i).RH = salt_data.RH_Water_Activity;
-    salt_analysis(i).gamma = salt_data.Activity_Coefficient_Water;
-    salt_analysis(i).x_water = salt_data.Mole_Fraction_Water;
+    % Statistical properties from valid data only
+    if height(salt_data_valid) > 0
+        salt_analysis(i).molality_range = [min(salt_data_valid.Molality_mol_per_kg), ...
+                                           max(salt_data_valid.Molality_mol_per_kg)];
+        salt_analysis(i).RH_range = [min(salt_data_valid.RH_Water_Activity), ...
+                                     max(salt_data_valid.RH_Water_Activity)];
+        salt_analysis(i).gamma_range = [min(salt_data_valid.Activity_Coefficient_Water), ...
+                                        max(salt_data_valid.Activity_Coefficient_Water)];
+        
+        % Mean values (from valid data only)
+        salt_analysis(i).mean_molality = mean(salt_data_valid.Molality_mol_per_kg);
+        salt_analysis(i).mean_RH = mean(salt_data_valid.RH_Water_Activity);
+        salt_analysis(i).mean_gamma = mean(salt_data_valid.Activity_Coefficient_Water);
+        
+        % Deviation from ideality
+        salt_analysis(i).mean_deviation_from_ideal = salt_analysis(i).mean_gamma - 1.0;
+        
+        % Store full data arrays (filtered to valid RH range only)
+        salt_analysis(i).molality = salt_data_valid.Molality_mol_per_kg;
+        salt_analysis(i).RH = salt_data_valid.RH_Water_Activity;
+        salt_analysis(i).gamma = salt_data_valid.Activity_Coefficient_Water;
+        salt_analysis(i).x_water = salt_data_valid.Mole_Fraction_Water;
+    else
+        % No valid data - set to empty/NaN
+        salt_analysis(i).molality_range = [NaN, NaN];
+        salt_analysis(i).RH_range = [NaN, NaN];
+        salt_analysis(i).gamma_range = [NaN, NaN];
+        salt_analysis(i).mean_molality = NaN;
+        salt_analysis(i).mean_RH = NaN;
+        salt_analysis(i).mean_gamma = NaN;
+        salt_analysis(i).mean_deviation_from_ideal = NaN;
+        salt_analysis(i).molality = [];
+        salt_analysis(i).RH = [];
+        salt_analysis(i).gamma = [];
+        salt_analysis(i).x_water = [];
+    end
 end
 
 write_output('Property calculations complete\n\n');
 
-%% ANALYSIS 1: Activity Coefficient vs Molality by Chemical Family
-write_output('=== Analysis 1: Activity Coefficient vs Molality by Chemical Family ===\n');
+%% Define custom color palette for better distinguishability
+% Base color palette with highly distinguishable colors
+% Colors chosen to maximize perceptual distance
+distinguishable_base_colors = [
+    0, 0.4470, 0.7410;      % Blue
+    0.8500, 0.3250, 0.0980;  % Orange
+    0.9290, 0.6940, 0.1250;  % Yellow
+    0.4940, 0.1840, 0.5560;  % Purple
+    0.4660, 0.6740, 0.1880;  % Green
+    0.6350, 0.0780, 0.1840;  % Red
+    0.3010, 0.7450, 0.9330;  % Cyan
+    0.7500, 0.0000, 0.7500;  % Magenta
+    0.0000, 0.5000, 0.0000;  % Dark green
+    0.8700, 0.4900, 0.0000;  % Dark orange
+    0.5000, 0.5000, 0.0000;  % Olive
+    0.0000, 0.7500, 0.7500;  % Teal
+    0.7500, 0.7500, 0.0000;  % Yellow-green
+    0.7500, 0.0000, 0.0000;  % Dark red
+    0.0000, 0.0000, 0.7500;  % Dark blue
+    0.5000, 0.0000, 0.5000;  % Dark magenta
+    0.0000, 0.5000, 0.5000;  % Dark cyan
+    0.5500, 0.5500, 0.5500;  % Gray
+];
+
+% Function to get distinguishable colors (function defined at end of file)
+get_distinguishable_colors = @(n) get_colors_func(n, distinguishable_base_colors);
+
+%% ANALYSIS 1: Activity Coefficient vs RH by Chemical Family
+write_output('=== Analysis 1: Activity Coefficient vs RH by Chemical Family ===\n');
 
 categories = unique({salt_analysis.category});
-figure('Position', [100, 100, 1400, 900]);
+% Filter out 'unknown' category if present
+categories = categories(~strcmp(categories, 'unknown'));
+n_categories = length(categories);
 
-for cat_idx = 1:min(6, length(categories))
-    subplot(2, 3, cat_idx);
+% Calculate grid dimensions to fit all categories
+n_cols = 3;
+n_rows = ceil(n_categories / n_cols);
+
+figure('Position', [100, 100, 1400, n_rows * 300]);
+
+for cat_idx = 1:n_categories
+    subplot(n_rows, n_cols, cat_idx);
     hold on; grid on; box on;
     
     cat = categories{cat_idx};
     cat_mask = strcmp({salt_analysis.category}, cat);
     cat_salts = salt_analysis(cat_mask);
     
-    colors = lines(length(cat_salts));
+    colors = get_distinguishable_colors(length(cat_salts));
     
     for s = 1:length(cat_salts)
-        plot(cat_salts(s).molality, cat_salts(s).gamma, '-', ...
-             'LineWidth', 2, 'Color', colors(s, :), ...
-             'DisplayName', strrep(cat_salts(s).name, '_', '\_'));
+        % Only plot if we have valid data
+        if ~isempty(cat_salts(s).RH) && ~isempty(cat_salts(s).gamma)
+            plot(cat_salts(s).RH, cat_salts(s).gamma, '-', ...
+                 'LineWidth', 2, 'Color', colors(s, :), ...
+                 'DisplayName', strrep(cat_salts(s).name, '_', '\_'));
+        else
+            % Debug: report if salt has no data
+            if strcmp(cat_salts(s).name, 'NH4NO3')
+                write_output('Warning: NH4NO3 found but has empty RH or gamma data\n');
+            end
+        end
     end
     
-    xlabel('Molality (mol/kg)', 'FontWeight', 'bold');
+    % Add ideal line
+    plot([0, 1], [1, 1], 'k--', 'LineWidth', 1.5, 'DisplayName', 'Ideal');
+    
+    xlabel('RH (Water Activity)', 'FontWeight', 'bold');
     ylabel('\gamma_w (Activity Coefficient)', 'FontWeight', 'bold');
     title(strrep(cat, '_', ' '), 'FontWeight', 'bold');
     legend('Location', 'best', 'FontSize', 8);
+    xlim([0, 1]);
     ylim([0.4, 2.0]);
     set(gca, 'FontSize', 10);
 end
 
-sgtitle('Water Activity Coefficient vs Molality by Chemical Family', ...
+sgtitle('Water Activity Coefficient vs RH by Chemical Family', ...
         'FontSize', 14, 'FontWeight', 'bold');
-saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_gamma_vs_molality_by_family.png'));
-savefig(fullfile(filepath, '..', 'figures', 'exploration_gamma_vs_molality_by_family.fig'));
+saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_gamma_vs_RH_by_family.png'));
+savefig(fullfile(filepath, '..', 'figures', 'exploration_gamma_vs_RH_by_family.fig'));
 
 %% ANALYSIS 2: Activity Coefficient vs RH by Cation
 write_output('=== Analysis 2: Activity Coefficient vs RH by Cation ===\n');
@@ -328,12 +467,15 @@ for cat_idx = 1:min(9, length(cations))
     cat_mask = strcmp({salt_analysis.cation}, cat);
     cat_salts = salt_analysis(cat_mask);
     
-    colors = lines(length(cat_salts));
+    colors = get_distinguishable_colors(length(cat_salts));
     
     for s = 1:length(cat_salts)
-        plot(cat_salts(s).RH, cat_salts(s).gamma, 'o-', ...
-             'LineWidth', 1.5, 'MarkerSize', 3, 'Color', colors(s, :), ...
-             'DisplayName', strrep(cat_salts(s).name, '_', '\_'));
+        % Only plot if we have valid data
+        if ~isempty(cat_salts(s).RH) && ~isempty(cat_salts(s).gamma)
+            plot(cat_salts(s).RH, cat_salts(s).gamma, 'o-', ...
+                 'LineWidth', 1.5, 'MarkerSize', 3, 'Color', colors(s, :), ...
+                 'DisplayName', strrep(cat_salts(s).name, '_', '\_'));
+        end
     end
     
     % Add ideal line
@@ -425,7 +567,7 @@ halide_series = {
     {'LiCl', 'NaCl', 'KCl', 'RbCl', 'CsCl', 'NH4Cl'}, 'Chlorides (Cl^-)';
     {'LiBr', 'NaBr', 'KBr', 'CsBr'}, 'Bromides (Br^-)';
     {'LiI', 'NaI', 'KI', 'CsI'}, 'Iodides (I^-)';
-    {'LiNO3', 'NaNO3', 'KNO3', 'AgNO3'}, 'Nitrates (NO_3^-)';
+    {'LiNO3', 'NaNO3', 'KNO3', 'NH4NO3', 'AgNO3'}, 'Nitrates (NO_3^-)';
     {'MgCl2', 'CaCl2', 'SrCl2', 'BaCl2', 'ZnCl2'}, 'Chlorides 2:1 (Cl^-)';
     {'CaBr2', 'SrBr2', 'BaBr2', 'ZnBr2'}, 'Bromides 2:1 (Br^-)';
 };
@@ -439,14 +581,14 @@ for series_idx = 1:size(halide_series, 1)
     series_salts = halide_series{series_idx, 1};
     series_name = halide_series{series_idx, 2};
     
-    colors = lines(length(series_salts));
+    colors = get_distinguishable_colors(length(series_salts));
     
     for s = 1:length(series_salts)
         salt_name = series_salts{s};
         
         % Find in salt_analysis
         idx = find(strcmp({salt_analysis.name}, salt_name));
-        if ~isempty(idx)
+        if ~isempty(idx) && ~isempty(salt_analysis(idx).molality) && ~isempty(salt_analysis(idx).gamma)
             if ~isnan(salt_analysis(idx).cat_radius)
                 plot(salt_analysis(idx).molality, salt_analysis(idx).gamma, 'o-', ...
                      'LineWidth', 2, 'MarkerSize', 4, 'Color', colors(s, :), ...
@@ -480,28 +622,34 @@ cation_series = {
     {'LiCl', 'LiBr', 'LiI', 'LiNO3', 'LiOH', 'LiClO4'}, 'Lithium Salts (Li^+)';
     {'NaCl', 'NaBr', 'NaI', 'NaNO3', 'NaOH', 'NaClO4'}, 'Sodium Salts (Na^+)';
     {'KCl', 'KBr', 'KI', 'KNO3', 'KClO3'}, 'Potassium Salts (K^+)';
+    {'NH4Cl', 'NH4NO3', '(NH4)2SO4'}, 'Ammonium Salts (NH_4^+)';
     {'CaCl2', 'CaBr2', 'CaI2', 'Ca(NO3)2'}, 'Calcium Salts (Ca^{2+})';
     {'MgCl2', 'Mg(NO3)2', 'MgSO4'}, 'Magnesium Salts (Mg^{2+})';
     {'ZnCl2', 'ZnBr2', 'ZnI2', 'ZnSO4'}, 'Zinc Salts (Zn^{2+})';
 };
 
-figure('Position', [100, 100, 1600, 900]);
+% Calculate grid dimensions for cation series (7 series)
+n_series = size(cation_series, 1);
+n_cols_b = 3;
+n_rows_b = ceil(n_series / n_cols_b);
 
-for series_idx = 1:size(cation_series, 1)
-    subplot(2, 3, series_idx);
+figure('Position', [100, 100, 1600, n_rows_b * 300]);
+
+for series_idx = 1:n_series
+    subplot(n_rows_b, n_cols_b, series_idx);
     hold on; grid on; box on;
     
     series_salts = cation_series{series_idx, 1};
     series_name = cation_series{series_idx, 2};
     
-    colors = lines(length(series_salts));
+    colors = get_distinguishable_colors(length(series_salts));
     
     for s = 1:length(series_salts)
         salt_name = series_salts{s};
         
         % Find in salt_analysis
         idx = find(strcmp({salt_analysis.name}, salt_name));
-        if ~isempty(idx)
+        if ~isempty(idx) && ~isempty(salt_analysis(idx).molality) && ~isempty(salt_analysis(idx).gamma)
             if ~isnan(salt_analysis(idx).an_radius)
                 plot(salt_analysis(idx).molality, salt_analysis(idx).gamma, 'o-', ...
                      'LineWidth', 2, 'MarkerSize', 4, 'Color', colors(s, :), ...
@@ -560,7 +708,7 @@ end
 
 % Color by anion type
 unique_anions = unique(anion_types);
-anion_colors = lines(length(unique_anions));
+anion_colors = get_distinguishable_colors(length(unique_anions));
 
 for a = 1:length(unique_anions)
     anion_mask = strcmp(anion_types, unique_anions{a});
@@ -601,7 +749,7 @@ end
 
 % Color by cation type
 unique_cations = unique(cation_types);
-cation_colors = lines(length(unique_cations));
+cation_colors = get_distinguishable_colors(length(unique_cations));
 
 for c = 1:length(unique_cations)
     cation_mask = strcmp(cation_types, unique_cations{c});
@@ -687,7 +835,7 @@ mean_gamma_vals = [H_salts.mean_gamma];
 % Color by category
 cats = {H_salts.category};
 unique_cats = unique(cats);
-colors = lines(length(unique_cats));
+colors = get_distinguishable_colors(length(unique_cats));
 
 for c = 1:length(unique_cats)
     cat_mask = strcmp(cats, unique_cats{c});
@@ -763,7 +911,7 @@ hold on; grid on; box on;
 IS_factors = unique([salt_analysis.ionic_strength_factor]);
 IS_factors = IS_factors(~isnan(IS_factors));
 
-colors = lines(length(IS_factors));
+colors = get_distinguishable_colors(length(IS_factors));
 
 for is_idx = 1:length(IS_factors)
     is_val = IS_factors(is_idx);
@@ -829,7 +977,7 @@ hold on; grid on; box on;
 
 % Select a few 1:1 salts for Debye-Hückel comparison
 dh_salts = {'NaCl', 'KCl', 'LiCl'};
-colors_dh = lines(length(dh_salts));
+colors_dh = get_distinguishable_colors(length(dh_salts));
 
 for s = 1:length(dh_salts)
     idx = find(strcmp({salt_analysis.name}, dh_salts{s}));
@@ -840,10 +988,12 @@ for s = 1:length(dh_salts)
         % This is a simplified version; gamma_w decreases with increasing I
         A_DH = 0.509; % Debye-Hückel constant at 25°C (kg^0.5/mol^0.5)
         
-        % Plot experimental
-        plot(I, salt_analysis(idx).gamma, 'o-', ...
-             'Color', colors_dh(s, :), 'LineWidth', 2, 'MarkerSize', 4, ...
-             'DisplayName', [strrep(dh_salts{s}, '_', '\_') ' (exp)']);
+        % Plot experimental - only if we have valid data
+        if ~isempty(I) && ~isempty(salt_analysis(idx).gamma)
+            plot(I, salt_analysis(idx).gamma, 'o-', ...
+                 'Color', colors_dh(s, :), 'LineWidth', 2, 'MarkerSize', 4, ...
+                 'DisplayName', [strrep(dh_salts{s}, '_', '\_') ' (exp)']);
+        end
     end
 end
 
@@ -892,7 +1042,7 @@ hold on; grid on; box on;
 
 cats_all = {salt_analysis.category};
 unique_cats_all = unique(cats_all);
-colors_mw = lines(length(unique_cats_all));
+colors_mw = get_distinguishable_colors(length(unique_cats_all));
 
 for c = 1:length(unique_cats_all)
     cat_mask = strcmp(cats_all, unique_cats_all{c});
@@ -980,7 +1130,7 @@ salt_labels_ion = {};
 colors_by_type = [];
 
 electrolyte_classes = unique({ion_salts.electrolyte_class});
-class_colors = lines(length(electrolyte_classes));
+class_colors = get_distinguishable_colors(length(electrolyte_classes));
 
 for i = 1:length(ion_salts)
     % Find data near target molality
@@ -1108,8 +1258,11 @@ for c = 1:length(electrolyte_classes)
     class_salts = ion_salts(class_mask);
     
     for s = 1:length(class_salts)
-        plot(class_salts(s).molality, class_salts(s).gamma, '-', ...
-             'Color', [class_colors(c, :), 0.6], 'LineWidth', 1.5);
+        % Only plot if we have valid data
+        if ~isempty(class_salts(s).molality) && ~isempty(class_salts(s).gamma)
+            plot(class_salts(s).molality, class_salts(s).gamma, '-', ...
+                 'Color', [class_colors(c, :), 0.6], 'LineWidth', 1.5);
+        end
     end
     
     % Add dummy for legend
@@ -1211,8 +1364,11 @@ for c = 1:length(electrolyte_classes)
     
     % Plot all salts in this class
     for s = 1:length(class_salts)
-        plot(class_salts(s).RH, class_salts(s).gamma, '-', ...
-             'Color', [class_colors(c, :), 0.5], 'LineWidth', 1.5);
+        % Only plot if we have valid data
+        if ~isempty(class_salts(s).RH) && ~isempty(class_salts(s).gamma)
+            plot(class_salts(s).RH, class_salts(s).gamma, '-', ...
+                 'Color', [class_colors(c, :), 0.5], 'LineWidth', 1.5);
+        end
     end
     
     % Add thick dummy line for legend
@@ -1398,6 +1554,388 @@ sgtitle('Multi-dimensional Feature Analysis', 'FontSize', 14, 'FontWeight', 'bol
 saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_multidimensional.png'));
 savefig(fullfile(filepath, '..', 'figures', 'exploration_multidimensional.fig'));
 
+%% ANALYSIS 10: Correlation Matrix
+write_output('=== Analysis 10: Correlation Matrix ===\n');
+
+% Select target RH for activity coefficient comparison
+target_RH = 0.75;
+RH_tolerance = 0.05;
+
+% Initialize arrays for correlation analysis
+correlation_data = [];
+correlation_labels = {};
+salt_names_corr = {};
+
+% Features to include:
+% 1. Cation radius
+% 2. Anion radius
+% 3. Mean ionic radius (cat + an)/2
+% 4. Cation charge
+% 5. Anion charge
+% 6. Cation charge density
+% 7. Anion charge density
+% 8. Mean charge density
+% 9. Enthalpy of solution
+% 10. Molecular weight
+% 11. Ionic strength factor
+% 12. Total number of ions
+% 13. Activity coefficient at target RH
+
+feature_names = {
+    'Cation Radius (pm)', ...
+    'Anion Radius (pm)', ...
+    'Mean Radius (pm)', ...
+    'Cation Charge', ...
+    'Anion Charge', ...
+    'Cation Charge Density (e/pm^3)', ...
+    'Anion Charge Density (e/pm^3)', ...
+    'Mean Charge Density (e/pm^3)', ...
+    'ΔH_{soln} (kJ/mol)', ...
+    'Molecular Weight (g/mol)', ...
+    'Ionic Strength Factor', ...
+    'Total Ion Number', ...
+    'γ_w at RH≈0.75'
+};
+
+write_output('Extracting features for correlation analysis...\n');
+write_output('Target RH: %.2f ± %.2f\n', target_RH, RH_tolerance);
+
+% Extract features for each salt
+for i = 1:length(salt_analysis)
+    % Only include salts with sufficient data
+    if ~strcmp(salt_analysis(i).category, 'unknown') && ...
+       ~isnan(salt_analysis(i).cat_radius) && ...
+       ~isnan(salt_analysis(i).an_radius) && ...
+       ~isnan(salt_analysis(i).delta_H_soln) && ...
+       ~isnan(salt_analysis(i).ionic_strength_factor) && ...
+       ~isempty(salt_analysis(i).RH)
+        
+        % Find gamma at target RH
+        RH_mask = abs(salt_analysis(i).RH - target_RH) < RH_tolerance;
+        
+        if sum(RH_mask) > 0
+            gamma_at_target_RH = mean(salt_analysis(i).gamma(RH_mask));
+            
+            % Calculate mean radius
+            mean_radius = (salt_analysis(i).cat_radius + salt_analysis(i).an_radius) / 2;
+            
+            % Build feature vector
+            feature_vec = [
+                salt_analysis(i).cat_radius;           % 1
+                salt_analysis(i).an_radius;            % 2
+                mean_radius;                            % 3
+                salt_analysis(i).cat_charge;           % 4
+                salt_analysis(i).an_charge;            % 5
+                salt_analysis(i).cat_charge_density;   % 6
+                salt_analysis(i).an_charge_density;    % 7
+                salt_analysis(i).mean_charge_density;  % 8
+                salt_analysis(i).delta_H_soln;         % 9
+                salt_analysis(i).MW;                    % 10
+                salt_analysis(i).ionic_strength_factor; % 11
+                salt_analysis(i).total_ions;           % 12
+                gamma_at_target_RH                      % 13
+            ];
+            
+            % Check for any NaN values
+            if ~any(isnan(feature_vec))
+                correlation_data = [correlation_data; feature_vec'];
+                salt_names_corr{end+1} = salt_analysis(i).name;
+            end
+        end
+    end
+end
+
+write_output('Successfully extracted features for %d salts\n\n', length(salt_names_corr));
+
+% Calculate correlation matrix
+if ~isempty(correlation_data)
+    corr_matrix = corrcoef(correlation_data);
+    
+    % Print correlation matrix to output file
+    write_output('CORRELATION MATRIX:\n');
+    write_output('(Pearson correlation coefficients)\n\n');
+    
+    % Print header
+    write_output('%-35s', 'Feature');
+    for j = 1:length(feature_names)
+        write_output(' %6d', j);
+    end
+    write_output('\n');
+    write_output('%s\n', repmat('-', 1, 35 + 7*length(feature_names)));
+    
+    % Print rows
+    for i = 1:length(feature_names)
+        write_output('%-2d. %-30s', i, feature_names{i});
+        for j = 1:length(feature_names)
+            write_output(' %6.3f', corr_matrix(i, j));
+        end
+        write_output('\n');
+    end
+    write_output('\n');
+    
+    % Find and report strongest correlations (excluding diagonal)
+    write_output('STRONGEST CORRELATIONS (|r| > 0.7):\n');
+    write_output('%-35s %-35s %10s\n', 'Feature 1', 'Feature 2', 'r');
+    write_output('%s\n', repmat('-', 1, 82));
+    
+    strong_corr_count = 0;
+    for i = 1:length(feature_names)
+        for j = i+1:length(feature_names)
+            if abs(corr_matrix(i, j)) > 0.7
+                write_output('%-35s %-35s %10.4f\n', ...
+                    feature_names{i}, feature_names{j}, corr_matrix(i, j));
+                strong_corr_count = strong_corr_count + 1;
+            end
+        end
+    end
+    
+    if strong_corr_count == 0
+        write_output('No correlations with |r| > 0.7 found\n');
+    end
+    write_output('\n');
+    
+    % Find correlations with activity coefficient
+    write_output('CORRELATIONS WITH ACTIVITY COEFFICIENT (γ_w at RH≈%.2f):\n', target_RH);
+    write_output('%-40s %10s\n', 'Feature', 'r');
+    write_output('%s\n', repmat('-', 1, 52));
+    
+    gamma_idx = length(feature_names); % Last feature is gamma
+    [~, sort_idx] = sort(abs(corr_matrix(gamma_idx, 1:end-1)), 'descend');
+    
+    for i = 1:length(sort_idx)
+        idx = sort_idx(i);
+        write_output('%-40s %10.4f\n', feature_names{idx}, corr_matrix(gamma_idx, idx));
+    end
+    write_output('\n');
+    
+    % Create correlation heatmap
+    figure('Position', [100, 100, 1400, 1200]);
+    
+    % Main correlation heatmap
+    subplot(2, 2, [1, 2]);
+    imagesc(corr_matrix);
+    colormap(jet);
+    caxis([-1, 1]);
+    cb = colorbar;
+    ylabel(cb, 'Correlation Coefficient (r)', 'FontWeight', 'bold', 'FontSize', 11);
+    
+    % Add text annotations
+    for i = 1:size(corr_matrix, 1)
+        for j = 1:size(corr_matrix, 2)
+            % Color text based on background
+            if abs(corr_matrix(i, j)) > 0.6
+                text_color = 'w';
+            else
+                text_color = 'k';
+            end
+            
+            text(j, i, sprintf('%.2f', corr_matrix(i, j)), ...
+                 'HorizontalAlignment', 'center', ...
+                 'VerticalAlignment', 'middle', ...
+                 'FontSize', 8, ...
+                 'FontWeight', 'bold', ...
+                 'Color', text_color);
+        end
+    end
+    
+    % Set axis labels
+    xticks(1:length(feature_names));
+    yticks(1:length(feature_names));
+    xticklabels(feature_names);
+    yticklabels(feature_names);
+    xtickangle(45);
+    
+    title('Correlation Matrix: Salt Properties and Activity Coefficients', ...
+          'FontWeight', 'bold', 'FontSize', 14);
+    axis equal tight;
+    set(gca, 'FontSize', 9);
+    
+    % Subplot: Bar chart of correlations with gamma
+    subplot(2, 2, 3);
+    hold on; grid on; box on;
+    
+    gamma_corr = corr_matrix(gamma_idx, 1:end-1);
+    [sorted_corr, sort_idx] = sort(gamma_corr);
+    sorted_names = feature_names(sort_idx);
+    
+    colors_bar = zeros(length(sorted_corr), 3);
+    for i = 1:length(sorted_corr)
+        if sorted_corr(i) > 0
+            colors_bar(i, :) = [0.2, 0.6, 0.2]; % Green for positive
+        else
+            colors_bar(i, :) = [0.8, 0.2, 0.2]; % Red for negative
+        end
+    end
+    
+    for i = 1:length(sorted_corr)
+        barh(i, sorted_corr(i), 'FaceColor', colors_bar(i, :), 'EdgeColor', 'k', 'LineWidth', 1.5);
+    end
+    
+    yticks(1:length(sorted_names));
+    yticklabels(sorted_names);
+    xlabel('Correlation with γ_w', 'FontWeight', 'bold', 'FontSize', 12);
+    title(sprintf('Correlations with γ_w (RH≈%.2f)', target_RH), ...
+          'FontWeight', 'bold', 'FontSize', 12);
+    xlim([-1, 1]);
+    plot([0, 0], ylim, 'k--', 'LineWidth', 2);
+    set(gca, 'FontSize', 9);
+    
+    % Subplot: Scatter plot of top correlation with gamma
+    subplot(2, 2, 4);
+    hold on; grid on; box on;
+    
+    [max_corr, max_idx] = max(abs(gamma_corr));
+    
+    % Get electrolyte class for coloring
+    electrolyte_colors_corr = [];
+    electrolyte_class_corr = {};
+    unique_classes_corr = {};
+    
+    for i = 1:length(salt_names_corr)
+        idx = find(strcmp({salt_analysis.name}, salt_names_corr{i}));
+        if ~isempty(idx) && isfield(salt_analysis(idx), 'electrolyte_class')
+            electrolyte_class_corr{i} = salt_analysis(idx).electrolyte_class;
+            
+            if ~any(strcmp(unique_classes_corr, electrolyte_class_corr{i}))
+                unique_classes_corr{end+1} = electrolyte_class_corr{i};
+            end
+        else
+            electrolyte_class_corr{i} = 'unknown';
+        end
+    end
+    
+    class_colors_scatter = get_distinguishable_colors(length(unique_classes_corr));
+    
+    % Plot each electrolyte class
+    for c = 1:length(unique_classes_corr)
+        class_mask = strcmp(electrolyte_class_corr, unique_classes_corr{c});
+        
+        scatter(correlation_data(class_mask, max_idx), ...
+                correlation_data(class_mask, gamma_idx), ...
+                120, class_colors_scatter(c, :), 'filled', ...
+                'MarkerEdgeColor', 'k', 'LineWidth', 1.5, ...
+                'DisplayName', unique_classes_corr{c});
+    end
+    
+    % Add regression line
+    p = polyfit(correlation_data(:, max_idx), correlation_data(:, gamma_idx), 1);
+    x_fit = linspace(min(correlation_data(:, max_idx)), max(correlation_data(:, max_idx)), 100);
+    y_fit = polyval(p, x_fit);
+    plot(x_fit, y_fit, 'k--', 'LineWidth', 2.5, 'DisplayName', ...
+         sprintf('Linear fit (r=%.3f)', gamma_corr(max_idx)));
+    
+    xlabel(feature_names{max_idx}, 'FontWeight', 'bold', 'FontSize', 12);
+    ylabel('γ_w', 'FontWeight', 'bold', 'FontSize', 12);
+    title(sprintf('Strongest Predictor of γ_w (|r|=%.3f)', max_corr), ...
+          'FontWeight', 'bold', 'FontSize', 12);
+    legend('Location', 'best', 'FontSize', 9);
+    set(gca, 'FontSize', 10);
+    
+    sgtitle('Correlation Analysis of Salt Properties', ...
+            'FontSize', 16, 'FontWeight', 'bold');
+    
+    saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_correlation_matrix.png'));
+    savefig(fullfile(filepath, '..', 'figures', 'exploration_correlation_matrix.fig'));
+    
+    % Additional figure: Correlation matrix for different RH values
+    figure('Position', [100, 100, 1600, 1000]);
+    
+    RH_targets = [0.5, 0.6, 0.7, 0.8, 0.9];
+    RH_tol = 0.05;
+    
+    for rh_idx = 1:length(RH_targets)
+        target_rh_val = RH_targets(rh_idx);
+        
+        % Extract data for this RH
+        corr_data_rh = [];
+        for i = 1:length(salt_analysis)
+            if ~strcmp(salt_analysis(i).category, 'unknown') && ...
+               ~isnan(salt_analysis(i).cat_radius) && ...
+               ~isnan(salt_analysis(i).an_radius) && ...
+               ~isnan(salt_analysis(i).delta_H_soln) && ...
+               ~isnan(salt_analysis(i).ionic_strength_factor) && ...
+               ~isempty(salt_analysis(i).RH)
+                
+                RH_mask = abs(salt_analysis(i).RH - target_rh_val) < RH_tol;
+                
+                if sum(RH_mask) > 0
+                    gamma_rh = mean(salt_analysis(i).gamma(RH_mask));
+                    mean_radius = (salt_analysis(i).cat_radius + salt_analysis(i).an_radius) / 2;
+                    
+                    feature_vec = [
+                        salt_analysis(i).cat_radius;
+                        salt_analysis(i).an_radius;
+                        mean_radius;
+                        salt_analysis(i).cat_charge;
+                        salt_analysis(i).an_charge;
+                        salt_analysis(i).cat_charge_density;
+                        salt_analysis(i).an_charge_density;
+                        salt_analysis(i).mean_charge_density;
+                        salt_analysis(i).delta_H_soln;
+                        salt_analysis(i).MW;
+                        salt_analysis(i).ionic_strength_factor;
+                        salt_analysis(i).total_ions;
+                        gamma_rh
+                    ];
+                    
+                    if ~any(isnan(feature_vec))
+                        corr_data_rh = [corr_data_rh; feature_vec'];
+                    end
+                end
+            end
+        end
+        
+        if size(corr_data_rh, 1) >= 3  % Need at least 3 samples
+            subplot(2, 3, rh_idx);
+            
+            corr_mat_rh = corrcoef(corr_data_rh);
+            gamma_corr_rh = corr_mat_rh(end, 1:end-1);
+            
+            [sorted_corr_rh, sort_idx_rh] = sort(gamma_corr_rh);
+            sorted_names_rh = feature_names(sort_idx_rh);
+            
+            colors_bar_rh = zeros(length(sorted_corr_rh), 3);
+            for i = 1:length(sorted_corr_rh)
+                if sorted_corr_rh(i) > 0
+                    colors_bar_rh(i, :) = [0.2, 0.6, 0.2];
+                else
+                    colors_bar_rh(i, :) = [0.8, 0.2, 0.2];
+                end
+            end
+            
+            hold on; grid on; box on;
+            for i = 1:length(sorted_corr_rh)
+                barh(i, sorted_corr_rh(i), 'FaceColor', colors_bar_rh(i, :), ...
+                     'EdgeColor', 'k', 'LineWidth', 1);
+            end
+            
+            yticks(1:length(sorted_names_rh));
+            yticklabels(sorted_names_rh);
+            xlabel('Correlation', 'FontWeight', 'bold');
+            title(sprintf('RH ≈ %.2f (n=%d)', target_rh_val, size(corr_data_rh, 1)), ...
+                  'FontWeight', 'bold');
+            xlim([-1, 1]);
+            plot([0, 0], ylim, 'k--', 'LineWidth', 1.5);
+            set(gca, 'FontSize', 8);
+        else
+            subplot(2, 3, rh_idx);
+            text(0.5, 0.5, sprintf('Insufficient data\nfor RH ≈ %.2f', target_rh_val), ...
+                 'HorizontalAlignment', 'center', 'FontSize', 12);
+            axis off;
+        end
+    end
+    
+    sgtitle('Feature Correlations with γ_w at Different RH Values', ...
+            'FontSize', 16, 'FontWeight', 'bold');
+    
+    saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_correlation_vs_RH.png'));
+    savefig(fullfile(filepath, '..', 'figures', 'exploration_correlation_vs_RH.fig'));
+    
+    write_output('Correlation analysis complete. Generated 2 figures.\n\n');
+else
+    write_output('WARNING: Insufficient data for correlation analysis.\n\n');
+end
+
 %% Generate Summary Statistics Report
 write_output('\n=== GENERATING SUMMARY STATISTICS ===\n\n');
 
@@ -1473,11 +2011,32 @@ write_output('Saved: systematic_exploration_workspace.mat\n');
 write_output('\n========================================\n');
 write_output('EXPLORATION COMPLETE!\n');
 write_output('========================================\n');
-write_output('Generated %d figures\n', 12);
+write_output('Generated %d figures\n', 14);
 write_output('All figures saved to ../figures/\n');
 write_output('Analysis data saved to exploration/\n');
 write_output('Text output saved to: systematic_exploration_results.txt\n\n');
 
 % Close output file
-fclose(fid_out);
-fprintf('Analysis results saved to: %s\n', output_filename);
+if fid_out ~= 1
+    fclose(fid_out);
+    fprintf('Analysis results saved to: %s\n', output_filename);
+else
+    fprintf('Analysis completed (output file could not be created).\n');
+end
+
+%% Helper function for distinguishable colors (defined at end)
+function colors = get_colors_func(n, base_colors)
+    if n <= size(base_colors, 1)
+        colors = base_colors(1:n, :);
+    else
+        % Use base colors and interpolate additional ones
+        colors = base_colors;
+        % Add interpolated colors for larger sets
+        for i = size(base_colors, 1)+1:n
+            idx = mod(i-1, size(base_colors, 1)) + 1;
+            next_idx = mod(i, size(base_colors, 1)) + 1;
+            t = 0.5;  % Midpoint interpolation
+            colors(i, :) = colors(idx, :) * (1-t) + colors(next_idx, :) * t;
+        end
+    end
+end

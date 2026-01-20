@@ -8,8 +8,8 @@ clc
 
 % Add calculate_mf and util folders to path
 [filepath,~,~] = fileparts(mfilename('fullpath'));
-addpath(fullfile(filepath, 'calculate_mf'));
-addpath(fullfile(filepath, 'util'));
+addpath(fullfile(filepath, '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', 'util'));
 
 T = 25; % Temperature in Celsius
 MWw = 18.015; % Molecular weight of water (g/mol)
@@ -64,6 +64,7 @@ salt_data = {
     {'ZnSO4', 161.44, 0.9130, 0.9962, 'calculate_mf_ZnSO4_', 0};
     
     % Nitrates (additional)
+    {'NH4NO3', 80.043, 0.118, 0.732, 'calculate_mf_NH4NO3', 0};
     {'BaNO3', 261.34, 0.9859, 0.9958, 'calculate_mf_BaNO3', 0};
     {'CaNO3', 164.09, 0.6464, 0.9955, 'calculate_mf_CaNO3', 0};
     
@@ -82,7 +83,7 @@ salt_data = {
 
 % Process each salt
 num_points = 100;
-data_output_dir = fullfile(filepath, 'data');
+data_output_dir = filepath; % Script is already in data/ folder
 
 % Create output directory if it doesn't exist
 if ~exist(data_output_dir, 'dir')
@@ -182,25 +183,6 @@ for s = 1:length(salt_data)
         % Calculate Activity Coefficient (gamma_w = a_w / x_w)
         gamma_w = RH_vec ./ x_water;
         
-        % Save individual CSV file for this salt
-        individual_filename = fullfile(data_output_dir, sprintf('water_activity_%s.csv', salt_name));
-        
-        % Create data matrix
-        data_matrix = [repmat(T, num_points, 1), ...
-                      repmat(MW, num_points, 1), ...
-                      RH_vec', ...
-                      mf_salt', ...
-                      mf_water', ...
-                      x_water', ...
-                      molality', ...
-                      gamma_w'];
-        
-        % Write to individual CSV file with header
-        fid = fopen(individual_filename, 'w');
-        fprintf(fid, 'Temperature_C,MW_Salt_g_per_mol,RH_Water_Activity,Mass_Fraction_Salt,Mass_Fraction_Water,Mole_Fraction_Water,Molality_mol_per_kg,Activity_Coefficient_Water\n');
-        fclose(fid);
-        dlmwrite(individual_filename, data_matrix, '-append', 'delimiter', ',', 'precision', '%.10f');
-        
         % Add to combined data array
         for i = 1:num_points
             all_data_combined{row_idx, 1} = salt_name;
@@ -242,7 +224,7 @@ end
 fclose(fid);
 
 fprintf('\n=== Summary ===\n');
-fprintf('Individual salt files: %d\n', s);
+fprintf('Salts processed: %d\n', s);
 fprintf('Combined file: water_activity_all_salts_combined.csv\n');
 fprintf('Total data points: %d\n', row_idx - 2);
-fprintf('\nAll files saved in: %s\n', data_output_dir);
+fprintf('\nFile saved in: %s\n', data_output_dir);

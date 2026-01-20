@@ -24,6 +24,7 @@ salt_data = {
     {'AgNO3', 169.87, 0.865, 0.99, 'calculate_mf_AgNO3_', 0};
     {'KI', 165.998, 0.975, 0.995, 'calculate_mf_KI_', 0};
     {'LiNO3', 68.95, 0.736, 0.99, 'calculate_mf_LiNO3', 0};
+    {'NH4NO3', 80.043, 0.118, 0.732, 'calculate_mf_NH4NO3', 0};
     {'KNO3', 101.10, 0.932, 0.995, 'calculate_mf_KNO3', 0};
     {'NaClO4', 122.44, 0.778, 0.99, 'calculate_mf_NaClO4', 0};
     {'KClO3', 122.55, 0.981, 0.995, 'calculate_mf_KClO3', 0};

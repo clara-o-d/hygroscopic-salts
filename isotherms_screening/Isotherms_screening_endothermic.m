@@ -91,6 +91,16 @@ for i = 1:length(RH_LiNO3)
 end
 U_LiNO3_molmol = U_LiNO3_gg * (2 * MWw / MW_LiNO3)^-1;
 
+%% NH4NO3
+MW_NH4NO3 = 80.043;
+% Fit valid from 0.118 to 0.732
+RH_NH4NO3 = linspace(0.118, 0.732, 100);
+
+for i = 1:length(RH_NH4NO3)
+   U_NH4NO3_gg(i) = 1/calculate_mf_NH4NO3(RH_NH4NO3(i)) - 1;
+end
+U_NH4NO3_molmol = U_NH4NO3_gg * (2 * MWw / MW_NH4NO3)^-1;
+
 %% KNO3
 MW_KNO3 = 101.10;
 % Fit valid > 0.9315 - RESTRICTED TO FIT RANGE
@@ -195,6 +205,7 @@ plot(RH_NaNO3, U_NaNO3_gg, 'LineWidth', 2, 'DisplayName', 'NaNO_3')
 plot(RH_AgNO3, U_AgNO3_gg, 'LineWidth', 2, 'DisplayName', 'AgNO_3')
 plot(RH_KI,    U_KI_gg,    'LineWidth', 2, 'DisplayName', 'KI')
 plot(RH_LiNO3, U_LiNO3_gg, 'LineWidth', 2, 'DisplayName', 'LiNO_3')
+plot(RH_NH4NO3, U_NH4NO3_gg, 'LineWidth', 2, 'DisplayName', 'NH_4NO_3')
 plot(RH_KNO3,  U_KNO3_gg,  'LineWidth', 2, 'DisplayName', 'KNO_3')
 plot(RH_NaClO4, U_NaClO4_gg, 'LineWidth', 2, 'DisplayName', 'NaClO_4')
 plot(RH_KClO3, U_KClO3_gg, 'LineWidth', 2, 'DisplayName', 'KClO_3')
@@ -227,6 +238,7 @@ plot(RH_NaNO3*100, U_NaNO3_molmol, 'LineWidth', 2, 'DisplayName', 'NaNO_3')
 plot(RH_AgNO3*100, U_AgNO3_molmol, 'LineWidth', 2, 'DisplayName', 'AgNO_3')
 plot(RH_KI*100,    U_KI_molmol,    'LineWidth', 2, 'DisplayName', 'KI')
 plot(RH_LiNO3*100, U_LiNO3_molmol, 'LineWidth', 2, 'DisplayName', 'LiNO_3')
+plot(RH_NH4NO3*100, U_NH4NO3_molmol, 'LineWidth', 2, 'DisplayName', 'NH_4NO_3')
 plot(RH_KNO3*100,  U_KNO3_molmol,  'LineWidth', 2, 'DisplayName', 'KNO_3')
 plot(RH_NaClO4*100, U_NaClO4_molmol, 'LineWidth', 2, 'DisplayName', 'NaClO_4')
 plot(RH_KClO3*100, U_KClO3_molmol, 'LineWidth', 2, 'DisplayName', 'KClO_3')
