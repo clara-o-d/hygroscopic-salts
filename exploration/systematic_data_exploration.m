@@ -96,78 +96,79 @@ ionic_radii.ClO3 = 195; % ClO3- (effective)
 ionic_radii.ClO4 = 240; % ClO4- (effective)
 
 % Salt properties: [cation, cation_charge, cation_stoich, anion, anion_charge, 
-%                   anion_stoich, enthalpy_solution_kJ_mol, category]
-% Enthalpy of solution: positive = endothermic, negative = exothermic
+%                   anion_stoich, enthalpy_solution_kJ_mol, category, 
+%                   cation_type, anion_type]
+% Types: 'k'=kosmotrope, 'c'=chaotrope, 'u'=unknown
 salt_props = containers.Map();
 
 % Alkali metal chlorides
-salt_props('LiCl') = {'Li', 1, 1, 'Cl', 1, 1, -37.0, 'exothermic_halide'};
-salt_props('NaCl') = {'Na', 1, 1, 'Cl', 1, 1, -3.9, 'exothermic_halide'};
-salt_props('KCl') = {'K', 1, 1, 'Cl', 1, 1, 17.2, 'endothermic_halide'};
-salt_props('RbCl') = {'Rb', 1, 1, 'Cl', 1, 1, 17.3, 'endothermic_halide'};
-salt_props('CsCl') = {'Cs', 1, 1, 'Cl', 1, 1, 17.8, 'endothermic_halide'};
-salt_props('NH4Cl') = {'NH4', 1, 1, 'Cl', 1, 1, 14.8, 'endothermic_halide'};
+salt_props('LiCl') = {'Li', 1, 1, 'Cl', 1, 1, -37.0, 'exothermic_halide', 'k', 'c'};
+salt_props('NaCl') = {'Na', 1, 1, 'Cl', 1, 1, -3.9, 'exothermic_halide', 'c', 'c'};
+salt_props('KCl') = {'K', 1, 1, 'Cl', 1, 1, 17.2, 'endothermic_halide', 'c', 'c'};
+salt_props('RbCl') = {'Rb', 1, 1, 'Cl', 1, 1, 17.3, 'endothermic_halide', 'c', 'c'};
+salt_props('CsCl') = {'Cs', 1, 1, 'Cl', 1, 1, 17.8, 'endothermic_halide', 'c', 'c'};
+salt_props('NH4Cl') = {'NH4', 1, 1, 'Cl', 1, 1, 14.8, 'endothermic_halide', 'c', 'c'};
 
 % Alkali metal bromides
-salt_props('LiBr') = {'Li', 1, 1, 'Br', 1, 1, -48.8, 'exothermic_halide'};
-salt_props('NaBr') = {'Na', 1, 1, 'Br', 1, 1, -0.6, 'endothermic_halide'};
-salt_props('KBr') = {'K', 1, 1, 'Br', 1, 1, 19.9, 'endothermic_halide'};
-salt_props('CsBr') = {'Cs', 1, 1, 'Br', 1, 1, 25.0, 'endothermic_halide'};
+salt_props('LiBr') = {'Li', 1, 1, 'Br', 1, 1, -48.8, 'exothermic_halide', 'k', 'c'};
+salt_props('NaBr') = {'Na', 1, 1, 'Br', 1, 1, -0.6, 'endothermic_halide', 'c', 'c'};
+salt_props('KBr') = {'K', 1, 1, 'Br', 1, 1, 19.9, 'endothermic_halide', 'c', 'c'};
+salt_props('CsBr') = {'Cs', 1, 1, 'Br', 1, 1, 25.0, 'endothermic_halide', 'c', 'c'};
 
 % Alkali metal iodides
-salt_props('LiI') = {'Li', 1, 1, 'I', 1, 1, -63.3, 'exothermic_halide'};
-salt_props('NaI') = {'Na', 1, 1, 'I', 1, 1, -7.5, 'endothermic_halide'};
-salt_props('KI') = {'K', 1, 1, 'I', 1, 1, 20.3, 'endothermic_halide'};
-salt_props('CsI') = {'Cs', 1, 1, 'I', 1, 1, 33.3, 'endothermic_halide'};
+salt_props('LiI') = {'Li', 1, 1, 'I', 1, 1, -63.3, 'exothermic_halide', 'k', 'c'};
+salt_props('NaI') = {'Na', 1, 1, 'I', 1, 1, -7.5, 'endothermic_halide', 'c', 'c'};
+salt_props('KI') = {'K', 1, 1, 'I', 1, 1, 20.3, 'endothermic_halide', 'c', 'c'};
+salt_props('CsI') = {'Cs', 1, 1, 'I', 1, 1, 33.3, 'endothermic_halide', 'c', 'c'};
 
 % Alkaline earth halides
-salt_props('MgCl2') = {'Mg', 2, 1, 'Cl', 1, 2, -160.0, 'exothermic_halide'};
-salt_props('CaCl2') = {'Ca', 2, 1, 'Cl', 1, 2, -82.8, 'exothermic_halide'};
-salt_props('SrCl2') = {'Sr', 2, 1, 'Cl', 1, 2, -47.7, 'exothermic_halide'};
-salt_props('BaCl2') = {'Ba', 2, 1, 'Cl', 1, 2, -8.7, 'endothermic_halide'};
+salt_props('MgCl2') = {'Mg', 2, 1, 'Cl', 1, 2, -160.0, 'exothermic_halide', 'k', 'c'};
+salt_props('CaCl2') = {'Ca', 2, 1, 'Cl', 1, 2, -82.8, 'exothermic_halide', 'k', 'c'};
+salt_props('SrCl2') = {'Sr', 2, 1, 'Cl', 1, 2, -47.7, 'exothermic_halide', 'k', 'c'};
+salt_props('BaCl2') = {'Ba', 2, 1, 'Cl', 1, 2, -8.7, 'endothermic_halide', 'k', 'c'};
 
-salt_props('CaBr2') = {'Ca', 2, 1, 'Br', 1, 2, -103.1, 'exothermic_halide'};
-salt_props('SrBr2') = {'Sr', 2, 1, 'Br', 1, 2, -71.1, 'exothermic_halide'};
-salt_props('BaBr2') = {'Ba', 2, 1, 'Br', 1, 2, -27.6, 'exothermic_halide'};
+salt_props('CaBr2') = {'Ca', 2, 1, 'Br', 1, 2, -103.1, 'exothermic_halide', 'k', 'c'};
+salt_props('SrBr2') = {'Sr', 2, 1, 'Br', 1, 2, -71.1, 'exothermic_halide', 'k', 'c'};
+salt_props('BaBr2') = {'Ba', 2, 1, 'Br', 1, 2, -27.6, 'exothermic_halide', 'k', 'c'};
 
-salt_props('CaI2') = {'Ca', 2, 1, 'I', 1, 2, -110.0, 'exothermic_halide'};
-salt_props('SrI2') = {'Sr', 2, 1, 'I', 1, 2, -89.5, 'exothermic_halide'};
+salt_props('CaI2') = {'Ca', 2, 1, 'I', 1, 2, -110.0, 'exothermic_halide', 'k', 'c'};
+salt_props('SrI2') = {'Sr', 2, 1, 'I', 1, 2, -89.5, 'exothermic_halide', 'k', 'c'};
 
 % Transition metal halides
-salt_props('ZnCl2') = {'Zn', 2, 1, 'Cl', 1, 2, -65.3, 'exothermic_halide'};
-salt_props('ZnBr2') = {'Zn', 2, 1, 'Br', 1, 2, -72.4, 'exothermic_halide'};
-salt_props('ZnI2') = {'Zn', 2, 1, 'I', 1, 2, -52.3, 'exothermic_halide'};
+salt_props('ZnCl2') = {'Zn', 2, 1, 'Cl', 1, 2, -65.3, 'exothermic_halide', 'k', 'c'};
+salt_props('ZnBr2') = {'Zn', 2, 1, 'Br', 1, 2, -72.4, 'exothermic_halide', 'k', 'c'};
+salt_props('ZnI2') = {'Zn', 2, 1, 'I', 1, 2, -52.3, 'exothermic_halide', 'k', 'c'};
 
 % Nitrates
-salt_props('LiNO3') = {'Li', 1, 1, 'NO3', 1, 1, -2.5, 'endothermic_nitrate'};
-salt_props('NaNO3') = {'Na', 1, 1, 'NO3', 1, 1, 20.5, 'endothermic_nitrate'};
-salt_props('KNO3') = {'K', 1, 1, 'NO3', 1, 1, 34.9, 'endothermic_nitrate'};
-salt_props('NH4NO3') = {'NH4', 1, 1, 'NO3', 1, 1, 25.7, 'endothermic_nitrate'};
-salt_props('AgNO3') = {'Ag', 1, 1, 'NO3', 1, 1, 22.6, 'endothermic_nitrate'};
-salt_props('Ca(NO3)2') = {'Ca', 2, 1, 'NO3', 1, 2, -19.2, 'exothermic_nitrate'};
-salt_props('Mg(NO3)2') = {'Mg', 2, 1, 'NO3', 1, 2, -90.9, 'exothermic_nitrate'};
-salt_props('Ba(NO3)2') = {'Ba', 2, 1, 'NO3', 1, 2, 42.0, 'endothermic_nitrate'};
+salt_props('LiNO3') = {'Li', 1, 1, 'NO3', 1, 1, -2.5, 'endothermic_nitrate', 'k', 'c'};
+salt_props('NaNO3') = {'Na', 1, 1, 'NO3', 1, 1, 20.5, 'endothermic_nitrate', 'c', 'c'};
+salt_props('KNO3') = {'K', 1, 1, 'NO3', 1, 1, 34.9, 'endothermic_nitrate', 'c', 'c'};
+salt_props('NH4NO3') = {'NH4', 1, 1, 'NO3', 1, 1, 25.7, 'endothermic_nitrate', 'c', 'c'};
+salt_props('AgNO3') = {'Ag', 1, 1, 'NO3', 1, 1, 22.6, 'endothermic_nitrate', 'c', 'c'};
+salt_props('Ca(NO3)2') = {'Ca', 2, 1, 'NO3', 1, 2, -19.2, 'exothermic_nitrate', 'k', 'c'};
+salt_props('Mg(NO3)2') = {'Mg', 2, 1, 'NO3', 1, 2, -90.9, 'exothermic_nitrate', 'k', 'c'};
+salt_props('Ba(NO3)2') = {'Ba', 2, 1, 'NO3', 1, 2, 42.0, 'endothermic_nitrate', 'k', 'c'};
 
 % Sulfates
-salt_props('Li2SO4') = {'Li', 1, 2, 'SO4', 2, 1, -29.8, 'endothermic_sulfate'};
-salt_props('Na2SO4') = {'Na', 1, 2, 'SO4', 2, 1, -2.4, 'endothermic_sulfate'};
-salt_props('K2SO4') = {'K', 1, 2, 'SO4', 2, 1, 23.8, 'endothermic_sulfate'};
-salt_props('(NH4)2SO4') = {'NH4', 1, 2, 'SO4', 2, 1, 6.6, 'endothermic_sulfate'};
-salt_props('MgSO4') = {'Mg', 2, 1, 'SO4', 2, 1, -91.2, 'endothermic_sulfate'};
-salt_props('CuSO4') = {'Cu', 2, 1, 'SO4', 2, 1, -66.5, 'endothermic_sulfate'};
-salt_props('ZnSO4') = {'Zn', 2, 1, 'SO4', 2, 1, -78.9, 'endothermic_sulfate'};
-salt_props('MnSO4') = {'Mn', 2, 1, 'SO4', 2, 1, -54.0, 'endothermic_sulfate'};
-salt_props('NiSO4') = {'Ni', 2, 1, 'SO4', 2, 1, -73.2, 'endothermic_sulfate'};
+salt_props('Li2SO4') = {'Li', 1, 2, 'SO4', 2, 1, -29.8, 'endothermic_sulfate', 'k', 'c'};
+salt_props('Na2SO4') = {'Na', 1, 2, 'SO4', 2, 1, -2.4, 'endothermic_sulfate', 'c', 'c'};
+salt_props('K2SO4') = {'K', 1, 2, 'SO4', 2, 1, 23.8, 'endothermic_sulfate', 'c', 'c'};
+salt_props('(NH4)2SO4') = {'NH4', 1, 2, 'SO4', 2, 1, 6.6, 'endothermic_sulfate', 'c', 'c'};
+salt_props('MgSO4') = {'Mg', 2, 1, 'SO4', 2, 1, -91.2, 'endothermic_sulfate', 'k', 'c'};
+salt_props('CuSO4') = {'Cu', 2, 1, 'SO4', 2, 1, -66.5, 'endothermic_sulfate', 'u', 'c'}; % Cu+2 not on list
+salt_props('ZnSO4') = {'Zn', 2, 1, 'SO4', 2, 1, -78.9, 'endothermic_sulfate', 'k', 'c'};
+salt_props('MnSO4') = {'Mn', 2, 1, 'SO4', 2, 1, -54.0, 'endothermic_sulfate', 'k', 'c'};
+salt_props('NiSO4') = {'Ni', 2, 1, 'SO4', 2, 1, -73.2, 'endothermic_sulfate', 'k', 'c'};
 
 % Hydroxides and strong acid
-salt_props('LiOH') = {'Li', 1, 1, 'OH', 1, 1, -23.6, 'exothermic_base'};
-salt_props('NaOH') = {'Na', 1, 1, 'OH', 1, 1, -44.5, 'exothermic_base'};
-salt_props('HCl') = {'H', 1, 1, 'Cl', 1, 1, -74.8, 'exothermic_acid'};
+salt_props('LiOH') = {'Li', 1, 1, 'OH', 1, 1, -23.6, 'exothermic_base', 'k', 'k'};
+salt_props('NaOH') = {'Na', 1, 1, 'OH', 1, 1, -44.5, 'exothermic_base', 'c', 'k'};
+salt_props('HCl') = {'H', 1, 1, 'Cl', 1, 1, -74.8, 'exothermic_acid', 'k', 'c'};
 
 % Chlorates/Perchlorates
-salt_props('KClO3') = {'K', 1, 1, 'ClO3', 1, 1, 41.4, 'endothermic_oxyanion'};
-salt_props('NaClO4') = {'Na', 1, 1, 'ClO4', 1, 1, 13.9, 'endothermic_oxyanion'};
-salt_props('LiClO4') = {'Li', 1, 1, 'ClO4', 1, 1, -32.6, 'exothermic_oxyanion'};
+salt_props('KClO3') = {'K', 1, 1, 'ClO3', 1, 1, 41.4, 'endothermic_oxyanion', 'c', 'c'};
+salt_props('NaClO4') = {'Na', 1, 1, 'ClO4', 1, 1, 13.9, 'endothermic_oxyanion', 'c', 'c'};
+salt_props('LiClO4') = {'Li', 1, 1, 'ClO4', 1, 1, -32.6, 'exothermic_oxyanion', 'k', 'c'};
 
 write_output('Salt properties database built (%d salts)\n\n', salt_props.Count);
 
@@ -253,7 +254,10 @@ for i = 1:n_salts
         salt_analysis(i).an_stoich = props{6};
         salt_analysis(i).delta_H_soln = props{7};
         salt_analysis(i).category = props{8};
-        
+        salt_analysis(i).cat_type = props{9};
+        salt_analysis(i).an_type = props{10};
+        salt_analysis(i).kc_pair_type = [salt_analysis(i).cat_type '-' salt_analysis(i).an_type];
+
         % Get ionic radii
         if isfield(ionic_radii, salt_analysis(i).cation)
             salt_analysis(i).cat_radius = ionic_radii.(salt_analysis(i).cation);
@@ -312,6 +316,9 @@ for i = 1:n_salts
         salt_analysis(i).an_charge_density = NaN;
         salt_analysis(i).mean_charge_density = NaN;
         salt_analysis(i).ionic_strength_factor = NaN;
+        salt_analysis(i).cat_type = 'u';
+        salt_analysis(i).an_type = 'u';
+        salt_analysis(i).kc_pair_type = 'u-u';
     end
     
     % Get valid RH range for this salt
@@ -1554,8 +1561,64 @@ sgtitle('Multi-dimensional Feature Analysis', 'FontSize', 14, 'FontWeight', 'bol
 saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_multidimensional.png'));
 savefig(fullfile(filepath, '..', 'figures', 'exploration_multidimensional.fig'));
 
-%% ANALYSIS 10: Correlation Matrix
-write_output('=== Analysis 10: Correlation Matrix ===\n');
+
+%% ANALYSIS 10: Kosmotrope vs Chaotrope Effect at RH 75%
+write_output('=== Analysis 10: Kosmotrope vs Chaotrope Effect (RH ~ 0.75) ===\n');
+kc_groups = {};
+kc_gammas = [];
+
+figure('Position', [100, 100, 1000, 600]);
+hold on; grid on; box on;
+
+% 1. Extract Data
+for i = 1:length(salt_analysis)
+    % Check if mean_gamma exists and is valid (not NaN)
+    if ~isnan(salt_analysis(i).mean_gamma)
+        kc_groups{end+1} = salt_analysis(i).kc_pair_type;
+        kc_gammas(end+1) = salt_analysis(i).mean_gamma;
+    end
+end
+
+% 2. Manual Plotting (Jittered Scatter + Mean Bar)
+if ~isempty(kc_gammas)
+    unique_types = unique(kc_groups);
+    x_positions = 1:length(unique_types);
+    
+    % Loop through each group
+    for j = 1:length(unique_types)
+        type_mask = strcmp(kc_groups, unique_types{j});
+        vals = kc_gammas(type_mask);
+        
+        % A. Scatter points with random jitter
+        x_vals = repmat(x_positions(j), size(vals)) + (rand(size(vals))-0.5)*0.2;
+        scatter(x_vals, vals, 50, 'filled', 'MarkerEdgeColor', 'k', ...
+                'MarkerFaceColor', [0.6 0.6 0.6], 'MarkerFaceAlpha', 0.6);
+        
+        % B. Plot Mean Line (Red horizontal bar)
+        mean_val = mean(vals);
+        line([x_positions(j)-0.25, x_positions(j)+0.25], [mean_val, mean_val], ...
+             'Color', 'r', 'LineWidth', 3);
+         
+        % Add text for N count
+        text(x_positions(j), max(vals) + 0.05, sprintf('n=%d', length(vals)), ...
+             'HorizontalAlignment', 'center', 'FontSize', 8);
+    end
+    
+    % 3. Formatting
+    set(gca, 'XTick', x_positions, 'XTickLabel', unique_types);
+    ylabel('Mean \gamma_w (All valid RH data)', 'FontWeight', 'bold');
+    xlabel('Ion Pair Type (Cation-Anion)', 'FontWeight', 'bold');
+    
+    title({'Mean Activity Coefficient by Kosmotrope/Chaotrope Pair', ...
+           'k=Kosmotrope, c=Chaotrope, u=Unknown (Red Bar = Mean)'}, ...
+          'FontWeight', 'bold');
+    
+    saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_kosmotrope_chaotrope.png'));
+end
+write_output('Generated Kosmotrope/Chaotrope analysis.\n\n');
+
+%% ANALYSIS 11: Correlation Matrix
+write_output('=== Analysis 11: Correlation Matrix ===\n');
 
 % Select target RH for activity coefficient comparison
 target_RH = 0.75;
@@ -1585,6 +1648,7 @@ feature_names = {
     'Cation Radius (pm)', ...
     'Anion Radius (pm)', ...
     'Mean Radius (pm)', ...
+    'Radius Difference (pm)', ...
     'Cation Charge', ...
     'Anion Charge', ...
     'Cation Charge Density (e/pm^3)', ...
@@ -1616,24 +1680,26 @@ for i = 1:length(salt_analysis)
         if sum(RH_mask) > 0
             gamma_at_target_RH = mean(salt_analysis(i).gamma(RH_mask));
             
-            % Calculate mean radius
+            % Calculate mean radius AND radius difference
             mean_radius = (salt_analysis(i).cat_radius + salt_analysis(i).an_radius) / 2;
+            radius_diff = abs(salt_analysis(i).cat_radius - salt_analysis(i).an_radius); % <--- ADD THIS LINE
             
             % Build feature vector
             feature_vec = [
                 salt_analysis(i).cat_radius;           % 1
                 salt_analysis(i).an_radius;            % 2
-                mean_radius;                            % 3
-                salt_analysis(i).cat_charge;           % 4
-                salt_analysis(i).an_charge;            % 5
-                salt_analysis(i).cat_charge_density;   % 6
-                salt_analysis(i).an_charge_density;    % 7
-                salt_analysis(i).mean_charge_density;  % 8
-                salt_analysis(i).delta_H_soln;         % 9
-                salt_analysis(i).MW;                    % 10
-                salt_analysis(i).ionic_strength_factor; % 11
-                salt_analysis(i).total_ions;           % 12
-                gamma_at_target_RH                      % 13
+                mean_radius;                           % 3
+                radius_diff;                           % 4
+                salt_analysis(i).cat_charge;           % 5
+                salt_analysis(i).an_charge;            % 6
+                salt_analysis(i).cat_charge_density;   % 7
+                salt_analysis(i).an_charge_density;    % 8
+                salt_analysis(i).mean_charge_density;  % 9
+                salt_analysis(i).delta_H_soln;         % 10
+                salt_analysis(i).MW;                   % 11
+                salt_analysis(i).ionic_strength_factor;% 12
+                salt_analysis(i).total_ions;           % 13
+                gamma_at_target_RH                     % 14
             ];
             
             % Check for any NaN values
@@ -1861,11 +1927,13 @@ if ~isempty(correlation_data)
                 if sum(RH_mask) > 0
                     gamma_rh = mean(salt_analysis(i).gamma(RH_mask));
                     mean_radius = (salt_analysis(i).cat_radius + salt_analysis(i).an_radius) / 2;
+                    radius_diff = abs(salt_analysis(i).cat_radius - salt_analysis(i).an_radius);
                     
                     feature_vec = [
                         salt_analysis(i).cat_radius;
                         salt_analysis(i).an_radius;
                         mean_radius;
+                        radius_diff;
                         salt_analysis(i).cat_charge;
                         salt_analysis(i).an_charge;
                         salt_analysis(i).cat_charge_density;

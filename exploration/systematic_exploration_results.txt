@@ -2,7 +2,7 @@
 ========================================
 SYSTEMATIC WATER ACTIVITY DATA EXPLORATION
 ========================================
-Date: 19-Jan-2026 16:52:05
+Date: 20-Jan-2026 02:35:15
 ========================================
 
 Loading data...
@@ -96,7 +96,10 @@ NiSO4                1        1        2        0.9766       [0.940-0.995]
 ZnSO4                1        1        2        0.9666       [0.914-0.995]
 
 === Analysis 9: Multi-dimensional Summary ===
-=== Analysis 10: Correlation Matrix ===
+=== Analysis 10: Kosmotrope vs Chaotrope Effect (RH ~ 0.75) ===
+Generated Kosmotrope/Chaotrope analysis.
+
+=== Analysis 11: Correlation Matrix ===
 Extracting features for correlation analysis...
 Target RH: 0.75 ± 0.05
 Successfully extracted features for 21 salts
@@ -104,27 +107,30 @@ Successfully extracted features for 21 salts
 CORRELATION MATRIX:
 (Pearson correlation coefficients)
 
-Feature                                  1      2      3      4      5      6      7      8      9     10     11     12     13
-------------------------------------------------------------------------------------------------------------------------------
-1 . Cation Radius (pm)              1.000 -0.158  0.679 -0.217    NaN -0.762  0.114 -0.759  0.349 -0.054 -0.217 -0.217  0.353
-2 . Anion Radius (pm)              -0.158  1.000  0.618 -0.033    NaN  0.027 -0.911 -0.010  0.190  0.445 -0.033 -0.033  0.496
-3 . Mean Radius (pm)                0.679  0.618  1.000 -0.197    NaN -0.587 -0.586 -0.612  0.420  0.288 -0.197 -0.197  0.649
-4 . Cation Charge                  -0.217 -0.033 -0.197  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
-5 . Anion Charge                      NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN
-6 . Cation Charge Density (e/pm^3) -0.762  0.027 -0.587  0.617    NaN  1.000 -0.097  0.999 -0.568  0.304  0.617  0.617 -0.433
-7 . Anion Charge Density (e/pm^3)   0.114 -0.911 -0.586 -0.080    NaN -0.097  1.000 -0.056 -0.115 -0.432 -0.080 -0.080 -0.398
-8 . Mean Charge Density (e/pm^3)   -0.759 -0.010 -0.612  0.616    NaN  0.999 -0.056  1.000 -0.575  0.288  0.616  0.616 -0.450
-9 . ΔH_{soln} (kJ/mol)              0.349  0.190  0.420 -0.724    NaN -0.568 -0.115 -0.575  1.000 -0.309 -0.724 -0.724  0.202
-10. Molecular Weight (g/mol)       -0.054  0.445  0.288  0.698    NaN  0.304 -0.432  0.288 -0.309  1.000  0.698  0.698  0.420
-11. Ionic Strength Factor          -0.217 -0.033 -0.197  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
-12. Total Ion Number               -0.217 -0.033 -0.197  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
-13. γ_w at RH≈0.75                  0.353  0.496  0.649 -0.002    NaN -0.433 -0.398 -0.450  0.202  0.420 -0.002 -0.002  1.000
+Feature                                  1      2      3      4      5      6      7      8      9     10     11     12     13     14
+-------------------------------------------------------------------------------------------------------------------------------------
+1 . Cation Radius (pm)              1.000 -0.158  0.679 -0.780 -0.217    NaN -0.762  0.114 -0.759  0.349 -0.054 -0.217 -0.217  0.353
+2 . Anion Radius (pm)              -0.158  1.000  0.618  0.741 -0.033    NaN  0.027 -0.911 -0.010  0.190  0.445 -0.033 -0.033  0.496
+3 . Mean Radius (pm)                0.679  0.618  1.000 -0.070 -0.197    NaN -0.587 -0.586 -0.612  0.420  0.288 -0.197 -0.197  0.649
+4 . Radius Difference (pm)         -0.780  0.741 -0.070  1.000  0.127    NaN  0.535 -0.655  0.510 -0.117  0.319  0.127  0.127  0.075
+5 . Cation Charge                  -0.217 -0.033 -0.197  0.127  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
+6 . Anion Charge                      NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN
+7 . Cation Charge Density (e/pm^3) -0.762  0.027 -0.587  0.535  0.617    NaN  1.000 -0.097  0.999 -0.568  0.304  0.617  0.617 -0.433
+8 . Anion Charge Density (e/pm^3)   0.114 -0.911 -0.586 -0.655 -0.080    NaN -0.097  1.000 -0.056 -0.115 -0.432 -0.080 -0.080 -0.398
+9 . Mean Charge Density (e/pm^3)   -0.759 -0.010 -0.612  0.510  0.616    NaN  0.999 -0.056  1.000 -0.575  0.288  0.616  0.616 -0.450
+10. ΔH_{soln} (kJ/mol)              0.349  0.190  0.420 -0.117 -0.724    NaN -0.568 -0.115 -0.575  1.000 -0.309 -0.724 -0.724  0.202
+11. Molecular Weight (g/mol)       -0.054  0.445  0.288  0.319  0.698    NaN  0.304 -0.432  0.288 -0.309  1.000  0.698  0.698  0.420
+12. Ionic Strength Factor          -0.217 -0.033 -0.197  0.127  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
+13. Total Ion Number               -0.217 -0.033 -0.197  0.127  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
+14. γ_w at RH≈0.75                  0.353  0.496  0.649  0.075 -0.002    NaN -0.433 -0.398 -0.450  0.202  0.420 -0.002 -0.002  1.000
 
 STRONGEST CORRELATIONS (|r| > 0.7):
 Feature 1                           Feature 2                                    r
 ----------------------------------------------------------------------------------
+Cation Radius (pm)                  Radius Difference (pm)                 -0.7796
 Cation Radius (pm)                  Cation Charge Density (e/pm^3)         -0.7617
 Cation Radius (pm)                  Mean Charge Density (e/pm^3)           -0.7595
+Anion Radius (pm)                   Radius Difference (pm)                  0.7414
 Anion Radius (pm)                   Anion Charge Density (e/pm^3)          -0.9107
 Cation Charge                       ΔH_{soln} (kJ/mol)                     -0.7244
 Cation Charge                       Ionic Strength Factor                   1.0000
@@ -146,6 +152,7 @@ Molecular Weight (g/mol)                     0.4203
 Anion Charge Density (e/pm^3)               -0.3979
 Cation Radius (pm)                           0.3526
 ΔH_{soln} (kJ/mol)                           0.2021
+Radius Difference (pm)                       0.0748
 Cation Charge                               -0.0019
 Ionic Strength Factor                       -0.0019
 Total Ion Number                            -0.0019
