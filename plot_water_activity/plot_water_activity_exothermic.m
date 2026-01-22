@@ -231,8 +231,8 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction'), '-dpng', '-r600')
-savefig(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction.fig'))
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction'), '-dpng', '-r600')
+savefig(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction.fig'))
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity
 figure('Position', [100, 100, 900, 700]);
@@ -265,9 +265,9 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH'), '-dpng', '-r600')
-savefig(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH.fig'))
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH'), '-dpng', '-r600')
+savefig(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH.fig'))
 
 disp('Plots generated successfully!')
-disp('  - figures/Activity_Coefficient_vs_Mole_Fraction.png')
-disp('  - figures/Activity_Coefficient_vs_RH.png')
+disp('  - figures/activity_coefficient_subsets/Activity_Coefficient_vs_Mole_Fraction.png')
+disp('  - figures/activity_coefficient_subsets/Activity_Coefficient_vs_RH.png')

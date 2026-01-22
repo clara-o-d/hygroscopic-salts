@@ -192,7 +192,7 @@ ylim([0.95 1.05])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction_Sulfates'), '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction_Sulfates'), '-dpng', '-r600')
 
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity (Sulfates)
@@ -223,6 +223,6 @@ ylim([0.95 1.05])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH_Sulfates'), '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH_Sulfates'), '-dpng', '-r600')
 
 disp('Sulfate plots generated successfully!')

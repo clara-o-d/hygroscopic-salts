@@ -107,8 +107,7 @@ ylim([0.9 1.5])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_Mole_Fraction_Chlorates'), '-dpng', '-r600')
-
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction_Chlorates'), '-dpng', '-r600')
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity (Chlorates)
 figure('Position', [150, 150, 900, 700]);
@@ -132,6 +131,6 @@ ylim([0.9 1.5])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print(fullfile(filepath, '..', 'figures', 'Activity_Coefficient_vs_RH_Chlorates'), '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH_Chlorates'), '-dpng', '-r600')
 
 disp('Chlorate plots generated successfully!')
