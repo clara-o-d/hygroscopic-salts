@@ -449,7 +449,7 @@ for cat_idx = 1:n_categories
     title(strrep(cat, '_', ' '), 'FontWeight', 'bold');
     legend('Location', 'best', 'FontSize', 8);
     xlim([0, 1]);
-    ylim([0.4, 1.1]);
+    ylim([0.4, 1]);
     set(gca, 'FontSize', 10);
 end
 
