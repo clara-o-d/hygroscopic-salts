@@ -2,12 +2,12 @@
 ========================================
 SYSTEMATIC WATER ACTIVITY DATA EXPLORATION
 ========================================
-Date: 20-Jan-2026 02:35:15
+Date: 23-Jan-2026 00:43:21
 ========================================
 
 Loading data...
-Loaded data for 49 salts
-Total data points: 4900
+Loaded data for 48 salts
+Total data points: 4800
 
 Building salt properties database...
 Salt properties database built (49 salts)
@@ -27,73 +27,72 @@ Property calculations complete
 ELECTROLYTE TYPE STATISTICS:
 Type       Count           Mean γ_w        Std γ_w         Mean RH Range  
 ----------------------------------------------------------------------
-1:1        25              NaN             NaN             0.2953         
-1:2        3               1.1016          0.0670          0.0857         
-2:1        12              1.0350          0.4171          0.3769         
-2:2        5               1.0243          0.0998          0.0754         
+1:1        24              NaN             NaN             0.2711         
+1:2        3               0.9723          0.0244          0.0837         
+2:1        12              0.7836          0.2074          0.3750         
+2:2        5               0.9939          0.0105          0.0506         
 
 DETAILED SALT BREAKDOWN BY ELECTROLYTE TYPE:
 
 1:1 Electrolytes:
 Salt                 ν_+      ν_-      ν_total  Mean γ_w     RH Range    
 ---------------------------------------------------------------------------
-AgNO3                1        1        2        1.5631       [0.866-0.989]
-CsBr                 1        1        2        1.4946       [0.849-0.989]
-CsCl                 1        1        2        1.3784       [0.821-0.989]
-CsI                  1        1        2        NaN          [0.914-0.994]
-HCl                  1        1        2        0.6015       [0.171-0.899]
-KBr                  1        1        2        NaN          [0.834-0.989]
-KCl                  1        1        2        1.0845       [0.856-0.989]
-KClO3                1        1        2        1.0360       [0.982-0.994]
-KI                   1        1        2        1.0594       [0.976-0.994]
-KNO3                 1        1        2        1.1120       [0.933-0.994]
-LiBr                 1        1        2        0.5447       [0.071-0.899]
-LiCl                 1        1        2        0.5765       [0.121-0.899]
-LiClO4               1        1        2        1.3037       [0.778-0.986]
-LiI                  1        1        2        0.5998       [0.181-0.899]
-LiNO3                1        1        2        1.0600       [0.737-0.989]
-LiOH                 1        1        2        0.9391       [0.851-0.899]
-NH4Cl                1        1        2        1.0457       [0.816-0.989]
-NH4NO3               1        1        2        1.3285       [0.119-0.731]
-NaBr                 1        1        2        NaN          [0.615-0.989]
+AgNO3                1        1        2        1.0014       [0.866-0.984]
+CsBr                 1        1        2        0.9577       [0.849-0.946]
+CsCl                 1        1        2        0.9547       [0.821-0.989]
+CsI                  1        1        2        NaN          [0.914-0.960]
+HCl                  1        1        2        0.6003       [0.171-0.896]
+KBr                  1        1        2        0.9426       [0.834-0.951]
+KCl                  1        1        2        0.9616       [0.856-0.989]
+KClO3                1        1        2        0.9946       [0.982-0.992]
+KI                   1        1        2        0.9929       [0.975-0.994]
+KNO3                 1        1        2        0.9899       [0.933-0.994]
+LiBr                 1        1        2        0.5434       [0.071-0.896]
+LiCl                 1        1        2        0.5732       [0.121-0.892]
+LiClO4               1        1        2        0.9446       [0.779-0.986]
+LiI                  1        1        2        0.5991       [0.181-0.897]
+LiNO3                1        1        2        0.9123       [0.737-0.989]
+LiOH                 1        1        2        0.9394       [0.851-0.900]
+NH4Cl                1        1        2        0.9508       [0.816-0.989]
+NaBr                 1        1        2        0.8412       [0.615-0.927]
 NaCl                 1        1        2        0.9277       [0.766-0.989]
-NaClO4               1        1        2        NaN          [0.779-0.989]
-NaI                  1        1        2        NaN          [0.582-0.989]
-NaNO3                1        1        2        1.0291       [0.972-0.994]
-NaOH                 1        1        2        0.6440       [0.231-0.899]
-RbCl                 1        1        2        NaN          [0.744-0.989]
+NaClO4               1        1        2        0.9302       [0.779-0.989]
+NaI                  1        1        2        0.8368       [0.582-0.965]
+NaNO3                1        1        2        0.9928       [0.972-0.994]
+NaOH                 1        1        2        0.6419       [0.231-0.894]
+RbCl                 1        1        2        0.9146       [0.744-0.951]
 
 1:2 Electrolytes:
 Salt                 ν_+      ν_-      ν_total  Mean γ_w     RH Range    
 ---------------------------------------------------------------------------
-K2SO4                2        1        3        1.0607       [0.973-0.995]
-Li2SO4               2        1        3        1.0900       [0.854-0.995]
-Na2SO4               2        1        3        1.1542       [0.900-0.995]
+K2SO4                2        1        3        0.9916       [0.974-0.994]
+Li2SO4               2        1        3        0.9515       [0.855-0.994]
+Na2SO4               2        1        3        0.9739       [0.901-0.994]
 
 2:1 Electrolytes:
 Salt                 ν_+      ν_-      ν_total  Mean γ_w     RH Range    
 ---------------------------------------------------------------------------
-BaBr2                1        2        3        1.4855       [0.823-0.958]
-BaCl2                1        2        3        1.1542       [0.939-0.972]
-CaBr2                1        2        3        1.2539       [0.640-0.953]
-CaCl2                1        2        3        0.6464       [0.311-0.899]
-CaI2                 1        2        3        1.4579       [0.833-0.951]
-MgCl2                1        2        3        0.6531       [0.331-0.899]
-SrBr2                1        2        3        1.3566       [0.779-0.956]
-SrCl2                1        2        3        1.1891       [0.807-0.977]
-SrI2                 1        2        3        1.5650       [0.679-0.956]
+BaBr2                1        2        3        0.9266       [0.824-0.957]
+BaCl2                1        2        3        0.9724       [0.940-0.971]
+CaBr2                1        2        3        0.8381       [0.641-0.952]
+CaCl2                1        2        3        0.6450       [0.311-0.896]
+CaI2                 1        2        3        0.9280       [0.834-0.950]
+MgCl2                1        2        3        0.6527       [0.331-0.898]
+SrBr2                1        2        3        0.9031       [0.780-0.955]
+SrCl2                1        2        3        0.9258       [0.808-0.976]
+SrI2                 1        2        3        0.8573       [0.680-0.955]
 ZnBr2                1        2        3        0.5246       [0.081-0.849]
-ZnCl2                1        2        3        0.5005       [0.071-0.799]
-ZnI2                 1        2        3        0.6330       [0.251-0.899]
+ZnCl2                1        2        3        0.4993       [0.071-0.797]
+ZnI2                 1        2        3        0.6318       [0.251-0.896]
 
 2:2 Electrolytes:
 Salt                 ν_+      ν_-      ν_total  Mean γ_w     RH Range    
 ---------------------------------------------------------------------------
-CuSO4                1        1        2        1.0941       [0.976-0.995]
-MgSO4                1        1        2        1.1447       [0.906-0.995]
-MnSO4                1        1        2        0.9392       [0.863-0.995]
-NiSO4                1        1        2        0.9766       [0.940-0.995]
-ZnSO4                1        1        2        0.9666       [0.914-0.995]
+CuSO4                1        1        2        1.0008       [0.977-0.994]
+MgSO4                1        1        2        0.9832       [0.907-0.994]
+MnSO4                1        1        2        0.9903       [0.921-0.994]
+NiSO4                1        1        2        1.0009       [0.973-0.994]
+ZnSO4                1        1        2        0.9944       [0.940-0.994]
 
 === Analysis 9: Multi-dimensional Summary ===
 === Analysis 10: Kosmotrope vs Chaotrope Effect (RH ~ 0.75) ===
@@ -102,60 +101,62 @@ Generated Kosmotrope/Chaotrope analysis.
 === Analysis 11: Correlation Matrix ===
 Extracting features for correlation analysis...
 Target RH: 0.75 ± 0.05
-Successfully extracted features for 21 salts
+Successfully extracted features for 20 salts
 
 CORRELATION MATRIX:
 (Pearson correlation coefficients)
 
 Feature                                  1      2      3      4      5      6      7      8      9     10     11     12     13     14
 -------------------------------------------------------------------------------------------------------------------------------------
-1 . Cation Radius (pm)              1.000 -0.158  0.679 -0.780 -0.217    NaN -0.762  0.114 -0.759  0.349 -0.054 -0.217 -0.217  0.353
-2 . Anion Radius (pm)              -0.158  1.000  0.618  0.741 -0.033    NaN  0.027 -0.911 -0.010  0.190  0.445 -0.033 -0.033  0.496
-3 . Mean Radius (pm)                0.679  0.618  1.000 -0.070 -0.197    NaN -0.587 -0.586 -0.612  0.420  0.288 -0.197 -0.197  0.649
-4 . Radius Difference (pm)         -0.780  0.741 -0.070  1.000  0.127    NaN  0.535 -0.655  0.510 -0.117  0.319  0.127  0.127  0.075
-5 . Cation Charge                  -0.217 -0.033 -0.197  0.127  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
+1 . Cation Radius (pm)              1.000 -0.190  0.616 -0.760 -0.157    NaN -0.751  0.160 -0.747  0.228  0.013 -0.157 -0.157  0.183
+2 . Anion Radius (pm)              -0.190  1.000  0.657  0.783 -0.028    NaN  0.035 -0.911 -0.003  0.194  0.453 -0.028 -0.028  0.269
+3 . Mean Radius (pm)                0.616  0.657  1.000  0.045 -0.143    NaN -0.549 -0.608 -0.577  0.331  0.374 -0.143 -0.143  0.357
+4 . Radius Difference (pm)         -0.760  0.783  0.045  1.000  0.080    NaN  0.499 -0.705  0.471 -0.016  0.292  0.080  0.080  0.062
+5 . Cation Charge                  -0.157 -0.028 -0.143  0.080  1.000    NaN  0.601 -0.093  0.600 -0.719  0.690  1.000  1.000 -0.595
 6 . Anion Charge                      NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN
-7 . Cation Charge Density (e/pm^3) -0.762  0.027 -0.587  0.535  0.617    NaN  1.000 -0.097  0.999 -0.568  0.304  0.617  0.617 -0.433
-8 . Anion Charge Density (e/pm^3)   0.114 -0.911 -0.586 -0.655 -0.080    NaN -0.097  1.000 -0.056 -0.115 -0.432 -0.080 -0.080 -0.398
-9 . Mean Charge Density (e/pm^3)   -0.759 -0.010 -0.612  0.510  0.616    NaN  0.999 -0.056  1.000 -0.575  0.288  0.616  0.616 -0.450
-10. ΔH_{soln} (kJ/mol)              0.349  0.190  0.420 -0.117 -0.724    NaN -0.568 -0.115 -0.575  1.000 -0.309 -0.724 -0.724  0.202
-11. Molecular Weight (g/mol)       -0.054  0.445  0.288  0.319  0.698    NaN  0.304 -0.432  0.288 -0.309  1.000  0.698  0.698  0.420
-12. Ionic Strength Factor          -0.217 -0.033 -0.197  0.127  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
-13. Total Ion Number               -0.217 -0.033 -0.197  0.127  1.000    NaN  0.617 -0.080  0.616 -0.724  0.698  1.000  1.000 -0.002
-14. γ_w at RH≈0.75                  0.353  0.496  0.649  0.075 -0.002    NaN -0.433 -0.398 -0.450  0.202  0.420 -0.002 -0.002  1.000
+7 . Cation Charge Density (e/pm^3) -0.751  0.035 -0.549  0.499  0.601    NaN  1.000 -0.116  0.999 -0.530  0.280  0.601  0.601 -0.409
+8 . Anion Charge Density (e/pm^3)   0.160 -0.911 -0.608 -0.705 -0.093    NaN -0.116  1.000 -0.075 -0.100 -0.447 -0.093 -0.093 -0.126
+9 . Mean Charge Density (e/pm^3)   -0.747 -0.003 -0.577  0.471  0.600    NaN  0.999 -0.075  1.000 -0.536  0.262  0.600  0.600 -0.416
+10. ΔH_{soln} (kJ/mol)              0.228  0.194  0.331 -0.016 -0.719    NaN -0.530 -0.100 -0.536  1.000 -0.278 -0.719 -0.719  0.733
+11. Molecular Weight (g/mol)        0.013  0.453  0.374  0.292  0.690    NaN  0.280 -0.447  0.262 -0.278  1.000  0.690  0.690 -0.308
+12. Ionic Strength Factor          -0.157 -0.028 -0.143  0.080  1.000    NaN  0.601 -0.093  0.600 -0.719  0.690  1.000  1.000 -0.595
+13. Total Ion Number               -0.157 -0.028 -0.143  0.080  1.000    NaN  0.601 -0.093  0.600 -0.719  0.690  1.000  1.000 -0.595
+14. γ_w at RH≈0.75                  0.183  0.269  0.357  0.062 -0.595    NaN -0.409 -0.126 -0.416  0.733 -0.308 -0.595 -0.595  1.000
 
 STRONGEST CORRELATIONS (|r| > 0.7):
 Feature 1                           Feature 2                                    r
 ----------------------------------------------------------------------------------
-Cation Radius (pm)                  Radius Difference (pm)                 -0.7796
-Cation Radius (pm)                  Cation Charge Density (e/pm^3)         -0.7617
-Cation Radius (pm)                  Mean Charge Density (e/pm^3)           -0.7595
-Anion Radius (pm)                   Radius Difference (pm)                  0.7414
-Anion Radius (pm)                   Anion Charge Density (e/pm^3)          -0.9107
-Cation Charge                       ΔH_{soln} (kJ/mol)                     -0.7244
+Cation Radius (pm)                  Radius Difference (pm)                 -0.7596
+Cation Radius (pm)                  Cation Charge Density (e/pm^3)         -0.7509
+Cation Radius (pm)                  Mean Charge Density (e/pm^3)           -0.7472
+Anion Radius (pm)                   Radius Difference (pm)                  0.7826
+Anion Radius (pm)                   Anion Charge Density (e/pm^3)          -0.9112
+Radius Difference (pm)              Anion Charge Density (e/pm^3)          -0.7052
+Cation Charge                       ΔH_{soln} (kJ/mol)                     -0.7193
 Cation Charge                       Ionic Strength Factor                   1.0000
 Cation Charge                       Total Ion Number                        1.0000
-Cation Charge Density (e/pm^3)      Mean Charge Density (e/pm^3)            0.9992
-ΔH_{soln} (kJ/mol)                  Ionic Strength Factor                  -0.7244
-ΔH_{soln} (kJ/mol)                  Total Ion Number                       -0.7244
+Cation Charge Density (e/pm^3)      Mean Charge Density (e/pm^3)            0.9991
+ΔH_{soln} (kJ/mol)                  Ionic Strength Factor                  -0.7193
+ΔH_{soln} (kJ/mol)                  Total Ion Number                       -0.7193
+ΔH_{soln} (kJ/mol)                  γ_w at RH≈0.75                          0.7326
 Ionic Strength Factor               Total Ion Number                        1.0000
 
 CORRELATIONS WITH ACTIVITY COEFFICIENT (γ_w at RH≈0.75):
 Feature                                           r
 ----------------------------------------------------
 Anion Charge                                    NaN
-Mean Radius (pm)                             0.6494
-Anion Radius (pm)                            0.4959
-Mean Charge Density (e/pm^3)                -0.4502
-Cation Charge Density (e/pm^3)              -0.4328
-Molecular Weight (g/mol)                     0.4203
-Anion Charge Density (e/pm^3)               -0.3979
-Cation Radius (pm)                           0.3526
-ΔH_{soln} (kJ/mol)                           0.2021
-Radius Difference (pm)                       0.0748
-Cation Charge                               -0.0019
-Ionic Strength Factor                       -0.0019
-Total Ion Number                            -0.0019
+ΔH_{soln} (kJ/mol)                           0.7326
+Total Ion Number                            -0.5952
+Cation Charge                               -0.5952
+Ionic Strength Factor                       -0.5952
+Mean Charge Density (e/pm^3)                -0.4157
+Cation Charge Density (e/pm^3)              -0.4088
+Mean Radius (pm)                             0.3565
+Molecular Weight (g/mol)                    -0.3078
+Anion Radius (pm)                            0.2691
+Cation Radius (pm)                           0.1830
+Anion Charge Density (e/pm^3)               -0.1263
+Radius Difference (pm)                       0.0622
 
 Correlation analysis complete. Generated 2 figures.
 
@@ -163,30 +164,30 @@ Correlation analysis complete. Generated 2 figures.
 === GENERATING SUMMARY STATISTICS ===
 
 OVERALL DATASET STATISTICS:
-Total number of salts: 49
-Total data points: 4900
+Total number of salts: 48
+Total data points: 4800
 Average points per salt: 100.0
 
 PROPERTY RANGES:
-Molality: 0.01 - 11385.76 mol/kg
-RH: 0.0710 - 0.9953
-Activity Coefficient: 0.0944 - 24.5276
+Molality: 0.15 - 21.04 mol/kg
+RH: 0.0710 - 0.9943
+Activity Coefficient: 0.0944 - 1.0303
 Molecular Weight: 24.00 - 341.43 g/mol
 
 CHARGE DENSITY STATISTICS (for salts with data):
-Number of salts with charge density data: 45
+Number of salts with charge density data: 44
 Mean charge density range: 1.54e-07 - 3.11e-06 e/pm^3
 
 ENTHALPY OF SOLUTION STATISTICS (for salts with data):
-Number of salts with enthalpy data: 45
+Number of salts with enthalpy data: 44
 Enthalpy range: -160.0 - 41.4 kJ/mol
 Exothermic salts (ΔH < 0): 30
-Endothermic salts (ΔH > 0): 15
-Mean enthalpy: -28.4 kJ/mol
+Endothermic salts (ΔH > 0): 14
+Mean enthalpy: -29.6 kJ/mol
 
 CHEMICAL FAMILY DISTRIBUTION:
 endothermic_halide: 11 salts
-endothermic_nitrate: 5 salts
+endothermic_nitrate: 4 salts
 endothermic_oxyanion: 2 salts
 endothermic_sulfate: 8 salts
 exothermic_acid: 1 salts
@@ -197,10 +198,10 @@ unknown: 4 salts
 
 TOP 5 SALTS BY DEVIATION FROM IDEALITY (|γ_w - 1|):
 1. CsI: γ_w = NaN (deviation = NaN)
-2. KBr: γ_w = NaN (deviation = NaN)
-3. NaBr: γ_w = NaN (deviation = NaN)
-4. NaClO4: γ_w = NaN (deviation = NaN)
-5. NaI: γ_w = NaN (deviation = NaN)
+2. ZnCl2: γ_w = 0.4993 (deviation = -0.5007)
+3. ZnBr2: γ_w = 0.5246 (deviation = -0.4754)
+4. LiBr: γ_w = 0.5434 (deviation = -0.4566)
+5. LiCl: γ_w = 0.5732 (deviation = -0.4268)
 
 === SAVING ANALYSIS RESULTS ===
 Saved: salt_properties_analysis.csv

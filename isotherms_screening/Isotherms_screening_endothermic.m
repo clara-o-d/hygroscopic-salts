@@ -16,7 +16,7 @@ MW_NaCl = 58.443;
 RH_NaCl = linspace(0.765, 0.99, 100);
 
 for i = 1:length(RH_NaCl)
-   U_NaCl_gg(i) = 1/calculate_mf_NaCl_(RH_NaCl(i)) - 1;
+   U_NaCl_gg(i) = 1/calculate_mf_NaCl(RH_NaCl(i)) - 1;
 end
 % 1:1 salt -> 2 ions
 U_NaCl_molmol = U_NaCl_gg * (2 * MWw / MW_NaCl)^-1;
@@ -27,7 +27,7 @@ MW_KCl = 74.551;
 RH_KCl = linspace(0.855, 0.99, 100);
 
 for i = 1:length(RH_KCl)
-   U_KCl_gg(i) = 1/calculate_mf_KCl_(RH_KCl(i)) - 1;
+   U_KCl_gg(i) = 1/calculate_mf_KCl(RH_KCl(i)) - 1;
 end
 U_KCl_molmol = U_KCl_gg * (2 * MWw / MW_KCl)^-1;
 
@@ -37,7 +37,7 @@ MW_NH4Cl = 53.491;
 RH_NH4Cl = linspace(0.815, 0.99, 100);
 
 for i = 1:length(RH_NH4Cl)
-   U_NH4Cl_gg(i) = 1/calculate_mf_NH4Cl_(RH_NH4Cl(i)) - 1;
+   U_NH4Cl_gg(i) = 1/calculate_mf_NH4Cl(RH_NH4Cl(i)) - 1;
 end
 U_NH4Cl_molmol = U_NH4Cl_gg * (2 * MWw / MW_NH4Cl)^-1;
 
@@ -47,7 +47,7 @@ MW_CsCl = 168.363;
 RH_CsCl = linspace(0.82, 0.99, 100);
 
 for i = 1:length(RH_CsCl)
-   U_CsCl_gg(i) = 1/calculate_mf_CsCl_(RH_CsCl(i)) - 1;
+   U_CsCl_gg(i) = 1/calculate_mf_CsCl(RH_CsCl(i)) - 1;
 end
 U_CsCl_molmol = U_CsCl_gg * (2 * MWw / MW_CsCl)^-1;
 
@@ -57,17 +57,17 @@ MW_NaNO3 = 84.994;
 RH_NaNO3 = linspace(0.971, 0.995, 100);
 
 for i = 1:length(RH_NaNO3)
-   U_NaNO3_gg(i) = 1/calculate_mf_NaNO3_(RH_NaNO3(i)) - 1;
+   U_NaNO3_gg(i) = 1/calculate_mf_NaNO3(RH_NaNO3(i)) - 1;
 end
 U_NaNO3_molmol = U_NaNO3_gg * (2 * MWw / MW_NaNO3)^-1;
 
 %% AgNO3
 MW_AgNO3 = 169.87;
 % Fit valid > 0.862
-RH_AgNO3 = linspace(0.865, 0.99, 100);
+RH_AgNO3 = linspace(0.865, 0.985, 100);
 
 for i = 1:length(RH_AgNO3)
-   U_AgNO3_gg(i) = 1/calculate_mf_AgNO3_(RH_AgNO3(i)) - 1;
+   U_AgNO3_gg(i) = 1/calculate_mf_AgNO3(RH_AgNO3(i)) - 1;
 end
 U_AgNO3_molmol = U_AgNO3_gg * (2 * MWw / MW_AgNO3)^-1;
 
@@ -77,7 +77,7 @@ MW_KI = 165.998;
 RH_KI = linspace(0.975, 0.995, 100);
 
 for i = 1:length(RH_KI)
-   U_KI_gg(i) = 1/calculate_mf_KI_(RH_KI(i)) - 1;
+   U_KI_gg(i) = 1/calculate_mf_KI(RH_KI(i)) - 1;
 end
 U_KI_molmol = U_KI_gg * (2 * MWw / MW_KI)^-1;
 
@@ -124,7 +124,7 @@ U_NaClO4_molmol = U_NaClO4_gg * (2 * MWw / MW_NaClO4)^-1;
 %% KClO3
 MW_KClO3 = 122.55;
 % Fit valid > 0.9800 - RESTRICTED TO FIT RANGE
-RH_KClO3 = linspace(0.981, 0.995, 100);
+RH_KClO3 = linspace(0.981, 0.9926, 100);
 
 for i = 1:length(RH_KClO3)
    U_KClO3_gg(i) = 1/calculate_mf_KClO3(RH_KClO3(i)) - 1;
@@ -134,7 +134,7 @@ U_KClO3_molmol = U_KClO3_gg * (2 * MWw / MW_KClO3)^-1;
 %% NaBr
 MW_NaBr = 102.89;
 % Fit valid > 0.6133
-RH_NaBr = linspace(0.614, 0.99, 100);
+RH_NaBr = linspace(0.614, 0.928, 100);
 
 for i = 1:length(RH_NaBr)
    U_NaBr_gg(i) = 1/calculate_mf_NaBr(RH_NaBr(i)) - 1;
@@ -144,7 +144,7 @@ U_NaBr_molmol = U_NaBr_gg * (2 * MWw / MW_NaBr)^-1;
 %% NaI
 MW_NaI = 149.89;
 % Fit valid > 0.5801
-RH_NaI = linspace(0.581, 0.99, 100);
+RH_NaI = linspace(0.581, 0.965, 100);
 
 for i = 1:length(RH_NaI)
    U_NaI_gg(i) = 1/calculate_mf_NaI(RH_NaI(i)) - 1;
@@ -154,7 +154,7 @@ U_NaI_molmol = U_NaI_gg * (2 * MWw / MW_NaI)^-1;
 %% KBr
 MW_KBr = 119.00;
 % Fit valid > 0.8325
-RH_KBr = linspace(0.833, 0.99, 100);
+RH_KBr = linspace(0.833, 0.95, 100);
 
 for i = 1:length(RH_KBr)
    U_KBr_gg(i) = 1/calculate_mf_KBr(RH_KBr(i)) - 1;
@@ -164,7 +164,7 @@ U_KBr_molmol = U_KBr_gg * (2 * MWw / MW_KBr)^-1;
 %% RbCl
 MW_RbCl = 120.92;
 % Fit valid > 0.7423
-RH_RbCl = linspace(0.743, 0.99, 100);
+RH_RbCl = linspace(0.743, 0.95, 100);
 
 for i = 1:length(RH_RbCl)
    U_RbCl_gg(i) = 1/calculate_mf_RbCl(RH_RbCl(i)) - 1;
@@ -174,7 +174,7 @@ U_RbCl_molmol = U_RbCl_gg * (2 * MWw / MW_RbCl)^-1;
 %% CsBr
 MW_CsBr = 212.81;
 % Fit valid > 0.8475
-RH_CsBr = linspace(0.848, 0.99, 100);
+RH_CsBr = linspace(0.848, 0.945, 100);
 
 for i = 1:length(RH_CsBr)
    U_CsBr_gg(i) = 1/calculate_mf_CsBr(RH_CsBr(i)) - 1;
@@ -184,7 +184,7 @@ U_CsBr_molmol = U_CsBr_gg * (2 * MWw / MW_CsBr)^-1;
 %% CsI
 MW_CsI = 259.81;
 % Fit valid > 0.9124 - RESTRICTED TO FIT RANGE
-RH_CsI = linspace(0.913, 0.995, 100);
+RH_CsI = linspace(0.913, 0.96, 100);
 
 for i = 1:length(RH_CsI)
    U_CsI_gg(i) = 1/calculate_mf_CsI(RH_CsI(i)) - 1;
