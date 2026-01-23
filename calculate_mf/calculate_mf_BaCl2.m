@@ -4,20 +4,21 @@ if ~exist('robust_fzero', 'file')
     [filepath,~,~] = fileparts(mfilename('fullpath'));
     addpath(fullfile(filepath, '..', 'util'));
 end
-% Fit on data range: MassFrac [0.5481, 0.7696] -> RH [0.9375, 0.9731]
-if RH < 0.9375
-    error("Input RH (%.4f) is below the lower fit limit for BaCl2 (0.9375)", RH);
-end
+% This function calculates the mass fraction of BaCl2 as a
+% function of the Relative Humidity at a temperature of 25C
 if RH > 1 
-    error("RH should be 0 < RH < 1");
+    error("RH should be 0 < RH < 1")
 end 
-
-A_4 = 51.737901;
-A_3 = -141.918321;
-A_2 = 144.292411;
-A_1 = -64.600718;
-A_0 = 11.731931;
-
+if RH < 0.9375 || RH > 0.9731 
+    error("below deliquescence relative humidity or above range") 
+end  
+A_4 = 321.0; 
+A_3 = -206.2; 
+A_2 = 46.85;
+A_1 = -4.69; 
+A_0 = 1.146;
 f = @(xi) RH - A_0 - A_1.*xi - A_2.*xi.^2 - A_3.*xi.^3 - A_4.*xi.^4;
-mf = robust_fzero(f, 0.5481, 0.7696, 0.66);
+mf = robust_fzero(f, 0.095, 0.2242, 0.1596);
+
 end
+% ---------------------------------------------------------

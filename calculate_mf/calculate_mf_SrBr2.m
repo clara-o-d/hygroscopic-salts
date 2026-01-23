@@ -4,20 +4,21 @@ if ~exist('robust_fzero', 'file')
     [filepath,~,~] = fileparts(mfilename('fullpath'));
     addpath(fullfile(filepath, '..', 'util'));
 end
-% Fit on data range: MassFrac [0.7311, 0.9190] -> RH [0.7776, 0.9571]
-if RH < 0.7776
-    error("Input RH (%.4f) is below the lower fit limit for SrBr2 (0.7776)", RH);
-end
+% This function calculates the mass fraction of SrBr2 as a
+% function of the Relative Humidity at a temperature of 25C
 if RH > 1 
-    error("RH should be 0 < RH < 1");
+    error("RH should be 0 < RH < 1")
 end 
-
-A_4 = -371.066326;
-A_3 = 1170.024726;
-A_2 = -1385.238827;
-A_1 = 729.569711;
-A_0 = -143.218582;
-
+if RH < 0.7776 || RH > 0.9571 
+    error("below deliquescence relative humidity or above range") 
+end  
+A_4 = -10.12; 
+A_3 = 11.73; 
+A_2 = -7.073;
+A_1 = 1.596; 
+A_0 = 0.8409;
 f = @(xi) RH - A_0 - A_1.*xi - A_2.*xi.^2 - A_3.*xi.^3 - A_4.*xi.^4;
-mf = robust_fzero(f, 0.7311, 0.9190, 0.83);
+mf = robust_fzero(f, 0.1652, 0.4525, 0.3089);
+
 end
+% ---------------------------------------------------------

@@ -16,7 +16,7 @@ MW_Na2SO4 = 142.04;
 RH_Na2SO4 = linspace(0.900, 0.995, 100); 
 
 for i = 1:length(RH_Na2SO4)
-    mf_salt_Na2SO4(i) = calculate_mf_Na2SO4_(RH_Na2SO4(i));
+    mf_salt_Na2SO4(i) = calculate_mf_Na2SO4(RH_Na2SO4(i));
     mf_water_Na2SO4(i) = 1 - mf_salt_Na2SO4(i);
     x_water_Na2SO4(i) = (mf_water_Na2SO4(i) / MWw) / ...
         ((mf_water_Na2SO4(i) / MWw) + (mf_salt_Na2SO4(i) / MW_Na2SO4));
@@ -28,7 +28,7 @@ MW_K2SO4 = 174.26;
 RH_K2SO4 = linspace(0.973, 0.995, 100);
 
 for i = 1:length(RH_K2SO4)
-    mf_salt_K2SO4(i) = calculate_mf_K2SO4_(RH_K2SO4(i));
+    mf_salt_K2SO4(i) = calculate_mf_K2SO4(RH_K2SO4(i));
     mf_water_K2SO4(i) = 1 - mf_salt_K2SO4(i);
     x_water_K2SO4(i) = (mf_water_K2SO4(i) / MWw) / ...
         ((mf_water_K2SO4(i) / MWw) + (mf_salt_K2SO4(i) / MW_K2SO4));
@@ -40,7 +40,7 @@ MW_NH42SO4 = 132.14;
 RH_NH42SO4 = linspace(0.832, 0.995, 100);
 
 for i = 1:length(RH_NH42SO4)
-    mf_salt_NH42SO4(i) = calculate_mf_NH42SO4_(RH_NH42SO4(i));
+    mf_salt_NH42SO4(i) = calculate_mf_NH42SO4(RH_NH42SO4(i));
     mf_water_NH42SO4(i) = 1 - mf_salt_NH42SO4(i);
     x_water_NH42SO4(i) = (mf_water_NH42SO4(i) / MWw) / ...
         ((mf_water_NH42SO4(i) / MWw) + (mf_salt_NH42SO4(i) / MW_NH42SO4));
@@ -52,7 +52,7 @@ MW_MgSO4 = 120.37;
 RH_MgSO4 = linspace(0.906, 0.995, 100);
 
 for i = 1:length(RH_MgSO4)
-    mf_salt_MgSO4(i) = calculate_mf_MgSO4_(RH_MgSO4(i));
+    mf_salt_MgSO4(i) = calculate_mf_MgSO4(RH_MgSO4(i));
     mf_water_MgSO4(i) = 1 - mf_salt_MgSO4(i);
     x_water_MgSO4(i) = (mf_water_MgSO4(i) / MWw) / ...
         ((mf_water_MgSO4(i) / MWw) + (mf_salt_MgSO4(i) / MW_MgSO4));
@@ -60,11 +60,11 @@ end
 
 %% 5. MnSO4
 MW_MnSO4 = 151.00;
-% Fit valid: [0.8620, 0.9961]
-RH_MnSO4 = linspace(0.863, 0.995, 100);
+% Fit valid: [0.8620 or 0.919, 0.9961]
+RH_MnSO4 = linspace(0.92, 0.995, 100);
 
 for i = 1:length(RH_MnSO4)
-    mf_salt_MnSO4(i) = calculate_mf_MnSO4_(RH_MnSO4(i));
+    mf_salt_MnSO4(i) = calculate_mf_MnSO4(RH_MnSO4(i));
     mf_water_MnSO4(i) = 1 - mf_salt_MnSO4(i);
     x_water_MnSO4(i) = (mf_water_MnSO4(i) / MWw) / ...
         ((mf_water_MnSO4(i) / MWw) + (mf_salt_MnSO4(i) / MW_MnSO4));
@@ -76,7 +76,7 @@ MW_Li2SO4 = 109.94;
 RH_Li2SO4 = linspace(0.854, 0.995, 100);
 
 for i = 1:length(RH_Li2SO4)
-    mf_salt_Li2SO4(i) = calculate_mf_Li2SO4_(RH_Li2SO4(i));
+    mf_salt_Li2SO4(i) = calculate_mf_Li2SO4(RH_Li2SO4(i));
     mf_water_Li2SO4(i) = 1 - mf_salt_Li2SO4(i);
     x_water_Li2SO4(i) = (mf_water_Li2SO4(i) / MWw) / ...
         ((mf_water_Li2SO4(i) / MWw) + (mf_salt_Li2SO4(i) / MW_Li2SO4));
@@ -88,7 +88,7 @@ MW_NiSO4 = 154.75;
 RH_NiSO4 = linspace(0.940, 0.995, 100);
 
 for i = 1:length(RH_NiSO4)
-    mf_salt_NiSO4(i) = calculate_mf_NiSO4_(RH_NiSO4(i));
+    mf_salt_NiSO4(i) = calculate_mf_NiSO4(RH_NiSO4(i));
     mf_water_NiSO4(i) = 1 - mf_salt_NiSO4(i);
     x_water_NiSO4(i) = (mf_water_NiSO4(i) / MWw) / ...
         ((mf_water_NiSO4(i) / MWw) + (mf_salt_NiSO4(i) / MW_NiSO4));
@@ -100,7 +100,7 @@ MW_CuSO4 = 159.61;
 RH_CuSO4 = linspace(0.976, 0.995, 100);
 
 for i = 1:length(RH_CuSO4)
-    mf_salt_CuSO4(i) = calculate_mf_CuSO4_(RH_CuSO4(i));
+    mf_salt_CuSO4(i) = calculate_mf_CuSO4(RH_CuSO4(i));
     mf_water_CuSO4(i) = 1 - mf_salt_CuSO4(i);
     x_water_CuSO4(i) = (mf_water_CuSO4(i) / MWw) / ...
         ((mf_water_CuSO4(i) / MWw) + (mf_salt_CuSO4(i) / MW_CuSO4));
@@ -112,7 +112,7 @@ MW_ZnSO4 = 161.44;
 RH_ZnSO4 = linspace(0.914, 0.995, 100);
 
 for i = 1:length(RH_ZnSO4)
-    mf_salt_ZnSO4(i) = calculate_mf_ZnSO4_(RH_ZnSO4(i));
+    mf_salt_ZnSO4(i) = calculate_mf_ZnSO4(RH_ZnSO4(i));
     mf_water_ZnSO4(i) = 1 - mf_salt_ZnSO4(i);
     x_water_ZnSO4(i) = (mf_water_ZnSO4(i) / MWw) / ...
         ((mf_water_ZnSO4(i) / MWw) + (mf_salt_ZnSO4(i) / MW_ZnSO4));
@@ -188,7 +188,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Sulfate Solutions: Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 2)
 xlim([0.9 1.0]) % Sulfates are mostly dilute, so zoom in near 1
-ylim([0.95 1.05])
+ylim([0.7 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
@@ -219,7 +219,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Sulfate Solutions: Activity Coefficient vs RH', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 2)
 xlim([80 100]) % Sulfates data is mostly high RH
-ylim([0.95 1.05])
+ylim([0.7 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 

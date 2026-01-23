@@ -1,24 +1,24 @@
-function mf = calculate_mf_SrCl2(RH)
+function mf = calculate_mf_NH4Cl(RH)
 % Add util folder to path if needed
 if ~exist('robust_fzero', 'file')
     [filepath,~,~] = fileparts(mfilename('fullpath'));
     addpath(fullfile(filepath, '..', 'util'));
 end
-% This function calculates the mass fraction of SrCl2 as a
+% This function calculates the mass fraction of NH4Cl as a
 % function of the Relative Humidity at a temperature of 25C
 if RH > 1 
     error("RH should be 0 < RH < 1")
 end 
-if RH < 0.8059 || RH > 0.9778 
+if RH < 0.812 || RH > 0.993 
     error("below deliquescence relative humidity or above range") 
 end  
-A_4 = -183.0; 
-A_3 = 149.4; 
-A_2 = -44.82;
-A_1 = 5.237; 
-A_0 = 0.7717;
+A_4 = 22.48; 
+A_3 = -10.93; 
+A_2 = 0.8213;
+A_1 = -0.6539; 
+A_0 = 1.0;
 f = @(xi) RH - A_0 - A_1.*xi - A_2.*xi.^2 - A_3.*xi.^3 - A_4.*xi.^4;
-mf = robust_fzero(f, 0.095, 0.3368, 0.2159);
+mf = robust_fzero(f, 0.0106, 0.243, 0.1268);
 
 end
 % ---------------------------------------------------------

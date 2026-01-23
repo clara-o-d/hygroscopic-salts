@@ -103,7 +103,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Chlorate Solutions: Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 1)
 xlim([0.7 1.0]) % Chlorates have wider range
-ylim([0.9 1.5])
+ylim([0.8 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
@@ -127,7 +127,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Chlorate Solutions: Activity Coefficient vs RH', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 1)
 xlim([75 100]) % Chlorates have wider RH range
-ylim([0.9 1.5])
+ylim([0.8 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 

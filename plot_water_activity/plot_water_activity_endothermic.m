@@ -12,30 +12,30 @@ MWw = 18.015;
 
 %% NaCl
 MW_NaCl = 58.443;
-RH_NaCl = linspace(0.73, 0.9934, 100);
+RH_NaCl = linspace(0.763, 0.9934, 100);
 
 for i = 1:length(RH_NaCl)
-    mf_salt_NaCl(i) = calculate_mf_NaCl_(RH_NaCl(i));
+    mf_salt_NaCl(i) = calculate_mf_NaCl(RH_NaCl(i));
     mf_water_NaCl(i) = 1 - mf_salt_NaCl(i);
     x_water_NaCl(i) = (mf_water_NaCl(i) / MWw) / ((mf_water_NaCl(i) / MWw) + (mf_salt_NaCl(i) / MW_NaCl));
 end
 
 %% KCl
 MW_KCl = 74.551;
-RH_KCl = linspace(0.83, 0.9935, 100);
+RH_KCl = linspace(0.853, 0.9935, 100);
 
 for i = 1:length(RH_KCl)
-    mf_salt_KCl(i) = calculate_mf_KCl_(RH_KCl(i));
+    mf_salt_KCl(i) = calculate_mf_KCl(RH_KCl(i));
     mf_water_KCl(i) = 1 - mf_salt_KCl(i);
     x_water_KCl(i) = (mf_water_KCl(i) / MWw) / ((mf_water_KCl(i) / MWw) + (mf_salt_KCl(i) / MW_KCl));
 end
 
 %% NH4Cl
 MW_NH4Cl = 53.491;
-RH_NH4Cl = linspace(0.76, 0.993, 100);
+RH_NH4Cl = linspace(0.813, 0.993, 100);
 
 for i = 1:length(RH_NH4Cl)
-    mf_salt_NH4Cl(i) = calculate_mf_NH4Cl_(RH_NH4Cl(i));
+    mf_salt_NH4Cl(i) = calculate_mf_NH4Cl(RH_NH4Cl(i));
     mf_water_NH4Cl(i) = 1 - mf_salt_NH4Cl(i);
     x_water_NH4Cl(i) = (mf_water_NH4Cl(i) / MWw) / ((mf_water_NH4Cl(i) / MWw) + (mf_salt_NH4Cl(i) / MW_NH4Cl));
 end
@@ -45,17 +45,17 @@ MW_CsCl = 168.363;
 RH_CsCl = linspace(0.817, 0.993, 100);
 
 for i = 1:length(RH_CsCl)
-    mf_salt_CsCl(i) = calculate_mf_CsCl_(RH_CsCl(i));
+    mf_salt_CsCl(i) = calculate_mf_CsCl(RH_CsCl(i));
     mf_water_CsCl(i) = 1 - mf_salt_CsCl(i);
     x_water_CsCl(i) = (mf_water_CsCl(i) / MWw) / ((mf_water_CsCl(i) / MWw) + (mf_salt_CsCl(i) / MW_CsCl));
 end
 
 %% NaNO3
 MW_NaNO3 = 84.994;
-RH_NaNO3 = linspace(0.71, 0.9996, 100);
+RH_NaNO3 = linspace(0.9701, 0.9996, 100);
 
 for i = 1:length(RH_NaNO3)
-    mf_salt_NaNO3(i) = calculate_mf_NaNO3_(RH_NaNO3(i));
+    mf_salt_NaNO3(i) = calculate_mf_NaNO3(RH_NaNO3(i));
     mf_water_NaNO3(i) = 1 - mf_salt_NaNO3(i);
     x_water_NaNO3(i) = (mf_water_NaNO3(i) / MWw) / ((mf_water_NaNO3(i) / MWw) + (mf_salt_NaNO3(i) / MW_NaNO3));
 end
@@ -65,17 +65,17 @@ MW_AgNO3 = 169.87;
 RH_AgNO3 = linspace(0.862, 0.986, 100);
 
 for i = 1:length(RH_AgNO3)
-    mf_salt_AgNO3(i) = calculate_mf_AgNO3_(RH_AgNO3(i));
+    mf_salt_AgNO3(i) = calculate_mf_AgNO3(RH_AgNO3(i));
     mf_water_AgNO3(i) = 1 - mf_salt_AgNO3(i);
     x_water_AgNO3(i) = (mf_water_AgNO3(i) / MWw) / ((mf_water_AgNO3(i) / MWw) + (mf_salt_AgNO3(i) / MW_AgNO3));
 end
 
 %% KI
 MW_KI = 165.998;
-RH_KI = linspace(0.65, 0.999, 100);
+RH_KI = linspace(0.9671, 0.999, 100);
 
 for i = 1:length(RH_KI)
-    mf_salt_KI(i) = calculate_mf_KI_(RH_KI(i));
+    mf_salt_KI(i) = calculate_mf_KI(RH_KI(i));
     mf_water_KI(i) = 1 - mf_salt_KI(i);
     x_water_KI(i) = (mf_water_KI(i) / MWw) / ((mf_water_KI(i) / MWw) + (mf_salt_KI(i) / MW_KI));
 end
@@ -285,7 +285,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Water Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10)
 xlim([0.2 1.0]) % Adjusted xlim since these salts are mostly soluble/high aw
-ylim([0.9 2.5])
+ylim([0.6 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 fig = gcf;
@@ -325,7 +325,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Water Activity Coefficient vs Relative Humidity', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10)
 xlim([50 100]) % Adjusted xlim to include all data ranges
-ylim([0.9 2.0])
+ylim([0.6 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 fig = gcf;

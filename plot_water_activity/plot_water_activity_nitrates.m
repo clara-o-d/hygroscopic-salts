@@ -13,10 +13,10 @@ MWw = 18.015;
 %% 1. NaNO3
 MW_NaNO3 = 85.00;
 % Fit valid: [0.9701, 0.9996] (from calculate_mf_NaNO3_)
-RH_NaNO3 = linspace(0.711, 0.999, 100); 
+RH_NaNO3 = linspace(0.9701, 0.999, 100); 
 
 for i = 1:length(RH_NaNO3)
-    mf_salt_NaNO3(i) = calculate_mf_NaNO3_(RH_NaNO3(i));
+    mf_salt_NaNO3(i) = calculate_mf_NaNO3(RH_NaNO3(i));
     mf_water_NaNO3(i) = 1 - mf_salt_NaNO3(i);
     x_water_NaNO3(i) = (mf_water_NaNO3(i) / MWw) / ...
         ((mf_water_NaNO3(i) / MWw) + (mf_salt_NaNO3(i) / MW_NaNO3));
@@ -28,7 +28,7 @@ MW_AgNO3 = 169.87;
 RH_AgNO3 = linspace(0.897, 0.985, 100);
 
 for i = 1:length(RH_AgNO3)
-    mf_salt_AgNO3(i) = calculate_mf_AgNO3_(RH_AgNO3(i));
+    mf_salt_AgNO3(i) = calculate_mf_AgNO3(RH_AgNO3(i));
     mf_water_AgNO3(i) = 1 - mf_salt_AgNO3(i);
     x_water_AgNO3(i) = (mf_water_AgNO3(i) / MWw) / ...
         ((mf_water_AgNO3(i) / MWw) + (mf_salt_AgNO3(i) / MW_AgNO3));
@@ -76,7 +76,7 @@ MW_BaNO3 = 261.34;
 RH_BaNO3 = linspace(0.986, 0.995, 100);
 
 for i = 1:length(RH_BaNO3)
-    mf_salt_BaNO3(i) = calculate_mf_BaNO3(RH_BaNO3(i));
+    mf_salt_BaNO3(i) = calculate_mf_BaNO32(RH_BaNO3(i));
     mf_water_BaNO3(i) = 1 - mf_salt_BaNO3(i);
     x_water_BaNO3(i) = (mf_water_BaNO3(i) / MWw) / ...
         ((mf_water_BaNO3(i) / MWw) + (mf_salt_BaNO3(i) / MW_BaNO3));
@@ -88,7 +88,7 @@ MW_CaNO3 = 164.09;
 RH_CaNO3 = linspace(0.647, 0.995, 100);
 
 for i = 1:length(RH_CaNO3)
-    mf_salt_CaNO3(i) = calculate_mf_CaNO3(RH_CaNO3(i));
+    mf_salt_CaNO3(i) = calculate_mf_CaNO32(RH_CaNO3(i));
     mf_water_CaNO3(i) = 1 - mf_salt_CaNO3(i);
     x_water_CaNO3(i) = (mf_water_CaNO3(i) / MWw) / ...
         ((mf_water_CaNO3(i) / MWw) + (mf_salt_CaNO3(i) / MW_CaNO3));
@@ -159,7 +159,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Nitrate Solutions: Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 2)
 xlim([0.7 1.0]) % Nitrates have wider range than sulfates
-ylim([0.9 1.5])
+ylim([0.7 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
@@ -188,7 +188,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Nitrate Solutions: Activity Coefficient vs RH', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 2)
 xlim([60 100]) % Nitrates have wider RH range
-ylim([0.9 1.5])
+ylim([0.7 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 

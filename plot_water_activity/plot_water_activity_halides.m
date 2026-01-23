@@ -243,7 +243,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Halide Solutions: Activity Coefficient vs Mole Fraction', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 2)
 xlim([0.6 1.0]) % Halides have wide range
-ylim([0.9 1.6])
+ylim([0.6 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
@@ -278,7 +278,7 @@ ylabel('Water Activity Coefficient (\gamma_w)', 'FontSize', 14, 'FontWeight', 'b
 title('Halide Solutions: Activity Coefficient vs RH', 'FontSize', 16, 'FontWeight', 'bold')
 legend('Location', 'northwest', 'FontSize', 10, 'NumColumns', 2)
 xlim([55 100]) % Halides have wide RH range
-ylim([0.9 1.6])
+ylim([0.6 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
