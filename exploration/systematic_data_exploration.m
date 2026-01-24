@@ -569,7 +569,7 @@ savefig(fullfile(filepath, '..', 'figures', 'exploration_charge_density_analysis
 %% ANALYSIS 4: Ionic Radius Trends
 write_output('=== Analysis 4: Ionic Radius Trends ===\n');
 
-% Part A: Same anion, different cations (Varying Cation Series)
+% --- Part A: Same anion, different cations (Varying Cation Series) ---
 halide_series = {
     {'LiCl', 'NaCl', 'KCl', 'RbCl', 'CsCl', 'NH4Cl'}, 'Chlorides (Cl^-)';
     {'LiBr', 'NaBr', 'KBr', 'CsBr'}, 'Bromides (Br^-)';
@@ -580,7 +580,6 @@ halide_series = {
 };
 
 figure('Position', [100, 100, 1600, 900]);
-
 for series_idx = 1:size(halide_series, 1)
     subplot(2, 3, series_idx);
     hold on; grid on; box on;
@@ -618,13 +617,13 @@ for series_idx = 1:size(halide_series, 1)
     grid on;
     set(gca, 'FontSize', 10);
 end
-
 sgtitle('Activity Coefficient Trends: Cation Size Effects (Constant Anion)', ...
         'FontSize', 14, 'FontWeight', 'bold');
 saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_ionic_radius_varying_cation.png'));
 savefig(fullfile(filepath, '..', 'figures', 'exploration_ionic_radius_varying_cation.fig'));
 
-% Part B: Same cation, different anions (Varying Anion Series)
+
+% --- Part B: Same cation, different anions (Varying Anion Series) ---
 cation_series = {
     {'LiCl', 'LiBr', 'LiI', 'LiNO3', 'LiOH', 'LiClO4'}, 'Lithium Salts (Li^+)';
     {'NaCl', 'NaBr', 'NaI', 'NaNO3', 'NaOH', 'NaClO4'}, 'Sodium Salts (Na^+)';
@@ -639,9 +638,7 @@ cation_series = {
 n_series = size(cation_series, 1);
 n_cols_b = 3;
 n_rows_b = ceil(n_series / n_cols_b);
-
 figure('Position', [100, 100, 1600, n_rows_b * 300]);
-
 for series_idx = 1:n_series
     subplot(n_rows_b, n_cols_b, series_idx);
     hold on; grid on; box on;
@@ -679,24 +676,26 @@ for series_idx = 1:n_series
     grid on;
     set(gca, 'FontSize', 10);
 end
-
 sgtitle('Activity Coefficient Trends: Anion Size Effects (Constant Cation)', ...
         'FontSize', 14, 'FontWeight', 'bold');
 saveas(gcf, fullfile(filepath, '..', 'figures', 'exploration_ionic_radius_varying_anion.png'));
 savefig(fullfile(filepath, '..', 'figures', 'exploration_ionic_radius_varying_anion.fig'));
 
-% Part C: Comparative analysis - cation vs anion radius effects
-figure('Position', [100, 100, 1400, 500]);
+
+% --- Part C: Comparative analysis - Correlations & Slopes ---
+figure('Position', [100, 100, 1600, 900]); % Increased height for 2 rows
+
+% -------------------------
+% Row 1: Mean Gamma Correlations
+% -------------------------
 
 % Plot 1: Mean gamma vs cation radius (for halides)
-subplot(1, 3, 1);
+subplot(2, 3, 1);
 hold on; grid on; box on;
-
 cat_radii = [];
 mean_gammas = [];
 salt_labels_cat = {};
 anion_types = {};
-
 for i = 1:length(salt_analysis)
     % Only consider simple halides (1:1)
     if strcmp(salt_analysis(i).category, 'endothermic_halide') || ...
@@ -712,18 +711,15 @@ for i = 1:length(salt_analysis)
         end
     end
 end
-
 % Color by anion type
 unique_anions = unique(anion_types);
 anion_colors = get_distinguishable_colors(length(unique_anions));
-
 for a = 1:length(unique_anions)
     anion_mask = strcmp(anion_types, unique_anions{a});
     scatter(cat_radii(anion_mask), mean_gammas(anion_mask), 120, ...
             anion_colors(a, :), 'filled', 'MarkerEdgeColor', 'k', ...
             'DisplayName', [unique_anions{a} '^-']);
 end
-
 xlabel('Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 ylabel('Mean \gamma_w', 'FontWeight', 'bold', 'FontSize', 11);
 title('Cation Size Effect (1:1 Halides)', 'FontWeight', 'bold');
@@ -731,14 +727,12 @@ legend('Location', 'best', 'FontSize', 9);
 grid on;
 
 % Plot 2: Mean gamma vs anion radius
-subplot(1, 3, 2);
+subplot(2, 3, 2);
 hold on; grid on; box on;
-
 an_radii = [];
 mean_gammas_an = [];
 salt_labels_an = {};
 cation_types = {};
-
 for i = 1:length(salt_analysis)
     if strcmp(salt_analysis(i).category, 'endothermic_halide') || ...
        strcmp(salt_analysis(i).category, 'exothermic_halide')
@@ -753,18 +747,15 @@ for i = 1:length(salt_analysis)
         end
     end
 end
-
 % Color by cation type
 unique_cations = unique(cation_types);
 cation_colors = get_distinguishable_colors(length(unique_cations));
-
 for c = 1:length(unique_cations)
     cation_mask = strcmp(cation_types, unique_cations{c});
     scatter(an_radii(cation_mask), mean_gammas_an(cation_mask), 120, ...
             cation_colors(c, :), 'filled', 'MarkerEdgeColor', 'k', ...
             'DisplayName', [unique_cations{c} '^+']);
 end
-
 xlabel('Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 ylabel('Mean \gamma_w', 'FontWeight', 'bold', 'FontSize', 11);
 title('Anion Size Effect (1:1 Halides)', 'FontWeight', 'bold');
@@ -772,9 +763,8 @@ legend('Location', 'best', 'FontSize', 9);
 grid on;
 
 % Plot 3: Combined - sum of ionic radii
-subplot(1, 3, 3);
+subplot(2, 3, 3);
 hold on; grid on; box on;
-
 for i = 1:length(salt_analysis)
     if strcmp(salt_analysis(i).category, 'endothermic_halide') || ...
        strcmp(salt_analysis(i).category, 'exothermic_halide')
@@ -806,17 +796,115 @@ for i = 1:length(salt_analysis)
         end
     end
 end
-
 % Add dummy points for legend
 scatter(NaN, NaN, 120, [0.8, 0.2, 0.2], 'filled', 'o', 'MarkerEdgeColor', 'k', ...
         'DisplayName', 'Exothermic');
 scatter(NaN, NaN, 120, [0.2, 0.2, 0.8], 'filled', 's', 'MarkerEdgeColor', 'k', ...
         'DisplayName', 'Endothermic');
-
 xlabel('Sum of Ionic Radii (r_{cat} + r_{an}, pm)', 'FontWeight', 'bold', 'FontSize', 11);
 ylabel('Mean \gamma_w', 'FontWeight', 'bold', 'FontSize', 11);
 title('Total Ionic Size Effect', 'FontWeight', 'bold');
 legend('Location', 'best', 'FontSize', 9);
+grid on;
+
+% -------------------------
+% Row 2: Slope (Sensitivity) Trends
+% -------------------------
+
+% Plot 4: Slope vs Cation Radius (grouped by Anion Series)
+subplot(2, 3, 4);
+hold on; grid on; box on;
+halide_colors = get_distinguishable_colors(size(halide_series, 1));
+
+for series_idx = 1:size(halide_series, 1)
+    series_salts = halide_series{series_idx, 1};
+    series_name_full = halide_series{series_idx, 2};
+    % Extract simplified name for legend (e.g., "Chlorides")
+    series_name_parts = split(series_name_full, '(');
+    series_label = strtrim(series_name_parts{1});
+    
+    radii_vec = [];
+    slopes_vec = [];
+    
+    for s = 1:length(series_salts)
+        salt_name = series_salts{s};
+        idx = find(strcmp({salt_analysis.name}, salt_name));
+        
+        if ~isempty(idx) && ~isempty(salt_analysis(idx).molality) && length(salt_analysis(idx).molality) > 1
+             if ~isnan(salt_analysis(idx).cat_radius)
+                 % Calculate linear slope (dGamma/dMolality approx)
+                 p = polyfit(salt_analysis(idx).molality, salt_analysis(idx).gamma, 1);
+                 slope_val = p(1);
+                 
+                 radii_vec(end+1) = salt_analysis(idx).cat_radius;
+                 slopes_vec(end+1) = slope_val;
+             end
+        end
+    end
+    
+    if ~isempty(radii_vec)
+        % Sort by radius for cleaner line plotting
+        [radii_vec, sort_i] = sort(radii_vec);
+        slopes_vec = slopes_vec(sort_i);
+        
+        plot(radii_vec, slopes_vec, 'o-', 'LineWidth', 2, 'MarkerSize', 8, ...
+             'Color', halide_colors(series_idx, :), ...
+             'MarkerFaceColor', halide_colors(series_idx, :), ...
+             'DisplayName', series_label);
+    end
+end
+xlabel('Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
+ylabel('Slope (d\gamma_w / dm)', 'FontWeight', 'bold', 'FontSize', 11);
+title('Sensitivity: Slope vs Cation Radius', 'FontWeight', 'bold');
+legend('Location', 'best', 'FontSize', 8);
+grid on;
+
+% Plot 5: Slope vs Anion Radius (grouped by Cation Series)
+subplot(2, 3, 5);
+hold on; grid on; box on;
+cation_series_colors = get_distinguishable_colors(size(cation_series, 1));
+
+for series_idx = 1:size(cation_series, 1)
+    series_salts = cation_series{series_idx, 1};
+    series_name_full = cation_series{series_idx, 2};
+    % Extract simplified name for legend
+    series_name_parts = split(series_name_full, '(');
+    series_label = strtrim(series_name_parts{1});
+    
+    radii_vec = [];
+    slopes_vec = [];
+    
+    for s = 1:length(series_salts)
+        salt_name = series_salts{s};
+        idx = find(strcmp({salt_analysis.name}, salt_name));
+        
+        if ~isempty(idx) && ~isempty(salt_analysis(idx).molality) && length(salt_analysis(idx).molality) > 1
+             if ~isnan(salt_analysis(idx).an_radius)
+                 % Calculate linear slope (dGamma/dMolality approx)
+                 p = polyfit(salt_analysis(idx).molality, salt_analysis(idx).gamma, 1);
+                 slope_val = p(1);
+                 
+                 radii_vec(end+1) = salt_analysis(idx).an_radius;
+                 slopes_vec(end+1) = slope_val;
+             end
+        end
+    end
+    
+    if ~isempty(radii_vec)
+        % Sort by radius for cleaner line plotting
+        [radii_vec, sort_i] = sort(radii_vec);
+        slopes_vec = slopes_vec(sort_i);
+        
+        plot(radii_vec, slopes_vec, 's-', 'LineWidth', 2, 'MarkerSize', 8, ...
+             'Color', cation_series_colors(series_idx, :), ...
+             'MarkerFaceColor', cation_series_colors(series_idx, :), ...
+             'DisplayName', series_label);
+    end
+end
+xlabel('Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
+ylabel('Slope (d\gamma_w / dm)', 'FontWeight', 'bold', 'FontSize', 11);
+title('Sensitivity: Slope vs Anion Radius', 'FontWeight', 'bold');
+legend('Location', 'best', 'FontSize', 8);
 grid on;
 
 sgtitle('Ionic Radius Correlation Analysis', 'FontSize', 14, 'FontWeight', 'bold');
