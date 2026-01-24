@@ -2,7 +2,7 @@
 ========================================
 SYSTEMATIC WATER ACTIVITY DATA EXPLORATION
 ========================================
-Date: 23-Jan-2026 18:22:16
+Date: 24-Jan-2026 11:40:43
 ========================================
 
 Loading data...
@@ -146,9 +146,9 @@ Feature                                           r
 ----------------------------------------------------
 Anion Charge                                    NaN
 ΔH_{soln} (kJ/mol)                           0.7326
-Total Ion Number                            -0.5952
-Cation Charge                               -0.5952
 Ionic Strength Factor                       -0.5952
+Cation Charge                               -0.5952
+Total Ion Number                            -0.5952
 Mean Charge Density (e/pm^3)                -0.4157
 Cation Charge Density (e/pm^3)              -0.4088
 Mean Radius (pm)                             0.3565
