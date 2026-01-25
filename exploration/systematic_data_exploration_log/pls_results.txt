@@ -1,0 +1,89 @@
+Partial Least Squares Regression Results
+=========================================
+
+Dataset: ../../data/baseline_numeric_only.csv
+Target: ln_gamma_at_90RH
+Samples: 33
+Features: 29
+PLS Components: 10
+
+Model Performance:
+------------------
+R² = 0.5323
+RMSE = 0.0184
+MAE = 0.0123
+
+Variable Importance in Projection (VIP):
+----------------------------------------
+Feature                                             VIP Score
+--------------------------------------------------------------
+cation_1_diffusion_coefficient                         1.0468 *
+C_MX_phi_original                                      0.8663
+anion_1_viscosity_jones_dole                           0.7552
+cation_1_molecular_weight                              0.7459
+anion_1_delta_G_hydration                              0.7124
+molecule_n_elements                                    0.6911
+cation_1_n_atoms                                       0.6738
+anion_1_molecular_weight                               0.6553
+anion_1_n_atoms                                        0.6379
+std_dev_simplified                                     0.6379
+anion_1_n_elements                                     0.6191
+B_MX_2_original                                        0.6177
+max_molality_simplified                                0.5799
+std_dev_original                                       0.5780
+cation_1_radius_vdw                                    0.5656
+anion_1_radius_vdw                                     0.5570
+r_M_angstrom                                           0.5474
+anion_1_radius_hydrated                                0.5273
+anion_type_numeric                                     0.5037
+anion_1_diffusion_coefficient                          0.4678
+electrolyte_type_numeric                               0.4418
+cation_1_delta_G_hydration                             0.4104
+B_MX_0_original                                        0.4045
+max_molality_original                                  0.4023
+r_X_angstrom                                           0.4006
+B_MX_1_original                                        0.3513
+cation_type_numeric                                    0.3109
+cation_1_viscosity_jones_dole                          0.2937
+cation_1_radius_hydrated                               0.2696
+
+* VIP > 1.0 indicates important features
+
+
+Predictions:
+------------
+    Sample          Actual       Predicted        Residual
+---------------------------------------------------------
+         1        0.107857        0.040903        0.066954
+         2        0.019472        0.011302        0.008169
+         3        0.007115        0.017209       -0.010094
+         4        0.007115        0.017209       -0.010094
+         5       -0.027945        0.002910       -0.030855
+         6       -0.024900       -0.021923       -0.002977
+         7        0.000948       -0.008523        0.009471
+         8        0.000904       -0.001672        0.002576
+         9       -0.022233       -0.033590        0.011357
+        10       -0.025445       -0.030741        0.005295
+        11        0.013553        0.010520        0.003033
+        12       -0.037439       -0.031522       -0.005917
+        13       -0.016557        0.020448       -0.037004
+        14        0.004698        0.004327        0.000372
+        15       -0.018894       -0.021478        0.002584
+        16       -0.008413       -0.011666        0.003253
+        17       -0.014522        0.021810       -0.036331
+        18       -0.018108       -0.031511        0.013403
+        19        0.001863        0.003045       -0.001182
+        20       -0.000562        0.007311       -0.007873
+        21        0.006876        0.017274       -0.010399
+        22        0.043701        0.026140        0.017561
+        23        0.003965        0.008677       -0.004713
+        24       -0.008605       -0.014805        0.006200
+        25       -0.027269       -0.009221       -0.018048
+        26        0.007998       -0.024159        0.032157
+        27       -0.030552       -0.017672       -0.012880
+        28       -0.003837       -0.006568        0.002731
+        29        0.001467        0.004472       -0.003005
+        30       -0.009549       -0.017402        0.007852
+        31        0.043893        0.033897        0.009996
+        32       -0.026886       -0.018020       -0.008866
+        33        0.003955        0.006683       -0.002728

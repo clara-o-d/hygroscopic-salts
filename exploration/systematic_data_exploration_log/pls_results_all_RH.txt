@@ -1,0 +1,171 @@
+Partial Least Squares Regression Results
+Multi-RH Analysis
+=========================================
+
+Dataset: ../../data/baseline_numeric_only.csv
+
+Summary Across RH Levels:
+-------------------------
+RH Level      Samples   Features         R²       RMSE        MAE
+--------------------------------------------------------------
+90%                31         22     0.4140     0.0210     0.0143
+70%                13         22     0.8315     0.0131     0.0112
+
+
+=========================================
+   DETAILED RESULTS FOR 90% RH
+=========================================
+
+Samples: 31
+Features: 22
+Components: 7
+
+Model Performance:
+  R² = 0.4140
+  RMSE = 0.0210
+  MAE = 0.0143
+
+Component Variance Explained:
+Component       Y Var (%%)    Y Cumul (%%)
+-------------------------------------------
+1                     5.61            5.61
+2                     2.36            7.97
+3                     0.17            8.14
+4                    20.72           28.86
+5                     0.46           29.32
+6                     1.90           31.22
+7                    10.18           41.40
+
+
+Variable Importance (VIP > 1.0):
+Feature                                        VIP Score
+----------------------------------------------------------
+C_MX_phi_original                                 1.1689
+
+
+Top Features per Component:
+
+Component 1 (5.6% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  cation_1_radius_hydrated                           -0.3565      -0.3565
+  cation_1_viscosity_jones_dole                      -0.3537      -0.3537
+  B_MX_0_original                                    -0.3499      -0.3499
+  cation_1_delta_G_hydration                          0.3431       0.3431
+  B_MX_1_original                                    -0.3392      -0.3392
+
+Component 2 (2.4% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  anion_1_radius_hydrated                             0.4839       0.4839
+  r_X_angstrom                                        0.4237       0.4237
+  anion_1_diffusion_coefficient                      -0.3850      -0.3850
+  anion_1_delta_G_hydration                          -0.3319      -0.3319
+  anion_1_n_atoms                                     0.3306       0.3306
+
+Component 3 (0.2% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  anion_type_numeric                                  0.4259       0.4259
+  anion_1_viscosity_jones_dole                       -0.3957      -0.3957
+  r_M_angstrom                                        0.3876       0.3876
+  cation_1_molecular_weight                           0.3622       0.3622
+  anion_1_delta_G_hydration                           0.3016       0.3016
+
+Component 4 (20.7% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  cation_1_molecular_weight                           0.4224       0.4224
+  r_M_angstrom                                        0.3958       0.3958
+  anion_1_viscosity_jones_dole                        0.3941       0.3941
+  anion_1_delta_G_hydration                          -0.3507      -0.3507
+  anion_1_molecular_weight                           -0.2936      -0.2936
+
+Component 5 (0.5% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  cation_1_diffusion_coefficient                     -0.5144      -0.5144
+  anion_1_molecular_weight                            0.4131       0.4131
+  anion_type_numeric                                 -0.3521      -0.3521
+  anion_1_diffusion_coefficient                       0.3046       0.3046
+  cation_1_n_atoms                                   -0.2681      -0.2681
+
+
+=========================================
+   DETAILED RESULTS FOR 70% RH
+=========================================
+
+Samples: 13
+Features: 22
+Components: 7
+
+Model Performance:
+  R² = 0.8315
+  RMSE = 0.0131
+  MAE = 0.0112
+
+Component Variance Explained:
+Component       Y Var (%%)    Y Cumul (%%)
+-------------------------------------------
+1                    19.83           19.83
+2                     0.46           20.30
+3                     9.15           29.45
+4                     2.71           32.16
+5                    49.92           82.08
+6                     1.05           83.13
+7                     0.02           83.15
+
+
+Variable Importance (VIP > 1.0):
+Feature                                        VIP Score
+----------------------------------------------------------
+C_MX_phi_original                                 1.4305
+cation_type_numeric                               1.0770
+
+
+Top Features per Component:
+
+Component 1 (19.8% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  B_MX_1_original                                     0.3516       0.3516
+  cation_1_radius_hydrated                            0.3496       0.3496
+  electrolyte_type_numeric                            0.3481       0.3481
+  cation_1_viscosity_jones_dole                       0.3453       0.3453
+  B_MX_0_original                                     0.3365       0.3365
+
+Component 2 (0.5% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  anion_1_molecular_weight                            0.4079       0.4079
+  anion_1_viscosity_jones_dole                       -0.3994      -0.3994
+  anion_1_delta_G_hydration                           0.3986       0.3986
+  r_X_angstrom                                        0.3956       0.3956
+  anion_1_radius_hydrated                            -0.2924      -0.2924
+
+Component 3 (9.2% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  anion_1_diffusion_coefficient                       0.5931       0.5931
+  anion_1_radius_hydrated                            -0.4768      -0.4768
+  C_MX_phi_original                                  -0.2676      -0.2676
+  r_X_angstrom                                       -0.2612      -0.2612
+  anion_1_delta_G_hydration                          -0.2453      -0.2453
+
+Component 4 (2.7% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  r_M_angstrom                                       -0.6041      -0.6041
+  cation_1_diffusion_coefficient                      0.4054       0.4054
+  cation_type_numeric                                -0.3595      -0.3595
+  C_MX_phi_original                                  -0.2852      -0.2852
+  anion_1_radius_hydrated                            -0.2551      -0.2551
+
+Component 5 (49.9% Y variance):
+  Feature                                            Loading       Weight
+  ------------------------------------------------------------------------
+  C_MX_phi_original                                  -0.6720      -0.6720
+  cation_type_numeric                                 0.4987       0.4987
+  cation_1_molecular_weight                           0.3182       0.3182
+  cation_1_diffusion_coefficient                      0.2271       0.2271
+  anion_1_diffusion_coefficient                      -0.2014      -0.2014
