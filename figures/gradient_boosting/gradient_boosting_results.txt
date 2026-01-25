@@ -1,0 +1,79 @@
+================================================================
+   GRADIENT BOOSTING RESULTS: ln(gamma) at 90% RH
+================================================================
+
+Date: 25-Jan-2026 13:50:25
+
+Data Summary:
+  - Data file: ../../../data/baseline_numeric_only.csv
+  - Total samples: 108
+  - Features: 22
+  - Training samples: 86
+  - Test samples: 22
+
+Model Hyperparameters:
+  - Number of trees: 100
+  - Learning rate: 0.100
+  - Max tree depth: 4
+  - Min leaf size: 5
+  - Subsample ratio: 0.80
+
+Performance Metrics:
+
+Training Set:
+  - RMSE: 0.011822
+  - MAE:  0.006024
+  - R²:   0.398670
+
+Test Set:
+  - RMSE: 0.014595
+  - MAE:  0.009566
+  - R²:   -0.517327
+
+Top 20 Feature Importances:
+   1. cation_1_molecular_weight                0.259182
+   2. B_MX_0_original                          0.236783
+   3. r_M_angstrom                             0.080907
+   4. max_molality_original                    0.077014
+   5. C_MX_phi_original                        0.071783
+   6. anion_1_n_atoms                          0.070452
+   7. cation_1_radius_hydrated                 0.028608
+   8. anion_1_diffusion_coefficient            0.028218
+   9. cation_1_diffusion_coefficient           0.026163
+  10. electrolyte_type_numeric                 0.025224
+  11. anion_1_viscosity_jones_dole             0.023790
+  12. B_MX_1_original                          0.023291
+  13. anion_1_delta_G_hydration                0.022039
+  14. anion_1_molecular_weight                 0.020409
+  15. cation_1_delta_G_hydration               0.006136
+  16. r_X_angstrom                             0.000000
+  17. anion_1_radius_hydrated                  0.000000
+  18. cation_1_n_atoms                         0.000000
+  19. cation_1_viscosity_jones_dole            0.000000
+  20. B_MX_2_original                          0.000000
+
+Test Set Predictions:
+Electrolyte                           Observed       Predicted        Residual
+--------------------------------------------------------------------------------
+KNO2                                  0.000000        0.008150       -0.008150
+CuCl2                                 0.000000       -0.003487        0.003487
+ZnCl2                                 0.043893       -0.009344        0.053237
+Zn(ClO4)2                             0.000000        0.001811       -0.001811
+Cu(NO3)2                              0.000000        0.002510       -0.002510
+ZnI2                                 -0.026886       -0.008207       -0.018679
+NaHCO3                                0.000000       -0.001670        0.001670
+NaBrO3                                0.000000        0.009424       -0.009424
+CoI2                                  0.000000       -0.004585        0.004585
+CrCl3                                 0.000000       -0.008373        0.008373
+KOH                                   0.000000        0.003517       -0.003517
+KSCN                                  0.000000        0.005370       -0.005370
+(NH4)2SO4                             0.000000        0.005853       -0.005853
+CoCl2                                 0.000000       -0.005722        0.005722
+FeCl2                                 0.000000       -0.005722        0.005722
+NH4Cl                                 0.001863       -0.009355        0.011218
+HBr                                   0.000000       -0.008218        0.008218
+SrCl2                                 0.001467       -0.005086        0.006554
+Th(NO3)4                              0.000000        0.004743       -0.004743
+RbF                                   0.000000       -0.001928        0.001928
+LiClO4                                0.013553       -0.010826        0.024379
+CsBr                                  0.019472        0.004160        0.015312

@@ -1,0 +1,28 @@
+=== Mixed-Effects Model Summary ===
+
+Model: ln(aw_ij) = f(m_ij) + u_cation(i) + v_anion(i) + e_ij
+
+Data:
+  Total observations: 4800
+  Unique salts: 48
+  Unique cations: 16
+  Unique anions: 6
+
+Model Performance:
+  RMSE: NaN
+  R²: NaN
+
+Variance Decomposition:
+  Total variance: 0.1173
+  Fixed effect (concentration): 0.1117 (95.2%)
+  Random effect (cation): NaN (NaN%)
+  Random effect (anion): NaN (NaN%)
+  Residual: NaN (NaN%)
+
+Cation:Anion variance ratio: NaN
+
+Cross-Validation Results:
+  Mean RMSE: NaN ± NaN
+  Mean R²: NaN ± NaN
+  Median RMSE: NaN
+  Median R²: NaN
