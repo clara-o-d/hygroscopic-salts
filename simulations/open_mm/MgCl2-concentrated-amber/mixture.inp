@@ -1,0 +1,22 @@
+# Water + MgCl2 mixture
+tolerance 2.0
+filetype pdb
+output mixture_raw.pdb
+
+# Water
+structure water.pdb
+  number 200
+  inside box 0. 0. 0. 40. 40. 40.
+end structure
+
+# Magnesium
+structure MG.pdb
+  number 300
+  inside box 0. 0. 0. 40. 40. 40.
+end structure
+
+# Chloride
+structure CLA.pdb
+  number 600
+  inside box 0. 0. 0. 40. 40. 40.
+end structure
