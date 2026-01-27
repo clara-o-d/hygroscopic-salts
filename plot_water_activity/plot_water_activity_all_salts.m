@@ -275,6 +275,64 @@ for d = 1:length(definitions)
     % Save
     filename = sprintf('Activity_Coefficient%s_vs_RH', file_suffix);
     print(fullfile(fig_out_dir, filename), '-dpng', '-r600')
+
+    %% --- Extra Plot: Gamma @ 90% vs Lower Bound (DRH Estimate) ---
+    % Target RH for comparison
+    target_RH = 0.90;
+    
+    figure('Position', [200, 200, 900, 700]);
+    hold on; grid on; box on;
+    
+    % Arrays to store valid points for correlation line (optional)
+    x_vals = [];
+    y_vals = [];
+    
+    for s = 1:num_salts
+        salt_name = salt_names{s};
+        data = all_salts_data.(salt_name);
+        
+        % 1. Get Lower Bound RH (The minimum RH used for this salt)
+        rh_lower_bound = min(data.RH);
+        
+        % 2. Interpolate Gamma_w (Ionic) at exactly 90% RH
+        % We use 'linear' interpolation. Extrapolation is turned off (returns NaN)
+        % to avoid plotting salts that aren't dissolved at 90% (e.g. K2SO4 starts at 97%)
+        gamma_at_90 = interp1(data.RH, data.gamma_w_ion, target_RH, 'linear', NaN);
+        
+        % 3. Plot only if valid (Salt is dissolved at 90% RH)
+        if ~isnan(gamma_at_90)
+            % Scatter point
+            scatter(rh_lower_bound * 100, gamma_at_90, 80, colors(s,:), 'filled', ...
+                'MarkerEdgeColor', 'k', 'DisplayName', data.display_name);
+            
+            % Text Label (offset slightly for readability)
+            text(rh_lower_bound * 100, gamma_at_90 + 0.002, ['  ' data.display_name], ...
+                 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold', 'Interpreter', 'none');
+                 
+            % Collect for simple stats/reference
+            x_vals = [x_vals, rh_lower_bound * 100];
+            y_vals = [y_vals, gamma_at_90];
+        end
+    end
+    
+    % Formatting
+    xlabel('Lower Bound RH / Approx. DRH (%)', 'FontSize', 12, 'FontWeight', 'bold');
+    ylabel(['Water Activity Coeff. (\gamma_{w,ion}) at ' num2str(target_RH*100) '% RH'], ...
+        'FontSize', 12, 'FontWeight', 'bold');
+    title(['Screening: Non-Ideality at ' num2str(target_RH*100) '% RH vs. Deliquescence limit'], ...
+        'FontSize', 14, 'FontWeight', 'bold');
+    
+    % Add a reference line for Ideal Behavior
+    yline(1.0, 'k--', 'Ideal (\gamma = 1)', 'LineWidth', 1.5, 'LabelHorizontalAlignment', 'left');
+    
+    % Cosmetic adjustments
+    xlim([0 100]);
+    set(gca, 'FontSize', 12);
+    set(gcf, 'color', 'w');
+    
+    % Save the extra figure
+    print(fullfile(fig_out_dir, 'Gamma90_vs_LowerBoundRH'), '-dpng', '-r600');
+    disp('Extra scatter plot generated: Gamma90_vs_LowerBoundRH');
     
 end
 

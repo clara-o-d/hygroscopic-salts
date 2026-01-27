@@ -2,261 +2,164 @@ close all
 clear
 clc 
 
-% Add calculate_mf and util folders to path
+% --- Setup Paths ---
 [filepath,~,~] = fileparts(mfilename('fullpath'));
-addpath(fullfile(filepath, '..', 'calculate_mf'));
-addpath(fullfile(filepath, '..', 'util'));
+addpath(fullfile(filepath, '..', 'calculate_mf')); % Uncomment if folders exist
+addpath(fullfile(filepath, '..', 'util'));         % Uncomment if folders exist
 
-T = 25; 
-MWw = 18.015;
+% --- Constants ---
+MWw = 18.015; % Molecular weight of water
 
-%% NaCl
-MW_NaCl = 58.443;
-% Fit valid > 0.762 (User req: 73)
-RH_NaCl = linspace(0.765, 0.99, 100);
+% --- Data Input ---
+% Cols: {Name, MW, RH_min, RH_max, FuncName, IsExo, Cation_n, Anion_n}
+salt_data = {
+    % Endothermic salts
+    {'NaCl', 58.443, 0.765, 0.99, 'calculate_mf_NaCl', 0, 1, 1};
+    {'KCl', 74.551, 0.855, 0.99, 'calculate_mf_KCl', 0, 1, 1};
+    {'NH4Cl', 53.491, 0.815, 0.99, 'calculate_mf_NH4Cl', 0, 1, 1};
+    {'CsCl', 168.363, 0.82, 0.99, 'calculate_mf_CsCl', 0, 1, 1};
+    {'NaNO3', 85.00, 0.971, 0.995, 'calculate_mf_NaNO3', 0, 1, 1};
+    {'AgNO3', 169.87, 0.865, 0.985, 'calculate_mf_AgNO3', 0, 1, 1};
+    {'KI', 165.998, 0.97, 0.995, 'calculate_mf_KI', 0, 1, 1};
+    {'LiNO3', 68.95, 0.736, 0.99, 'calculate_mf_LiNO3', 0, 1, 1};
+    % {'NH4NO3', 80.043, 0.118, 0.732, 'calculate_mf_NH4NO3', 0, 1, 1};
+    {'KNO3', 101.10, 0.932, 0.995, 'calculate_mf_KNO3', 0, 1, 1};
+    {'NaClO4', 122.44, 0.778, 0.99, 'calculate_mf_NaClO4', 0, 1, 1};
+    {'KClO3', 122.55, 0.981, 0.9926, 'calculate_mf_KClO3', 0, 1, 1}; 
+    {'NaBr', 102.89, 0.614, 0.9280, 'calculate_mf_NaBr', 0, 1, 1};   
+    {'NaI', 149.89, 0.581, 0.9659, 'calculate_mf_NaI', 0, 1, 1};     
+    {'KBr', 119.00, 0.833, 0.9518, 'calculate_mf_KBr', 0, 1, 1};     
+    {'RbCl', 120.92, 0.743, 0.9517, 'calculate_mf_RbCl', 0, 1, 1};   
+    {'CsBr', 212.81, 0.848, 0.9472, 'calculate_mf_CsBr', 0, 1, 1};   
+    {'CsI', 259.81, 0.913, 0.9614, 'calculate_mf_CsI', 0, 1, 1};     
+    
+    % Exothermic salts
+    {'LiCl', 42.4, 0.12, 0.97, 'calculate_mf_LiCl', 1, 1, 1};
+    {'LiOH', 24, 0.85, 0.97, 'calculate_mf_LiOH', 0, 1, 1};
+    {'NaOH', 40, 0.23, 0.97, 'calculate_mf_NaOH', 0, 1, 1};
+    {'HCl', 36.5, 0.17, 0.97, 'calculate_mf_HCl', 0, 1, 1};
+    {'CaCl2', 111, 0.31, 0.97, 'calculate_mf_CaCl', 1, 1, 2};
+    {'MgCl2', 95.2, 0.33, 0.97, 'calculate_mf_MgCl', 0, 1, 2};
+    {'MgNO3', 148.3, 0.55, 0.9, 'calculate_mf_MgNO3', 0, 1, 2};
+    {'LiBr', 86.85, 0.07, 0.97, 'calculate_mf_LiBr', 0, 1, 1};
+    {'ZnCl2', 136.3, 0.07, 0.97, 'calculate_mf_ZnCl', 0, 1, 2};
+    {'ZnI2', 319.18, 0.25, 0.97, 'calculate_mf_ZnI', 0, 1, 2};
+    {'ZnBr2', 225.2, 0.08, 0.85, 'calculate_mf_ZnBr', 0, 1, 2};
+    {'LiI', 133.85, 0.18, 0.97, 'calculate_mf_LiI', 0, 1, 1};
+    
+    % Sulfates
+    {'Na2SO4', 142.04, 0.9000, 0.9947, 'calculate_mf_Na2SO4', 0, 2, 1}; 
+    {'K2SO4', 174.26, 0.9730, 0.9948, 'calculate_mf_K2SO4', 0, 2, 1};   
+    {'NH42SO4', 132.14, 0.8320, 0.9949, 'calculate_mf_NH42SO4', 0, 2, 1};
+    {'MgSO4', 120.37, 0.9060, 0.9950, 'calculate_mf_MgSO4', 0, 1, 1};   
+    {'MnSO4', 151.00, 0.9200, 0.9951, 'calculate_mf_MnSO4', 0, 1, 1};   
+    {'Li2SO4', 109.94, 0.8540, 0.9946, 'calculate_mf_Li2SO4', 0, 2, 1}; 
+    {'NiSO4', 154.75, 0.9720, 0.9952, 'calculate_mf_NiSO4', 0, 1, 1};   
+    {'CuSO4', 159.61, 0.9760, 0.9953, 'calculate_mf_CuSO4', 0, 1, 1};   
+    {'ZnSO4', 161.44, 0.9390, 0.9952, 'calculate_mf_ZnSO4', 0, 1, 1};   
+    
+    % Nitrates (additional)
+    {'BaNO3', 261.34, 0.9869, 0.9948, 'calculate_mf_BaNO32', 0, 1, 2}; 
+    {'CaNO3', 164.09, 0.6474, 0.9945, 'calculate_mf_CaNO32', 0, 1, 2}; 
+    
+    % Halides (additional)
+    {'CaBr2', 199.89, 0.6405, 0.9530, 'calculate_mf_CaBr2', 0, 1, 2}; 
+    {'CaI2', 293.89, 0.8331, 0.9514, 'calculate_mf_CaI2', 0, 1, 2};   
+    {'SrCl2', 158.53, 0.8069, 0.9768, 'calculate_mf_SrCl2', 0, 1, 2}; 
+    {'SrBr2', 247.43, 0.7786, 0.9561, 'calculate_mf_SrBr2', 0, 1, 2}; 
+    {'SrI2', 341.43, 0.6795, 0.9559, 'calculate_mf_SrI2', 0, 1, 2};   
+    {'BaCl2', 208.23, 0.9385, 0.9721, 'calculate_mf_BaCl2', 0, 1, 2}; 
+    {'BaBr2', 297.14, 0.8231, 0.9577, 'calculate_mf_BaBr2', 0, 1, 2}; 
+    
+    % Chlorates
+    {'LiClO4', 106.39, 0.7785, 0.9869, 'calculate_mf_LiClO4', 0, 1, 1}; 
+};
 
-for i = 1:length(RH_NaCl)
-   U_NaCl_gg(i) = 1/calculate_mf_NaCl(RH_NaCl(i)) - 1;
+% --- Processing Loop ---
+% --- Processing Loop (Corrected) ---
+results = struct();
+
+for i = 1:length(salt_data)
+    % 1. Extract the row first (because salt_data is a cell array of cell arrays)
+    row = salt_data{i}; 
+    
+    % 2. Extract parameters from the row
+    name    = row{1};
+    MW_salt = row{2};
+    rh_min  = row{3};
+    rh_max  = row{4};
+    funcStr = row{5};
+    % stoichiometry: nu = cation + anion count (Cols 7 and 8)
+    nu      = row{7} + row{8}; 
+    
+    % Generate RH vector
+    rh_vec = linspace(rh_min, rh_max, 100);
+    
+    % Get function handle and calculate
+    calc_func = str2func(funcStr);
+    
+    % Safe calculation loop
+    mf_vec = zeros(size(rh_vec));
+    for j = 1:length(rh_vec)
+        try
+            mf_vec(j) = calc_func(rh_vec(j));
+        catch
+            mf_vec(j) = NaN; % Handle errors gracefully
+        end
+    end
+    
+    % Calculate Uptake (g/g)
+    % U_gg = m_water / m_salt = (1/mf) - 1
+    u_gg = (1 ./ mf_vec) - 1;
+    
+    % Calculate Uptake (mol/mol)
+    % U_mm = U_gg * (MW_salt / (nu * MWw))
+    u_mm = u_gg * (MW_salt / (nu * MWw));
+    
+    % Format name for Legend (Regex puts subscripts for numbers)
+    cleanName = regexprep(name, '(\d+)', '_$1');
+    
+    % Store in struct
+    results(i).Name = name;
+    results(i).LegendName = cleanName;
+    results(i).RH = rh_vec;
+    results(i).U_gg = u_gg;
+    results(i).U_mm = u_mm;
 end
-% 1:1 salt -> 2 ions
-U_NaCl_molmol = U_NaCl_gg * (2 * MWw / MW_NaCl)^-1;
-
-%% KCl
-MW_KCl = 74.551;
-% Fit valid > 0.852 (User req: 83)
-RH_KCl = linspace(0.855, 0.99, 100);
-
-for i = 1:length(RH_KCl)
-   U_KCl_gg(i) = 1/calculate_mf_KCl(RH_KCl(i)) - 1;
-end
-U_KCl_molmol = U_KCl_gg * (2 * MWw / MW_KCl)^-1;
-
-%% NH4Cl
-MW_NH4Cl = 53.491;
-% Fit valid > 0.812 (User req: 76)
-RH_NH4Cl = linspace(0.815, 0.99, 100);
-
-for i = 1:length(RH_NH4Cl)
-   U_NH4Cl_gg(i) = 1/calculate_mf_NH4Cl(RH_NH4Cl(i)) - 1;
-end
-U_NH4Cl_molmol = U_NH4Cl_gg * (2 * MWw / MW_NH4Cl)^-1;
-
-%% CsCl
-MW_CsCl = 168.363;
-% Fit valid > 0.817 (User req: 60)
-RH_CsCl = linspace(0.82, 0.99, 100);
-
-for i = 1:length(RH_CsCl)
-   U_CsCl_gg(i) = 1/calculate_mf_CsCl(RH_CsCl(i)) - 1;
-end
-U_CsCl_molmol = U_CsCl_gg * (2 * MWw / MW_CsCl)^-1;
-
-%% NaNO3
-MW_NaNO3 = 84.994;
-% Fit valid > 0.970 (User req: 71) - RESTRICTED TO FIT RANGE
-RH_NaNO3 = linspace(0.971, 0.995, 100);
-
-for i = 1:length(RH_NaNO3)
-   U_NaNO3_gg(i) = 1/calculate_mf_NaNO3(RH_NaNO3(i)) - 1;
-end
-U_NaNO3_molmol = U_NaNO3_gg * (2 * MWw / MW_NaNO3)^-1;
-
-%% AgNO3
-MW_AgNO3 = 169.87;
-% Fit valid > 0.862
-RH_AgNO3 = linspace(0.865, 0.985, 100);
-
-for i = 1:length(RH_AgNO3)
-   U_AgNO3_gg(i) = 1/calculate_mf_AgNO3(RH_AgNO3(i)) - 1;
-end
-U_AgNO3_molmol = U_AgNO3_gg * (2 * MWw / MW_AgNO3)^-1;
-
-%% KI
-MW_KI = 165.998;
-% Fit valid > 0.973 (User req: 65) - RESTRICTED TO FIT RANGE
-RH_KI = linspace(0.975, 0.995, 100);
-
-for i = 1:length(RH_KI)
-   U_KI_gg(i) = 1/calculate_mf_KI(RH_KI(i)) - 1;
-end
-U_KI_molmol = U_KI_gg * (2 * MWw / MW_KI)^-1;
-
-%% LiNO3
-MW_LiNO3 = 68.95;
-% Fit valid > 0.7353
-RH_LiNO3 = linspace(0.736, 0.99, 100);
-
-for i = 1:length(RH_LiNO3)
-   U_LiNO3_gg(i) = 1/calculate_mf_LiNO3(RH_LiNO3(i)) - 1;
-end
-U_LiNO3_molmol = U_LiNO3_gg * (2 * MWw / MW_LiNO3)^-1;
-
-%% NH4NO3
-MW_NH4NO3 = 80.043;
-% Fit valid from 0.118 to 0.732
-RH_NH4NO3 = linspace(0.118, 0.732, 100);
-
-for i = 1:length(RH_NH4NO3)
-   U_NH4NO3_gg(i) = 1/calculate_mf_NH4NO3(RH_NH4NO3(i)) - 1;
-end
-U_NH4NO3_molmol = U_NH4NO3_gg * (2 * MWw / MW_NH4NO3)^-1;
-
-%% KNO3
-MW_KNO3 = 101.10;
-% Fit valid > 0.9315 - RESTRICTED TO FIT RANGE
-RH_KNO3 = linspace(0.932, 0.995, 100);
-
-for i = 1:length(RH_KNO3)
-   U_KNO3_gg(i) = 1/calculate_mf_KNO3(RH_KNO3(i)) - 1;
-end
-U_KNO3_molmol = U_KNO3_gg * (2 * MWw / MW_KNO3)^-1;
-
-%% NaClO4
-MW_NaClO4 = 122.44;
-% Fit valid > 0.7775
-RH_NaClO4 = linspace(0.778, 0.99, 100);
-
-for i = 1:length(RH_NaClO4)
-   U_NaClO4_gg(i) = 1/calculate_mf_NaClO4(RH_NaClO4(i)) - 1;
-end
-U_NaClO4_molmol = U_NaClO4_gg * (2 * MWw / MW_NaClO4)^-1;
-
-%% KClO3
-MW_KClO3 = 122.55;
-% Fit valid > 0.9800 - RESTRICTED TO FIT RANGE
-RH_KClO3 = linspace(0.981, 0.9926, 100);
-
-for i = 1:length(RH_KClO3)
-   U_KClO3_gg(i) = 1/calculate_mf_KClO3(RH_KClO3(i)) - 1;
-end
-U_KClO3_molmol = U_KClO3_gg * (2 * MWw / MW_KClO3)^-1;
-
-%% NaBr
-MW_NaBr = 102.89;
-% Fit valid > 0.6133
-RH_NaBr = linspace(0.614, 0.928, 100);
-
-for i = 1:length(RH_NaBr)
-   U_NaBr_gg(i) = 1/calculate_mf_NaBr(RH_NaBr(i)) - 1;
-end
-U_NaBr_molmol = U_NaBr_gg * (2 * MWw / MW_NaBr)^-1;
-
-%% NaI
-MW_NaI = 149.89;
-% Fit valid > 0.5801
-RH_NaI = linspace(0.581, 0.965, 100);
-
-for i = 1:length(RH_NaI)
-   U_NaI_gg(i) = 1/calculate_mf_NaI(RH_NaI(i)) - 1;
-end
-U_NaI_molmol = U_NaI_gg * (2 * MWw / MW_NaI)^-1;
-
-%% KBr
-MW_KBr = 119.00;
-% Fit valid > 0.8325
-RH_KBr = linspace(0.833, 0.95, 100);
-
-for i = 1:length(RH_KBr)
-   U_KBr_gg(i) = 1/calculate_mf_KBr(RH_KBr(i)) - 1;
-end
-U_KBr_molmol = U_KBr_gg * (2 * MWw / MW_KBr)^-1;
-
-%% RbCl
-MW_RbCl = 120.92;
-% Fit valid > 0.7423
-RH_RbCl = linspace(0.743, 0.95, 100);
-
-for i = 1:length(RH_RbCl)
-   U_RbCl_gg(i) = 1/calculate_mf_RbCl(RH_RbCl(i)) - 1;
-end
-U_RbCl_molmol = U_RbCl_gg * (2 * MWw / MW_RbCl)^-1;
-
-%% CsBr
-MW_CsBr = 212.81;
-% Fit valid > 0.8475
-RH_CsBr = linspace(0.848, 0.945, 100);
-
-for i = 1:length(RH_CsBr)
-   U_CsBr_gg(i) = 1/calculate_mf_CsBr(RH_CsBr(i)) - 1;
-end
-U_CsBr_molmol = U_CsBr_gg * (2 * MWw / MW_CsBr)^-1;
-
-%% CsI
-MW_CsI = 259.81;
-% Fit valid > 0.9124 - RESTRICTED TO FIT RANGE
-RH_CsI = linspace(0.913, 0.96, 100);
-
-for i = 1:length(RH_CsI)
-   U_CsI_gg(i) = 1/calculate_mf_CsI(RH_CsI(i)) - 1;
-end
-U_CsI_molmol = U_CsI_gg * (2 * MWw / MW_CsI)^-1;
-
 
 %% PLOTTING
-
-% --- g/g Uptake ---
-figure('Position', [100, 100, 800, 600]);
+% --- Figure 1: g/g Uptake ---
+fig1 = figure('Position', [100, 100, 800, 600]);
 hold on
-plot(RH_NaCl,  U_NaCl_gg,  'LineWidth', 2, 'DisplayName', 'NaCl')
-plot(RH_KCl,   U_KCl_gg,   'LineWidth', 2, 'DisplayName', 'KCl')
-plot(RH_NH4Cl, U_NH4Cl_gg, 'LineWidth', 2, 'DisplayName', 'NH_4Cl')
-plot(RH_CsCl,  U_CsCl_gg,  'LineWidth', 2, 'DisplayName', 'CsCl')
-plot(RH_NaNO3, U_NaNO3_gg, 'LineWidth', 2, 'DisplayName', 'NaNO_3')
-plot(RH_AgNO3, U_AgNO3_gg, 'LineWidth', 2, 'DisplayName', 'AgNO_3')
-plot(RH_KI,    U_KI_gg,    'LineWidth', 2, 'DisplayName', 'KI')
-plot(RH_LiNO3, U_LiNO3_gg, 'LineWidth', 2, 'DisplayName', 'LiNO_3')
-plot(RH_NH4NO3, U_NH4NO3_gg, 'LineWidth', 2, 'DisplayName', 'NH_4NO_3')
-plot(RH_KNO3,  U_KNO3_gg,  'LineWidth', 2, 'DisplayName', 'KNO_3')
-plot(RH_NaClO4, U_NaClO4_gg, 'LineWidth', 2, 'DisplayName', 'NaClO_4')
-plot(RH_KClO3, U_KClO3_gg, 'LineWidth', 2, 'DisplayName', 'KClO_3')
-plot(RH_NaBr,  U_NaBr_gg,  'LineWidth', 2, 'DisplayName', 'NaBr')
-plot(RH_NaI,   U_NaI_gg,   'LineWidth', 2, 'DisplayName', 'NaI')
-plot(RH_KBr,   U_KBr_gg,   'LineWidth', 2, 'DisplayName', 'KBr')
-plot(RH_RbCl,  U_RbCl_gg,  'LineWidth', 2, 'DisplayName', 'RbCl')
-plot(RH_CsBr,  U_CsBr_gg,  'LineWidth', 2, 'DisplayName', 'CsBr')
-plot(RH_CsI,   U_CsI_gg,   'LineWidth', 2, 'DisplayName', 'CsI')
+for i = 1:length(results)
+    plot(results(i).RH, results(i).U_gg, 'LineWidth', 2, ...
+         'DisplayName', results(i).LegendName);
+end
+xlabel('Relative Humidity (RH)');
+ylabel('Uptake (g/g)');
+title('Salt Water Uptake (Mass Basis)');
+legend('Location', 'bestoutside', 'Interpreter', 'tex', 'NumColumns', 2);
+grid on; set(gcf,'color','w');
+xlim([0, 1]);
 
-xlabel('Relative Humidity (RH)')
-ylabel('Uptake (g/g)')
-title('Endothermic Salts: Water Uptake (Mass Basis)')
-legend('Location', 'best', 'Interpreter', 'tex')
-grid on
-set(gcf,'color','w');
+% Save if needed
+print(fullfile(filepath, '..', 'figures', 'Uptake_All_gg'),'-dpng','-r600');
 
-% Save figure
-print(fullfile(filepath, '..', 'figures', 'Uptake_Endothermic_gg'),'-dpng','-r600')
-
-
-% --- mol/mol Uptake ---
-figure('Position', [150, 150, 800, 600]);
+% --- Figure 2: mol/mol Uptake ---
+fig2 = figure('Position', [150, 150, 800, 600]);
 hold on
-plot(RH_NaCl*100,  U_NaCl_molmol,  'LineWidth', 2, 'DisplayName', 'NaCl')
-plot(RH_KCl*100,   U_KCl_molmol,   'LineWidth', 2, 'DisplayName', 'KCl')
-plot(RH_NH4Cl*100, U_NH4Cl_molmol, 'LineWidth', 2, 'DisplayName', 'NH_4Cl')
-plot(RH_CsCl*100,  U_CsCl_molmol,  'LineWidth', 2, 'DisplayName', 'CsCl')
-plot(RH_NaNO3*100, U_NaNO3_molmol, 'LineWidth', 2, 'DisplayName', 'NaNO_3')
-plot(RH_AgNO3*100, U_AgNO3_molmol, 'LineWidth', 2, 'DisplayName', 'AgNO_3')
-plot(RH_KI*100,    U_KI_molmol,    'LineWidth', 2, 'DisplayName', 'KI')
-plot(RH_LiNO3*100, U_LiNO3_molmol, 'LineWidth', 2, 'DisplayName', 'LiNO_3')
-plot(RH_NH4NO3*100, U_NH4NO3_molmol, 'LineWidth', 2, 'DisplayName', 'NH_4NO_3')
-plot(RH_KNO3*100,  U_KNO3_molmol,  'LineWidth', 2, 'DisplayName', 'KNO_3')
-plot(RH_NaClO4*100, U_NaClO4_molmol, 'LineWidth', 2, 'DisplayName', 'NaClO_4')
-plot(RH_KClO3*100, U_KClO3_molmol, 'LineWidth', 2, 'DisplayName', 'KClO_3')
-plot(RH_NaBr*100,  U_NaBr_molmol,  'LineWidth', 2, 'DisplayName', 'NaBr')
-plot(RH_NaI*100,   U_NaI_molmol,   'LineWidth', 2, 'DisplayName', 'NaI')
-plot(RH_KBr*100,   U_KBr_molmol,   'LineWidth', 2, 'DisplayName', 'KBr')
-plot(RH_RbCl*100,  U_RbCl_molmol,  'LineWidth', 2, 'DisplayName', 'RbCl')
-plot(RH_CsBr*100,  U_CsBr_molmol,  'LineWidth', 2, 'DisplayName', 'CsBr')
-plot(RH_CsI*100,   U_CsI_molmol,   'LineWidth', 2, 'DisplayName', 'CsI')
+for i = 1:length(results)
+    plot(results(i).RH * 100, results(i).U_mm, 'LineWidth', 2, ...
+         'DisplayName', results(i).LegendName);
+end
+xlabel('Relative Humidity (%)');
+ylabel('Uptake (mol water / mol dissociation particle)');
+title('Salt Water Uptake (Molar Basis)');
+legend('Location', 'bestoutside', 'Interpreter', 'tex', 'NumColumns', 2);
+grid on; set(gcf,'color','w');
+xlim([0, 100]);
 
-xlabel('Relative Humidity (%)')
-ylabel('Uptake (mol water / mol dissociation particle)')
-title('Endothermic Salts: Water Uptake (Molar Basis)')
-legend('Location', 'best', 'Interpreter', 'tex')
-grid on
-set(gcf,'color','w');
+% Save if needed
+print(fullfile(filepath, '..', 'figures', 'Uptake_All_molmol'),'-dpng','-r600');
 
-% Save figure
-print(fullfile(filepath, '..', 'figures', 'Uptake_Endothermic_molmol'),'-dpng','-r600')
-
-disp('Endothermic salt plots generated.')
+disp('All salt plots generated successfully.');
