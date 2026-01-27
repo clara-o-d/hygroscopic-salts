@@ -1,0 +1,16 @@
+# Water + MgCl2 crystal
+tolerance 2.0
+filetype pdb
+output mixture_raw.pdb
+
+# MgCl2 crystal (solid)
+structure MgCl2_crystal.pdb
+  number 1
+  fixed 20.0 20.0 20.0  0.0 0.0 0.0
+end structure
+
+# Water
+structure water.pdb
+  number 3000
+  inside box 0. 0. 0. 40. 40. 80.
+end structure
