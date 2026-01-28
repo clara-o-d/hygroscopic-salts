@@ -9,20 +9,21 @@ Data:
   Unique anions: 6
 
 Model Performance:
-  RMSE: NaN
-  R²: NaN
+  RMSE: 0.1292
+  R²: 0.8576
 
 Variance Decomposition:
   Total variance: 0.1173
-  Fixed effect (concentration): 0.1117 (95.2%)
-  Random effect (cation): NaN (NaN%)
-  Random effect (anion): NaN (NaN%)
-  Residual: NaN (NaN%)
+  Fixed effect (concentration): 0.0983 (83.9%)
+  Random effect (cation): 0.0053 (4.5%)
+  Random effect (anion): 0.0006 (0.5%)
+  Residual: 0.0130 (11.1%)
 
-Cation:Anion variance ratio: NaN
+Cation:Anion variance ratio: 9.09
 
 Cross-Validation Results:
-  Mean RMSE: NaN ± NaN
-  Mean R²: NaN ± NaN
-  Median RMSE: NaN
-  Median R²: NaN
+  Mean RMSE: 0.1181 ± 0.1153
+  Mean R²: -2.9548 ± 4.4711
+  Median R²: -0.5450
+  Valid R² values: 48/48
+  Median RMSE: 0.0813

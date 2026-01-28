@@ -17,7 +17,7 @@ clear; clc; close all;
 RH_THRESHOLD = 0.75;  % Target RH for AWH applications
 MIN_POINTS = 5;       % Minimum data points required for fitting
 OUTPUT_DIR = '../../../figures/curve_reduction/';
-DATA_FILE = '../../../data/water_activity_all_salts_combined.csv';
+DATA_FILE = '../../data/water_activity_all_salts_combined.csv';
 
 % Create output directory if it doesn't exist
 if ~exist(OUTPUT_DIR, 'dir')

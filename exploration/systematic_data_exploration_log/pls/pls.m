@@ -5,7 +5,7 @@
 clear all; close all; clc;
 
 %% Load Data
-data_file = '../../data/baseline_numeric_only.csv';
+data_file = '../../../data/baseline_numeric_only.csv';
 fprintf('Loading data from: %s\n', data_file);
 
 % Try MATLAB's readtable first, fall back to manual parsing for Octave
@@ -194,6 +194,12 @@ for rh_idx = 1:length(rh_levels)
     
     fprintf('Using %d PLS components\n', opt_ncomp);
     
+    if has_plsregress
+        fprintf('Algorithm: SIMPLS (via MATLAB plsregress)\n');
+    else
+        fprintf('Algorithm: NIPALS (Octave-compatible)\n');
+    end
+    
     % Run PLS
     if has_plsregress
         % MATLAB path
@@ -293,6 +299,7 @@ for rh_idx = 1:length(rh_levels)
         end
         fprintf('  %-45s %10.4f%s\n', valid_feature_names{sort_idx(i)}, VIP_sorted(i), marker);
     end
+    fprintf('  (* VIP > 1.0 indicates important feature)\n');
     
     % Component breakdown
     fprintf('\n  Component Breakdown:\n');
@@ -318,6 +325,14 @@ for rh_idx = 1:length(rh_levels)
         fprintf('  %-10d %15.2f %15.2f\n', comp, Y_var_explained(comp), Y_cumvar(comp));
     end
     
+    fprintf('\n  How Components Contribute to Y Prediction:\n');
+    fprintf('  %-10s %15s\n', 'Component', 'Y-Loading');
+    fprintf('  %s\n', repmat('-', 1, 28));
+    for comp = 1:opt_ncomp
+        fprintf('  %-10d %15.6f\n', comp, YL(comp));
+    end
+    fprintf('  (Positive: component↑ → Y↑; Negative: component↑ → Y↓)\n');
+    
     % Store results
     results_all.(sprintf('RH_%d', rh)) = struct();
     results_all.(sprintf('RH_%d', rh)).n_samples = n_valid;
@@ -338,6 +353,12 @@ for rh_idx = 1:length(rh_levels)
     results_all.(sprintf('RH_%d', rh)).y = y;
     results_all.(sprintf('RH_%d', rh)).y_pred = y_pred;
     results_all.(sprintf('RH_%d', rh)).opt_ncomp = opt_ncomp;
+    results_all.(sprintf('RH_%d', rh)).algorithm = '';
+    if has_plsregress
+        results_all.(sprintf('RH_%d', rh)).algorithm = 'SIMPLS';
+    else
+        results_all.(sprintf('RH_%d', rh)).algorithm = 'NIPALS';
+    end
 end
 
 %% Summary comparison across RH levels
@@ -404,6 +425,7 @@ for rh_idx = 1:length(rh_levels)
     fprintf(fid, '   DETAILED RESULTS FOR %d%% RH\n', rh);
     fprintf(fid, '=========================================\n\n');
     
+    fprintf(fid, 'Algorithm: %s\n', res.algorithm);
     fprintf(fid, 'Samples: %d\n', res.n_samples);
     fprintf(fid, 'Features: %d\n', res.n_features);
     fprintf(fid, 'Components: %d\n\n', res.opt_ncomp);
@@ -421,6 +443,23 @@ for rh_idx = 1:length(rh_levels)
                 comp, res.Y_var_explained(comp), res.Y_cumvar(comp));
     end
     
+    fprintf(fid, '\n\nHow Components Contribute to Y Prediction:\n');
+    fprintf(fid, '-------------------------------------------\n');
+    fprintf(fid, 'The PLS model predicts Y (ln_gamma) as a linear combination of latent components.\n');
+    fprintf(fid, 'Each component is a weighted combination of the original features.\n\n');
+    fprintf(fid, 'Y-Loadings (Component Contributions to Y):\n');
+    fprintf(fid, '%-10s %15s %25s\n', 'Component', 'Y-Loading', 'Contribution to Y');
+    fprintf(fid, '%s\n', repmat('-', 1, 52));
+    for comp = 1:res.opt_ncomp
+        contribution_desc = sprintf('%.1f%% of Y variance', res.Y_var_explained(comp));
+        fprintf(fid, '%-10d %15.6f %25s\n', comp, res.YL(comp), contribution_desc);
+    end
+    fprintf(fid, '\nInterpretation:\n');
+    fprintf(fid, '  - Y-loadings show the strength and direction of each component''s relationship with Y\n');
+    fprintf(fid, '  - Positive loadings: component increases -> Y increases\n');
+    fprintf(fid, '  - Negative loadings: component increases -> Y decreases\n');
+    fprintf(fid, '  - Larger absolute values indicate stronger contribution to Y prediction\n');
+    
     fprintf(fid, '\n\nVariable Importance (VIP > 1.0):\n');
     fprintf(fid, '%-45s %10s\n', 'Feature', 'VIP Score');
     fprintf(fid, '%s\n', repmat('-', 1, 58));
@@ -433,20 +472,29 @@ for rh_idx = 1:length(rh_levels)
     end
     
     fprintf(fid, '\n\nTop Features per Component:\n');
+    fprintf(fid, 'Note: In SIMPLS algorithm (used by MATLAB plsregress), X-loadings and weights\n');
+    fprintf(fid, '      are identical for single-response PLS due to orthogonal component construction.\n');
+    fprintf(fid, '      - Loadings (P): correlation between features and components\n');
+    fprintf(fid, '      - Weights (W): coefficients to construct components from features (T = X*W)\n');
+    
     for comp = 1:res.opt_ncomp
         fprintf(fid, '\nComponent %d (%.1f%% Y variance):\n', comp, res.Y_var_explained(comp));
         
         comp_loadings = abs(res.XL(:, comp));
         [~, load_idx] = sort(comp_loadings, 'descend');
         
-        fprintf(fid, '  %-45s %12s %12s\n', 'Feature', 'Loading', 'Weight');
-        fprintf(fid, '  %s\n', repmat('-', 1, 72));
+        fprintf(fid, '  %-45s %12s\n', 'Feature', 'Loading/Wt');
+        fprintf(fid, '  %s\n', repmat('-', 1, 60));
         
         for i = 1:min(5, length(res.feature_names))
             idx = load_idx(i);
-            fprintf(fid, '  %-45s %12.4f %12.4f\n', ...
-                    res.feature_names{idx}, res.XL(idx, comp), res.W(idx, comp));
+            fprintf(fid, '  %-45s %12.4f\n', ...
+                    res.feature_names{idx}, res.XL(idx, comp));
         end
+        
+        % Show interpretation
+        fprintf(fid, '  Interpretation: These features have the strongest influence on this component.\n');
+        fprintf(fid, '  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓\n');
     end
 end
 

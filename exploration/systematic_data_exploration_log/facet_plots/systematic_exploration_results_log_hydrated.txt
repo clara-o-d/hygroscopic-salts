@@ -1,0 +1,27 @@
+
+========================================
+SYSTEMATIC WATER ACTIVITY DATA EXPLORATION (LOGARITHMIC)
+========================================
+Date: 25-Jan-2026 17:07:44
+========================================
+
+Loading data...
+Loaded data for 48 salts
+Total data points: 4800
+
+Building salt properties database...
+Salt properties database built (49 salts)
+
+Calculating derived properties...
+Property calculations complete
+
+=== Generating Faceted Plots by Ion Family ===
+Prepared 4228 data points for faceted plotting
+Found 16 unique cations and 8 unique anions
+Generated ln(aw) vs Ionic Strength faceted plots
+Generated ln(aw) vs Mole Fraction Water faceted plots
+Generated ln(gamma) vs Ionic Strength faceted plots
+Generated ln(gamma) vs Mole Fraction Water faceted plots
+Generated ln(gamma) vs RH faceted plots
+All faceted plots completed! Generated 10 figure sets.
+

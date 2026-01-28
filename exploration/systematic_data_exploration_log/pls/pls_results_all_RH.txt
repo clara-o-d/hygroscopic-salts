@@ -2,7 +2,7 @@ Partial Least Squares Regression Results
 Multi-RH Analysis
 =========================================
 
-Dataset: ../../data/baseline_numeric_only.csv
+Dataset: ../../../data/baseline_numeric_only.csv
 
 Summary Across RH Levels:
 -------------------------
@@ -16,6 +16,7 @@ RH Level      Samples   Features         R²       RMSE        MAE
    DETAILED RESULTS FOR 90% RH
 =========================================
 
+Algorithm: NIPALS
 Samples: 31
 Features: 22
 Components: 7
@@ -37,6 +38,29 @@ Component       Y Var (%%)    Y Cumul (%%)
 7                    10.18           41.40
 
 
+How Components Contribute to Y Prediction:
+-------------------------------------------
+The PLS model predicts Y (ln_gamma) as a linear combination of latent components.
+Each component is a weighted combination of the original features.
+
+Y-Loadings (Component Contributions to Y):
+Component        Y-Loading         Contribution to Y
+----------------------------------------------------
+1                 0.087511        5.6% of Y variance
+2                 0.077524        2.4% of Y variance
+3                 0.024466        0.2% of Y variance
+4                 0.332887       20.7% of Y variance
+5                 0.056391        0.5% of Y variance
+6                 0.137899        1.9% of Y variance
+7                 0.341339       10.2% of Y variance
+
+Interpretation:
+  - Y-loadings show the strength and direction of each component's relationship with Y
+  - Positive loadings: component increases -> Y increases
+  - Negative loadings: component increases -> Y decreases
+  - Larger absolute values indicate stronger contribution to Y prediction
+
+
 Variable Importance (VIP > 1.0):
 Feature                                        VIP Score
 ----------------------------------------------------------
@@ -44,57 +68,94 @@ C_MX_phi_original                                 1.1689
 
 
 Top Features per Component:
+Note: In SIMPLS algorithm (used by MATLAB plsregress), X-loadings and weights
+      are identical for single-response PLS due to orthogonal component construction.
+      - Loadings (P): correlation between features and components
+      - Weights (W): coefficients to construct components from features (T = X*W)
 
 Component 1 (5.6% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  cation_1_radius_hydrated                           -0.3565      -0.3565
-  cation_1_viscosity_jones_dole                      -0.3537      -0.3537
-  B_MX_0_original                                    -0.3499      -0.3499
-  cation_1_delta_G_hydration                          0.3431       0.3431
-  B_MX_1_original                                    -0.3392      -0.3392
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  cation_1_radius_hydrated                           -0.3565
+  cation_1_viscosity_jones_dole                      -0.3537
+  B_MX_0_original                                    -0.3499
+  cation_1_delta_G_hydration                          0.3431
+  B_MX_1_original                                    -0.3392
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 Component 2 (2.4% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  anion_1_radius_hydrated                             0.4839       0.4839
-  r_X_angstrom                                        0.4237       0.4237
-  anion_1_diffusion_coefficient                      -0.3850      -0.3850
-  anion_1_delta_G_hydration                          -0.3319      -0.3319
-  anion_1_n_atoms                                     0.3306       0.3306
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  anion_1_radius_hydrated                             0.4839
+  r_X_angstrom                                        0.4237
+  anion_1_diffusion_coefficient                      -0.3850
+  anion_1_delta_G_hydration                          -0.3319
+  anion_1_n_atoms                                     0.3306
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 Component 3 (0.2% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  anion_type_numeric                                  0.4259       0.4259
-  anion_1_viscosity_jones_dole                       -0.3957      -0.3957
-  r_M_angstrom                                        0.3876       0.3876
-  cation_1_molecular_weight                           0.3622       0.3622
-  anion_1_delta_G_hydration                           0.3016       0.3016
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  anion_type_numeric                                  0.4259
+  anion_1_viscosity_jones_dole                       -0.3957
+  r_M_angstrom                                        0.3876
+  cation_1_molecular_weight                           0.3622
+  anion_1_delta_G_hydration                           0.3016
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 Component 4 (20.7% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  cation_1_molecular_weight                           0.4224       0.4224
-  r_M_angstrom                                        0.3958       0.3958
-  anion_1_viscosity_jones_dole                        0.3941       0.3941
-  anion_1_delta_G_hydration                          -0.3507      -0.3507
-  anion_1_molecular_weight                           -0.2936      -0.2936
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  cation_1_molecular_weight                           0.4224
+  r_M_angstrom                                        0.3958
+  anion_1_viscosity_jones_dole                        0.3941
+  anion_1_delta_G_hydration                          -0.3507
+  anion_1_molecular_weight                           -0.2936
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 Component 5 (0.5% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  cation_1_diffusion_coefficient                     -0.5144      -0.5144
-  anion_1_molecular_weight                            0.4131       0.4131
-  anion_type_numeric                                 -0.3521      -0.3521
-  anion_1_diffusion_coefficient                       0.3046       0.3046
-  cation_1_n_atoms                                   -0.2681      -0.2681
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  cation_1_diffusion_coefficient                     -0.5144
+  anion_1_molecular_weight                            0.4131
+  anion_type_numeric                                 -0.3521
+  anion_1_diffusion_coefficient                       0.3046
+  cation_1_n_atoms                                   -0.2681
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
+
+Component 6 (1.9% Y variance):
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  cation_1_n_atoms                                   -0.8811
+  cation_1_molecular_weight                           0.3091
+  cation_1_diffusion_coefficient                      0.2738
+  anion_1_molecular_weight                           -0.1008
+  r_M_angstrom                                       -0.0887
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
+
+Component 7 (10.2% Y variance):
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  C_MX_phi_original                                  -0.8214
+  anion_1_n_atoms                                     0.2746
+  cation_1_diffusion_coefficient                     -0.2497
+  B_MX_0_original                                    -0.2031
+  B_MX_1_original                                    -0.1746
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 
 =========================================
    DETAILED RESULTS FOR 70% RH
 =========================================
 
+Algorithm: NIPALS
 Samples: 13
 Features: 22
 Components: 7
@@ -116,6 +177,29 @@ Component       Y Var (%%)    Y Cumul (%%)
 7                     0.02           83.15
 
 
+How Components Contribute to Y Prediction:
+-------------------------------------------
+The PLS model predicts Y (ln_gamma) as a linear combination of latent components.
+Each component is a weighted combination of the original features.
+
+Y-Loadings (Component Contributions to Y):
+Component        Y-Loading         Contribution to Y
+----------------------------------------------------
+1                 0.162816       19.8% of Y variance
+2                 0.029094        0.5% of Y variance
+3                 0.227992        9.2% of Y variance
+4                 0.142805        2.7% of Y variance
+5                 0.799181       49.9% of Y variance
+6                 0.124962        1.0% of Y variance
+7                 0.025689        0.0% of Y variance
+
+Interpretation:
+  - Y-loadings show the strength and direction of each component's relationship with Y
+  - Positive loadings: component increases -> Y increases
+  - Negative loadings: component increases -> Y decreases
+  - Larger absolute values indicate stronger contribution to Y prediction
+
+
 Variable Importance (VIP > 1.0):
 Feature                                        VIP Score
 ----------------------------------------------------------
@@ -124,48 +208,84 @@ cation_type_numeric                               1.0770
 
 
 Top Features per Component:
+Note: In SIMPLS algorithm (used by MATLAB plsregress), X-loadings and weights
+      are identical for single-response PLS due to orthogonal component construction.
+      - Loadings (P): correlation between features and components
+      - Weights (W): coefficients to construct components from features (T = X*W)
 
 Component 1 (19.8% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  B_MX_1_original                                     0.3516       0.3516
-  cation_1_radius_hydrated                            0.3496       0.3496
-  electrolyte_type_numeric                            0.3481       0.3481
-  cation_1_viscosity_jones_dole                       0.3453       0.3453
-  B_MX_0_original                                     0.3365       0.3365
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  B_MX_1_original                                     0.3516
+  cation_1_radius_hydrated                            0.3496
+  electrolyte_type_numeric                            0.3481
+  cation_1_viscosity_jones_dole                       0.3453
+  B_MX_0_original                                     0.3365
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 Component 2 (0.5% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  anion_1_molecular_weight                            0.4079       0.4079
-  anion_1_viscosity_jones_dole                       -0.3994      -0.3994
-  anion_1_delta_G_hydration                           0.3986       0.3986
-  r_X_angstrom                                        0.3956       0.3956
-  anion_1_radius_hydrated                            -0.2924      -0.2924
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  anion_1_molecular_weight                            0.4079
+  anion_1_viscosity_jones_dole                       -0.3994
+  anion_1_delta_G_hydration                           0.3986
+  r_X_angstrom                                        0.3956
+  anion_1_radius_hydrated                            -0.2924
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 Component 3 (9.2% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  anion_1_diffusion_coefficient                       0.5931       0.5931
-  anion_1_radius_hydrated                            -0.4768      -0.4768
-  C_MX_phi_original                                  -0.2676      -0.2676
-  r_X_angstrom                                       -0.2612      -0.2612
-  anion_1_delta_G_hydration                          -0.2453      -0.2453
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  anion_1_diffusion_coefficient                       0.5931
+  anion_1_radius_hydrated                            -0.4768
+  C_MX_phi_original                                  -0.2676
+  r_X_angstrom                                       -0.2612
+  anion_1_delta_G_hydration                          -0.2453
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 Component 4 (2.7% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  r_M_angstrom                                       -0.6041      -0.6041
-  cation_1_diffusion_coefficient                      0.4054       0.4054
-  cation_type_numeric                                -0.3595      -0.3595
-  C_MX_phi_original                                  -0.2852      -0.2852
-  anion_1_radius_hydrated                            -0.2551      -0.2551
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  r_M_angstrom                                       -0.6041
+  cation_1_diffusion_coefficient                      0.4054
+  cation_type_numeric                                -0.3595
+  C_MX_phi_original                                  -0.2852
+  anion_1_radius_hydrated                            -0.2551
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
 
 Component 5 (49.9% Y variance):
-  Feature                                            Loading       Weight
-  ------------------------------------------------------------------------
-  C_MX_phi_original                                  -0.6720      -0.6720
-  cation_type_numeric                                 0.4987       0.4987
-  cation_1_molecular_weight                           0.3182       0.3182
-  cation_1_diffusion_coefficient                      0.2271       0.2271
-  anion_1_diffusion_coefficient                      -0.2014      -0.2014
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  C_MX_phi_original                                  -0.6720
+  cation_type_numeric                                 0.4987
+  cation_1_molecular_weight                           0.3182
+  cation_1_diffusion_coefficient                      0.2271
+  anion_1_diffusion_coefficient                      -0.2014
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
+
+Component 6 (1.0% Y variance):
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  cation_1_diffusion_coefficient                     -0.5896
+  max_molality_original                              -0.3575
+  C_MX_phi_original                                  -0.3072
+  B_MX_0_original                                    -0.2516
+  cation_type_numeric                                -0.2298
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓
+
+Component 7 (0.0% Y variance):
+  Feature                                         Loading/Wt
+  ------------------------------------------------------------
+  cation_type_numeric                                -0.4757
+  max_molality_original                              -0.4442
+  cation_1_molecular_weight                           0.3647
+  cation_1_viscosity_jones_dole                      -0.3574
+  r_M_angstrom                                        0.3529
+  Interpretation: These features have the strongest influence on this component.
+  Positive values: feature ↑ → component ↑; Negative: feature ↑ → component ↓

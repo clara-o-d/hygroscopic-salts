@@ -6,12 +6,7 @@ clc
 % SYSTEMATIC EXPLORATION OF WATER ACTIVITY DATA (LOGARITHMIC VERSION)
 % =========================================================================
 % This script performs comprehensive analysis using ln(aw) and ln(gamma)
-% instead of raw values. Analysis considers:
-% - Salt properties (MW, dissolution enthalpy)
-% - Cation and anion identities
-% - Ionic radii and charge densities
-% - Chemical families (halides, sulfates, nitrates, etc.)
-% - Thermodynamic patterns
+% instead of raw values.
 % =========================================================================
 
 %% Setup
@@ -53,7 +48,7 @@ T_kelvin = 298.15; % 25°C
 
 %% Load data
 write_output('Loading data...\n');
-data_file = fullfile(filepath, '..', 'data', 'water_activity_all_salts_combined.csv');
+data_file = fullfile(filepath, '../../..', 'data', 'water_activity_all_salts_combined.csv');
 data_table = readtable(data_file);
 
 % Extract unique salts
@@ -485,8 +480,10 @@ for a_idx = 1:n_anions
         
         % Get cation radii for color mapping
         all_cat_radii = [anion_data.cat_radius];
-        min_radius = min(all_cat_radii);
-        max_radius = max(all_cat_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_radius = 69;   % Ni+
+        global_max_radius = 167;  % Cs+
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -497,12 +494,9 @@ for a_idx = 1:n_anions
             % Get cation radius for this salt
             cat_radius = salt_data(1).cat_radius;
             
-            % Map radius to viridis color (blue to green to yellow)
-            if max_radius > min_radius
-                t = (cat_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to viridis color (blue to green to yellow) - NO normalization
+            t = (cat_radius - global_min_radius) / (global_max_radius - global_min_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by ionic strength for smooth lines
@@ -532,10 +526,11 @@ sgtitle('ln(a_w) vs Ionic Strength - Faceted by Anion (colored by cation radius)
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
+caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
 ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_aw_vs_I_by_anion.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_aw_vs_I_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_I_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_I_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -557,8 +552,10 @@ hold on; grid on; box on;
         
         % Get anion radii for color mapping
         all_an_radii = [cation_data.an_radius];
-        min_radius = min(all_an_radii);
-        max_radius = max(all_an_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_an_radius = 133;   % F-
+        global_max_an_radius = 244;   % SO4^2-
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -569,12 +566,9 @@ hold on; grid on; box on;
             % Get anion radius for this salt
             an_radius = salt_data(1).an_radius;
             
-            % Map radius to viridis color (blue to green to yellow)
-            if max_radius > min_radius
-                t = (an_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to viridis color (blue to green to yellow) - NO normalization
+            t = (an_radius - global_min_an_radius) / (global_max_an_radius - global_min_an_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by ionic strength for smooth lines
@@ -604,10 +598,11 @@ sgtitle('ln(a_w) vs Ionic Strength - Faceted by Cation (colored by anion radius)
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
+caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
 ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_aw_vs_I_by_cation.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_aw_vs_I_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_I_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_I_by_cation.fig'));
 
 write_output('Generated ln(aw) vs Ionic Strength faceted plots\n');
 
@@ -630,8 +625,10 @@ hold on; grid on; box on;
         
         % Get cation radii for color mapping
         all_cat_radii = [anion_data.cat_radius];
-        min_radius = min(all_cat_radii);
-        max_radius = max(all_cat_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_radius = 69;   % Ni+
+        global_max_radius = 167;  % Cs+
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -642,12 +639,9 @@ hold on; grid on; box on;
             % Get cation radius for this salt
             cat_radius = salt_data(1).cat_radius;
             
-            % Map radius to color (green to blue)
-            if max_radius > min_radius
-                t = (cat_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to color - NO normalization
+            t = (cat_radius - global_min_radius) / (global_max_radius - global_min_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by x_water for smooth lines
@@ -678,10 +672,11 @@ sgtitle('ln(a_w) vs Mole Fraction Water - Faceted by Anion (colored by cation ra
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
+caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
 ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_aw_vs_xwater_by_anion.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_aw_vs_xwater_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_xwater_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_xwater_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -700,8 +695,10 @@ hold on; grid on; box on;
         
         % Get anion radii for color mapping
         all_an_radii = [cation_data.an_radius];
-        min_radius = min(all_an_radii);
-        max_radius = max(all_an_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_an_radius = 133;   % F-
+        global_max_an_radius = 244;   % SO4^2-
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -712,12 +709,9 @@ hold on; grid on; box on;
             % Get anion radius for this salt
             an_radius = salt_data(1).an_radius;
             
-            % Map radius to color (green to blue)
-            if max_radius > min_radius
-                t = (an_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to color - NO normalization
+            t = (an_radius - global_min_an_radius) / (global_max_an_radius - global_min_an_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by x_water for smooth lines
@@ -748,10 +742,11 @@ sgtitle('ln(a_w) vs Mole Fraction Water - Faceted by Cation (colored by anion ra
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
+caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
 ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_aw_vs_xwater_by_cation.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_aw_vs_xwater_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_xwater_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_xwater_by_cation.fig'));
 
 write_output('Generated ln(aw) vs Mole Fraction Water faceted plots\n');
 
@@ -774,8 +769,10 @@ hold on; grid on; box on;
         
         % Get cation radii for color mapping
         all_cat_radii = [anion_data.cat_radius];
-        min_radius = min(all_cat_radii);
-        max_radius = max(all_cat_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_radius = 69;   % Ni+
+        global_max_radius = 167;  % Cs+
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -786,12 +783,9 @@ hold on; grid on; box on;
             % Get cation radius for this salt
             cat_radius = salt_data(1).cat_radius;
             
-            % Map radius to color (green to blue)
-            if max_radius > min_radius
-                t = (cat_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to color - NO normalization
+            t = (cat_radius - global_min_radius) / (global_max_radius - global_min_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by ionic strength for smooth lines
@@ -824,10 +818,11 @@ sgtitle('ln(\gamma_w) vs Ionic Strength - Faceted by Anion (colored by cation ra
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
+caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
 ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_I_by_anion.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_I_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_I_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_I_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -846,8 +841,10 @@ hold on; grid on; box on;
         
         % Get anion radii for color mapping
         all_an_radii = [cation_data.an_radius];
-        min_radius = min(all_an_radii);
-        max_radius = max(all_an_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_an_radius = 133;   % F-
+        global_max_an_radius = 244;   % SO4^2-
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -858,12 +855,9 @@ hold on; grid on; box on;
             % Get anion radius for this salt
             an_radius = salt_data(1).an_radius;
             
-            % Map radius to color (green to blue)
-            if max_radius > min_radius
-                t = (an_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to color - NO normalization
+            t = (an_radius - global_min_an_radius) / (global_max_an_radius - global_min_an_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by ionic strength for smooth lines
@@ -896,10 +890,11 @@ sgtitle('ln(\gamma_w) vs Ionic Strength - Faceted by Cation (colored by anion ra
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
-ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
+    caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
+    ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_I_by_cation.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_I_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_I_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_I_by_cation.fig'));
 
 write_output('Generated ln(gamma) vs Ionic Strength faceted plots\n');
 
@@ -922,8 +917,10 @@ for a_idx = 1:n_anions
         
         % Get cation radii for color mapping
         all_cat_radii = [anion_data.cat_radius];
-        min_radius = min(all_cat_radii);
-        max_radius = max(all_cat_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_radius = 69;   % Ni+
+        global_max_radius = 167;  % Cs+
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -934,12 +931,9 @@ for a_idx = 1:n_anions
             % Get cation radius for this salt
             cat_radius = salt_data(1).cat_radius;
             
-            % Map radius to color (green to blue)
-            if max_radius > min_radius
-                t = (cat_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to color - NO normalization
+            t = (cat_radius - global_min_radius) / (global_max_radius - global_min_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by x_water for smooth lines
@@ -973,10 +967,11 @@ sgtitle('ln(\gamma_w) vs Mole Fraction Water - Faceted by Anion (colored by cati
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
-ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
+    caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
+    ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_xwater_by_anion.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_xwater_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_xwater_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_xwater_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -995,8 +990,10 @@ for c_idx = 1:n_cations
         
         % Get anion radii for color mapping
         all_an_radii = [cation_data.an_radius];
-        min_radius = min(all_an_radii);
-        max_radius = max(all_an_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_an_radius = 133;   % F-
+        global_max_an_radius = 244;   % SO4^2-
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -1007,12 +1004,9 @@ for c_idx = 1:n_cations
             % Get anion radius for this salt
             an_radius = salt_data(1).an_radius;
             
-            % Map radius to color (green to blue)
-            if max_radius > min_radius
-                t = (an_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to color - NO normalization
+            t = (an_radius - global_min_an_radius) / (global_max_an_radius - global_min_an_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by x_water for smooth lines
@@ -1046,10 +1040,11 @@ sgtitle('ln(\gamma_w) vs Mole Fraction Water - Faceted by Cation (colored by ani
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
-ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
+    caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
+    ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_xwater_by_cation.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_xwater_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_xwater_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_xwater_by_cation.fig'));
 
 write_output('Generated ln(gamma) vs Mole Fraction Water faceted plots\n');
 
@@ -1072,8 +1067,10 @@ for a_idx = 1:n_anions
         
         % Get cation radii for color mapping
         all_cat_radii = [anion_data.cat_radius];
-        min_radius = min(all_cat_radii);
-        max_radius = max(all_cat_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_radius = 69;   % Ni+
+        global_max_radius = 167;  % Cs+
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -1084,12 +1081,9 @@ for a_idx = 1:n_anions
             % Get cation radius for this salt
             cat_radius = salt_data(1).cat_radius;
             
-            % Map radius to color (green to blue)
-            if max_radius > min_radius
-                t = (cat_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to color - NO normalization
+            t = (cat_radius - global_min_radius) / (global_max_radius - global_min_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by RH for smooth lines
@@ -1123,10 +1117,11 @@ sgtitle('ln(\gamma_w) vs RH - Faceted by Anion (colored by cation radius)', ...
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
-ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
+    caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
+    ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_RH_by_anion.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_RH_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_RH_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_RH_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -1145,8 +1140,10 @@ for c_idx = 1:n_cations
         
         % Get anion radii for color mapping
         all_an_radii = [cation_data.an_radius];
-        min_radius = min(all_an_radii);
-        max_radius = max(all_an_radii);
+        
+        % Define global radius range for consistent coloring (in pm)
+        global_min_an_radius = 133;   % F-
+        global_max_an_radius = 244;   % SO4^2-
         
         % Plot each salt as a line
         for s = 1:length(salts_in_facet)
@@ -1157,12 +1154,9 @@ for c_idx = 1:n_cations
             % Get anion radius for this salt
             an_radius = salt_data(1).an_radius;
             
-            % Map radius to color (green to blue)
-            if max_radius > min_radius
-                t = (an_radius - min_radius) / (max_radius - min_radius);
-            else
-                t = 0.5;
-            end
+            % Map radius to color - NO normalization
+            t = (an_radius - global_min_an_radius) / (global_max_an_radius - global_min_an_radius);
+            t = max(0, min(1, t));  % Clamp to [0, 1]
             line_color = get_viridis_color(t);
             
             % Sort by RH for smooth lines
@@ -1196,10 +1190,11 @@ sgtitle('ln(\gamma_w) vs RH - Faceted by Cation (colored by anion radius)', ...
 cb_ax = axes('Position', [0.92, 0.15, 0.02, 0.7], 'Visible', 'off');
 colormap(cb_ax, viridis_colormap());
 cb = colorbar(cb_ax, 'Location', 'east');
-ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
+    caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
+    ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_RH_by_cation.png'));
-savefig(fullfile(filepath, '..', 'figures', 'faceted_ln_gamma_vs_RH_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_RH_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_RH_by_cation.fig'));
 
 write_output('Generated ln(gamma) vs RH faceted plots\n');
 write_output('All faceted plots completed! Generated 10 figure sets.\n\n');

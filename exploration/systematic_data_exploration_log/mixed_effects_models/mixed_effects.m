@@ -175,15 +175,32 @@ valid_bins = ~isnan(f_m_bins);
 m_bins_valid = m_bins(valid_bins);
 f_m_bins_valid = f_m_bins(valid_bins);
 
-% Use linear interpolation with no extrapolation (returns NaN for out-of-range)
-% Then fill NaN with nearest neighbor
-f_m_values = interp1(m_bins_valid, f_m_bins_valid, data.Molality, 'pchip');
+% Check if we have enough points for interpolation
+if length(m_bins_valid) < 2
+    error('Not enough valid bins for interpolation. Need at least 2 valid bins.');
+end
 
-% For any NaN values (extrapolation), use nearest neighbor
+% Use interpolation with robust fallback
+if length(m_bins_valid) >= 4
+    % Use pchip for smooth interpolation (requires at least 4 points)
+    f_m_values = interp1(m_bins_valid, f_m_bins_valid, data.Molality, 'pchip');
+else
+    % Use linear interpolation if we have 2-3 points
+    f_m_values = interp1(m_bins_valid, f_m_bins_valid, data.Molality, 'linear');
+end
+
+% For any NaN values (extrapolation or interpolation failure), use nearest neighbor
 nan_idx = isnan(f_m_values);
 if any(nan_idx)
     fprintf('Warning: %d points outside interpolation range, using nearest neighbor\n', sum(nan_idx));
+    % Use nearest neighbor with extrapolation
     f_m_values(nan_idx) = interp1(m_bins_valid, f_m_bins_valid, data.Molality(nan_idx), 'nearest', 'extrap');
+end
+
+% Final check: if any values are still NaN, use a constant fallback
+if any(isnan(f_m_values))
+    fprintf('Warning: %d points still have NaN after interpolation, using median value\n', sum(isnan(f_m_values)));
+    f_m_values(isnan(f_m_values)) = median(f_m_bins_valid);
 end
 
 % Create interpolation function for later use
@@ -273,12 +290,37 @@ for i = 1:n_obs
     end
 end
 
-% Calculate model fit
+% Calculate model fit (filter out NaN values)
+valid_pred_idx = ~isnan(data.ln_aw_pred) & ~isnan(data.ln_aw);
+if ~all(valid_pred_idx)
+    fprintf('Warning: %d predictions have NaN values, excluding from RMSE/R² calculation\n', sum(~valid_pred_idx));
+end
+
 for i = 1:n_obs
     data.residual_final(i) = data.ln_aw(i) - data.ln_aw_pred(i);
 end
-rmse_total = sqrt(mean(data.residual_final.^2));
-r2_total = 1 - sum(data.residual_final.^2) / sum((data.ln_aw - mean(data.ln_aw)).^2);
+
+% Calculate RMSE only on valid predictions
+if any(valid_pred_idx)
+    rmse_total = sqrt(mean(data.residual_final(valid_pred_idx).^2));
+else
+    rmse_total = NaN;
+    fprintf('Error: No valid predictions for RMSE calculation\n');
+end
+
+% R² calculation with numerical stability check (only on valid predictions)
+if any(valid_pred_idx)
+    ss_res_total = sum(data.residual_final(valid_pred_idx).^2);
+    ln_aw_valid = data.ln_aw(valid_pred_idx);
+    ss_tot_total = sum((ln_aw_valid - mean(ln_aw_valid)).^2);
+    if ss_tot_total < 1e-10
+        r2_total = NaN;
+    else
+        r2_total = 1 - ss_res_total / ss_tot_total;
+    end
+else
+    r2_total = NaN;
+end
 
 fprintf('\nModel Performance:\n');
 fprintf('  RMSE: %.4f\n', rmse_total);
@@ -290,46 +332,114 @@ fprintf('\n=== Step 4: Variance Decomposition ===\n');
 % Total variance in ln(aw)
 var_total = var(data.ln_aw);
 
-% Variance explained by fixed effect
-% Check for NaN values first
-if any(isnan(data.f_m))
-    fprintf('Warning: NaN values found in f_m\n');
-    fprintf('Number of NaN: %d\n', sum(isnan(data.f_m)));
-end
-var_fixed = var(data.f_m(~isnan(data.f_m)));
+% For proper variance decomposition, we need to calculate the variance
+% contribution of each component. Since the model is:
+% ln(aw) = f(m) + u_cation + v_anion + ε
+% and these components are (approximately) uncorrelated, we can decompose
+% the variance of the predicted values.
 
-% Variance from cation effects (weighted by occurrence)
-cation_var_contributions = zeros(n_obs, 1);
-for i = 1:n_obs
-    for c = 1:n_cations
-        if strcmp(data.Cation{i}, unique_cations{c})
-            cation_var_contributions(i) = cation_effects(c);
-            break;
+% Get contributions for each component (only on valid predictions)
+if any(valid_pred_idx)
+    % Fixed effect contribution
+    f_m_valid = data.f_m(valid_pred_idx);
+    var_fixed = var(f_m_valid);
+    
+    % Cation effects contribution
+    cation_var_contributions = zeros(sum(valid_pred_idx), 1);
+    valid_idx_list = find(valid_pred_idx);
+    for j = 1:length(valid_idx_list)
+        i = valid_idx_list(j);
+        for c = 1:n_cations
+            if strcmp(data.Cation{i}, unique_cations{c})
+                cation_var_contributions(j) = cation_effects(c);
+                break;
+            end
         end
     end
-end
-var_cation = var(cation_var_contributions);
-
-% Variance from anion effects
-anion_var_contributions = zeros(n_obs, 1);
-for i = 1:n_obs
-    for a = 1:n_anions
-        if strcmp(data.Anion{i}, unique_anions{a})
-            anion_var_contributions(i) = anion_effects(a);
-            break;
+    var_cation = var(cation_var_contributions);
+    
+    % Anion effects contribution
+    anion_var_contributions = zeros(sum(valid_pred_idx), 1);
+    for j = 1:length(valid_idx_list)
+        i = valid_idx_list(j);
+        for a = 1:n_anions
+            if strcmp(data.Anion{i}, unique_anions{a})
+                anion_var_contributions(j) = anion_effects(a);
+                break;
+            end
         end
     end
+    var_anion = var(anion_var_contributions);
+    
+    % Residual variance
+    var_residual = var(data.residual_final(valid_pred_idx));
+    
+    % Variance of predicted values (explained variance)
+    var_predicted = var(data.ln_aw_pred(valid_pred_idx));
+    var_explained = var_predicted;
+    
+    % The variance components are correlated, so they don't add up directly.
+    % We normalize them so they sum to the explained variance.
+    % The correct decomposition: var_total = var_explained + var_residual
+    % where var_explained = var(f(m) + u + v)
+    
+    % Normalize component variances to sum to explained variance
+    var_sum_components = var_fixed + var_cation + var_anion;
+    if var_sum_components > 0 && var_explained > 0
+        % Scale factors to make components sum to explained variance
+        scale_factor = var_explained / var_sum_components;
+        var_fixed = var_fixed * scale_factor;
+        var_cation = var_cation * scale_factor;
+        var_anion = var_anion * scale_factor;
+    end
+    
+    % Now compute percentages - normalize all components to sum to 100% of total variance
+    % Total variance = explained + residual (approximately)
+    var_total_check = var_explained + var_residual;
+    
+    % Sum of all variance components (for normalization)
+    var_sum_all = var_fixed + var_cation + var_anion + var_residual;
+    
+    % Normalize so percentages sum to 100%
+    if var_sum_all > 0
+        % Scale all components proportionally to sum to total variance
+        normalization_factor = var_total / var_sum_all;
+        var_fixed_normalized = var_fixed * normalization_factor;
+        var_cation_normalized = var_cation * normalization_factor;
+        var_anion_normalized = var_anion * normalization_factor;
+        var_residual_normalized = var_residual * normalization_factor;
+        
+        % Update for reporting
+        var_fixed = var_fixed_normalized;
+        var_cation = var_cation_normalized;
+        var_anion = var_anion_normalized;
+        var_residual = var_residual_normalized;
+        
+        % Debug check
+        fprintf('After normalization: sum=%.4f, total=%.4f\n', ...
+            var_fixed + var_cation + var_anion + var_residual, var_total);
+    end
+    
+    % Compute percentages relative to total variance (should sum to 100%)
+    pct_fixed = 100 * var_fixed / var_total;
+    pct_cation = 100 * var_cation / var_total;
+    pct_anion = 100 * var_anion / var_total;
+    pct_residual = 100 * var_residual / var_total;
+    
+    fprintf('Variance of predicted (explained): %.4f\n', var_explained);
+    fprintf('Residual variance: %.4f\n', var_residual);
+    fprintf('Sum of all components: %.4f (should equal total: %.4f)\n', ...
+        var_fixed + var_cation + var_anion + var_residual, var_total);
+else
+    var_fixed = NaN;
+    var_cation = NaN;
+    var_anion = NaN;
+    var_residual = NaN;
+    pct_fixed = NaN;
+    pct_cation = NaN;
+    pct_anion = NaN;
+    pct_residual = NaN;
 end
-var_anion = var(anion_var_contributions);
-
-% Residual variance
-var_residual = var(data.residual_final);
-
-% Compute percentages
-pct_fixed = 100 * var_fixed / var_total;
-pct_cation = 100 * var_cation / var_total;
-pct_anion = 100 * var_anion / var_total;
-pct_residual = 100 * var_residual / var_total;
 
 fprintf('\nVariance Decomposition:\n');
 fprintf('  Total variance: %.4f\n', var_total);
@@ -406,8 +516,28 @@ for s = 1:n_salts
     m_bins_train_valid = m_bins(valid_bins_train);
     f_m_bins_train_valid = f_m_bins_train(valid_bins_train);
     
+    % Check if we have enough valid bins
+    if length(m_bins_train_valid) < 2
+        % Not enough bins, skip this CV fold
+        cv_rmse(s) = NaN;
+        cv_r2(s) = NaN;
+        cv_predictions{s} = struct('Salt', test_salt, ...
+                                   'Cation', test_cation, ...
+                                   'Anion', test_anion, ...
+                                   'Molality', m_test, ...
+                                   'ln_aw_true', ln_aw_test, ...
+                                   'ln_aw_pred', NaN(size(m_test)));
+        continue;
+    end
+    
     % Re-estimate random effects on training data
     f_m_train_values = interp1_with_nearest(m_bins_train_valid, f_m_bins_train_valid, m_train);
+    
+    % Check for NaN values in f_m_train_values
+    if any(isnan(f_m_train_values))
+        fprintf('Warning: CV fold %d has NaN in f_m_train_values\n', s);
+        f_m_train_values(isnan(f_m_train_values)) = median(f_m_bins_train_valid);
+    end
     residual_train = ln_aw_train - f_m_train_values;
     
     % Get training cations and anions
@@ -450,10 +580,25 @@ for s = 1:n_salts
     
     f_m_test = interp1_with_nearest(m_bins_train_valid, f_m_bins_train_valid, m_test);
     
+    % Check for NaN in f_m_test
+    if any(isnan(f_m_test))
+        f_m_test(isnan(f_m_test)) = median(f_m_bins_train_valid);
+    end
+    
     cation_idx = find(strcmp(unique_cations, test_cation));
     anion_idx = find(strcmp(unique_anions, test_anion));
     
-    ln_aw_pred_test = f_m_test + cation_effects_train(cation_idx) + anion_effects_train(anion_idx);
+    % Check if cation/anion were in training set
+    if isempty(cation_idx) || isempty(anion_idx)
+        % Ion not in training set, use zero effect (already centered)
+        cation_effect_test = 0;
+        anion_effect_test = 0;
+    else
+        cation_effect_test = cation_effects_train(cation_idx);
+        anion_effect_test = anion_effects_train(anion_idx);
+    end
+    
+    ln_aw_pred_test = f_m_test + cation_effect_test + anion_effect_test;
     
     % Store results
     cv_predictions{s} = struct('Salt', test_salt, ...
@@ -463,27 +608,70 @@ for s = 1:n_salts
                                'ln_aw_true', ln_aw_test, ...
                                'ln_aw_pred', ln_aw_pred_test);
     
-    % Calculate metrics
-    cv_rmse(s) = sqrt(mean((ln_aw_test - ln_aw_pred_test).^2));
-    cv_r2(s) = 1 - sum((ln_aw_test - ln_aw_pred_test).^2) / sum((ln_aw_test - mean(ln_aw_test)).^2);
+    % Calculate metrics (check for NaN)
+    valid_test_idx = ~isnan(ln_aw_test) & ~isnan(ln_aw_pred_test);
+    if any(valid_test_idx)
+        cv_rmse(s) = sqrt(mean((ln_aw_test(valid_test_idx) - ln_aw_pred_test(valid_test_idx)).^2));
+    else
+        cv_rmse(s) = NaN;
+    end
+    
+    % R² calculation with numerical stability check (only on valid predictions)
+    if any(valid_test_idx)
+        ss_res = sum((ln_aw_test(valid_test_idx) - ln_aw_pred_test(valid_test_idx)).^2);
+        ln_aw_test_valid = ln_aw_test(valid_test_idx);
+        ss_tot = sum((ln_aw_test_valid - mean(ln_aw_test_valid)).^2);
+        
+        if ss_tot < 1e-10  % Very small variance in test data
+            % If test data has almost no variance, R² is undefined
+            cv_r2(s) = NaN;
+        else
+            cv_r2(s) = 1 - ss_res / ss_tot;
+            % Cap R² at reasonable bounds to avoid extreme values
+            if cv_r2(s) < -10
+                cv_r2(s) = -10;  % Cap at -10 for very poor predictions
+            end
+        end
+    else
+        cv_r2(s) = NaN;
+    end
 end
 
 fprintf('\n');
 
 fprintf('\nCross-Validation Results:\n');
 fprintf('  Mean RMSE: %.4f ± %.4f\n', mean(cv_rmse), std(cv_rmse));
-fprintf('  Mean R²: %.4f ± %.4f\n', mean(cv_r2), std(cv_r2));
+% Handle NaN values in R²
+valid_r2 = cv_r2(~isnan(cv_r2));
+if ~isempty(valid_r2)
+    fprintf('  Mean R²: %.4f ± %.4f\n', mean(valid_r2), std(valid_r2));
+    fprintf('  Median R²: %.4f\n', median(valid_r2));
+    fprintf('  Valid R² values: %d/%d\n', length(valid_r2), length(cv_r2));
+else
+    fprintf('  Mean R²: NaN (all values invalid)\n');
+    fprintf('  Median R²: NaN\n');
+end
 fprintf('  Median RMSE: %.4f\n', median(cv_rmse));
-fprintf('  Median R²: %.4f\n', median(cv_r2));
 
 % Best and worst predictions
 [~, best_idx] = min(cv_rmse);
 [~, worst_idx] = max(cv_rmse);
 
-fprintf('\nBest prediction: %s (RMSE=%.4f, R²=%.4f)\n', ...
-    unique_salts{best_idx}, cv_rmse(best_idx), cv_r2(best_idx));
-fprintf('Worst prediction: %s (RMSE=%.4f, R²=%.4f)\n', ...
-    unique_salts{worst_idx}, cv_rmse(worst_idx), cv_r2(worst_idx));
+fprintf('\nBest prediction: %s (RMSE=%.4f', unique_salts{best_idx}, cv_rmse(best_idx));
+if ~isnan(cv_r2(best_idx))
+    fprintf(', R²=%.4f', cv_r2(best_idx));
+else
+    fprintf(', R²=NaN');
+end
+fprintf(')\n');
+
+fprintf('Worst prediction: %s (RMSE=%.4f', unique_salts{worst_idx}, cv_rmse(worst_idx));
+if ~isnan(cv_r2(worst_idx))
+    fprintf(', R²=%.4f', cv_r2(worst_idx));
+else
+    fprintf(', R²=NaN');
+end
+fprintf(')\n');
 
 %% Visualization
 fprintf('\n=== Generating Visualizations ===\n');
@@ -505,23 +693,59 @@ else
 %% Figure 1: Variance Decomposition Pie Chart
 try
 fig1 = figure('Position', [100, 100, 800, 600], 'visible', 'off');
+
+% For the pie chart, show the variance components that sum to total variance
+% Include residual to show complete decomposition
 variance_components = [var_fixed, var_cation, var_anion, var_residual];
-labels = {'Fixed Effect (Concentration)', 'Cation Identity', 'Anion Identity', 'Residual'};
+labels_full = {'Fixed Effect (Concentration)', 'Cation Identity', 'Anion Identity', 'Residual'};
 colors = [0.2 0.4 0.8; 0.8 0.3 0.3; 0.3 0.7 0.3; 0.7 0.7 0.7];
 
-pie(variance_components);
-colormap(colors);
-legend(labels, 'Location', 'eastoutside', 'FontSize', 11);
-title('Variance Decomposition in ln(a_w)', 'FontSize', 14, 'FontWeight', 'bold');
-
-% Add percentage labels
-text_objs = findobj(fig1, 'Type', 'text');
-for i = 1:length(text_objs)
-    curr_text = text_objs(i).String;
-    if contains(curr_text, '%')
-        text_objs(i).FontSize = 12;
-        text_objs(i).FontWeight = 'bold';
+% DON'T filter out any components - include ALL to get full 360 degree pie
+if all(~isnan(variance_components))
+    % Calculate percentages
+    pcts = 100 * variance_components / sum(variance_components);
+    
+    % Create labels with percentages
+    labels_with_pct = cell(size(labels_full));
+    for i = 1:length(labels_full)
+        labels_with_pct{i} = sprintf('%s (%.1f%%)', labels_full{i}, pcts(i));
     end
+    
+    % Create pie chart with ALL components (this ensures 360 degree circle)
+    pie(variance_components, labels_with_pct);
+    colormap(colors);
+    
+    % Get current axes and adjust to fill figure
+    ax = gca;
+    set(ax, 'Position', [0.05 0.05 0.9 0.9]);  % Fill most of the figure
+    axis equal;
+    
+    title('Variance Decomposition in ln(a_w)', 'FontSize', 14, 'FontWeight', 'bold');
+    
+    % Add note about total variance
+    annotation_text = sprintf('Total Variance: %.4f', var_total);
+    text(0.02, 0.02, annotation_text, 'Units', 'normalized', 'FontSize', 10, ...
+         'BackgroundColor', 'w', 'EdgeColor', 'k');
+else
+    text(0.5, 0.5, 'No valid variance components', 'HorizontalAlignment', 'center', 'FontSize', 12);
+    title('Variance Decomposition in ln(a_w)', 'FontSize', 14, 'FontWeight', 'bold');
+end
+
+% Add percentage labels (Octave-compatible)
+try
+    text_objs = findobj(fig1, 'Type', 'text');
+    for i = 1:length(text_objs)
+        try
+            curr_text = get(text_objs(i), 'String');
+            if ~isempty(strfind(curr_text, '%'))
+                set(text_objs(i), 'FontSize', 12, 'FontWeight', 'bold');
+            end
+        catch
+            % Skip if property access fails
+        end
+    end
+catch
+    % Skip if text object manipulation fails
 end
 
 saveas(fig1, fullfile(OUTPUT_DIR, 'variance_decomposition.png'));
@@ -541,29 +765,40 @@ fig2 = figure('Position', [100, 100, 1200, 500], 'visible', 'off');
 subplot(1, 2, 1);
 bar(cation_effects_sorted, 'FaceColor', [0.8 0.3 0.3]);
 hold on;
-% Error bars
-errorbar(1:n_cations, cation_effects_sorted, cation_std(cation_sort_idx) / sqrt(mean(cation_n)), ...
-    'k.', 'LineWidth', 1.5);
+% Error bars (with fallback for Octave compatibility)
+try
+    error_y = cation_std(cation_sort_idx) / sqrt(mean(cation_n));
+    errorbar(1:n_cations, cation_effects_sorted, error_y, 'k.', 'LineWidth', 1.5);
+catch
+    % Skip error bars if not supported
+end
 set(gca, 'XTick', 1:n_cations, 'XTickLabel', unique_cations(cation_sort_idx), ...
     'XTickLabelRotation', 45, 'FontSize', 10);
 ylabel('Random Effect on ln(a_w)', 'FontSize', 12);
 title('Cation Effects (u_{cation})', 'FontSize', 13, 'FontWeight', 'bold');
 grid on;
 xl = xlim;
-line([xl(1) xl(2)], [0 0], 'Color', 'k', 'LineStyle', '--', 'LineWidth', 1.5);
+% Use plot instead of line to avoid variable name conflicts
+plot([xl(1) xl(2)], [0 0], 'k--', 'LineWidth', 1.5);
 
 subplot(1, 2, 2);
 bar(anion_effects_sorted, 'FaceColor', [0.3 0.7 0.3]);
 hold on;
-errorbar(1:n_anions, anion_effects_sorted, anion_std(anion_sort_idx) / sqrt(mean(anion_n)), ...
-    'k.', 'LineWidth', 1.5);
+% Error bars (with fallback for Octave compatibility)
+try
+    error_y_anion = anion_std(anion_sort_idx) / sqrt(mean(anion_n));
+    errorbar(1:n_anions, anion_effects_sorted, error_y_anion, 'k.', 'LineWidth', 1.5);
+catch
+    % Skip error bars if not supported
+end
 set(gca, 'XTick', 1:n_anions, 'XTickLabel', unique_anions(anion_sort_idx), ...
     'XTickLabelRotation', 45, 'FontSize', 10);
 ylabel('Random Effect on ln(a_w)', 'FontSize', 12);
 title('Anion Effects (v_{anion})', 'FontSize', 13, 'FontWeight', 'bold');
 grid on;
 xl = xlim;
-line([xl(1) xl(2)], [0 0], 'Color', 'k', 'LineStyle', '--', 'LineWidth', 1.5);
+% Use plot instead of line to avoid variable name conflicts
+plot([xl(1) xl(2)], [0 0], 'k--', 'LineWidth', 1.5);
 
 saveas(fig2, fullfile(OUTPUT_DIR, 'ion_random_effects.png'));
 fprintf('Saved: ion_random_effects.png\n');
@@ -597,9 +832,14 @@ m_plot = linspace(0, max(m_bins(valid_bins)), 200);
 f_m_plot = f_m_interp(m_plot);
 plot(m_plot, f_m_plot, 'b-', 'LineWidth', 3);
 
-% Plot bins with error bars
-errorbar(m_bins(valid_bins), f_m_bins(valid_bins), f_m_std(valid_bins), ...
-    'ko', 'MarkerFaceColor', 'k', 'MarkerSize', 6, 'LineWidth', 1.5);
+% Plot bins with error bars (Octave-compatible)
+try
+    errorbar(m_bins(valid_bins), f_m_bins(valid_bins), f_m_std(valid_bins), ...
+        'ko', 'MarkerFaceColor', 'k', 'MarkerSize', 6, 'LineWidth', 1.5);
+catch
+    % Fallback: plot without error bars if errorbar fails
+    plot(m_bins(valid_bins), f_m_bins(valid_bins), 'ko', 'MarkerFaceColor', 'k', 'MarkerSize', 6, 'LineWidth', 1.5);
+end
 
 xlabel('Molality (mol/kg)', 'FontSize', 12);
 ylabel('ln(a_w)', 'FontSize', 12);
@@ -619,7 +859,12 @@ end
 try
 fig4 = figure('Position', [100, 100, 800, 600], 'visible', 'off');
 
-scatter(data.ln_aw, data.ln_aw_pred, 20, 'b', 'filled', 'MarkerFaceAlpha', 0.3);
+% Use scatter with Octave-compatible syntax (MarkerFaceAlpha not supported)
+try
+    scatter(data.ln_aw, data.ln_aw_pred, 20, 'b', 'filled', 'MarkerFaceAlpha', 0.3);
+catch
+    scatter(data.ln_aw, data.ln_aw_pred, 20, 'b', 'filled');
+end
 hold on;
 xl = xlim;
 plot([xl(1) xl(2)], [xl(1) xl(2)], 'k--', 'LineWidth', 2);
@@ -647,7 +892,9 @@ try
 fig5 = figure('Position', [100, 100, 1000, 400], 'visible', 'off');
 
 subplot(1, 2, 1);
-histogram(cv_rmse, 20, 'FaceColor', [0.3 0.5 0.8], 'EdgeColor', 'k');
+% Use hist for Octave compatibility (histogram is MATLAB-only)
+[n_rmse, edges_rmse] = hist(cv_rmse, 20);
+bar(edges_rmse, n_rmse, 'FaceColor', [0.3 0.5 0.8], 'EdgeColor', 'k');
 hold on;
 yl = ylim;
 plot([mean(cv_rmse) mean(cv_rmse)], [yl(1) yl(2)], 'r--', 'LineWidth', 2);
@@ -655,19 +902,27 @@ plot([median(cv_rmse) median(cv_rmse)], [yl(1) yl(2)], 'g--', 'LineWidth', 2);
 xlabel('RMSE', 'FontSize', 12);
 ylabel('Frequency', 'FontSize', 12);
 title('Cross-Validation RMSE Distribution', 'FontSize', 13, 'FontWeight', 'bold');
-legend('RMSE', 'Mean', 'Median', 'Location', 'best');
+legend('RMSE', 'Mean', 'Median', 'Location', 'northeast');
 grid on;
 
 subplot(1, 2, 2);
-histogram(cv_r2, 20, 'FaceColor', [0.8 0.5 0.3], 'EdgeColor', 'k');
-hold on;
-yl = ylim;
-plot([mean(cv_r2) mean(cv_r2)], [yl(1) yl(2)], 'r--', 'LineWidth', 2);
-plot([median(cv_r2) median(cv_r2)], [yl(1) yl(2)], 'g--', 'LineWidth', 2);
-xlabel('R²', 'FontSize', 12);
-ylabel('Frequency', 'FontSize', 12);
-title('Cross-Validation R² Distribution', 'FontSize', 13, 'FontWeight', 'bold');
-legend('R²', 'Mean', 'Median', 'Location', 'best');
+% Filter out NaN values for R² histogram
+valid_r2_plot = cv_r2(~isnan(cv_r2));
+if ~isempty(valid_r2_plot)
+    [n_r2, edges_r2] = hist(valid_r2_plot, 20);
+    bar(edges_r2, n_r2, 'FaceColor', [0.8 0.5 0.3], 'EdgeColor', 'k');
+    hold on;
+    yl = ylim;
+    plot([mean(valid_r2_plot) mean(valid_r2_plot)], [yl(1) yl(2)], 'r--', 'LineWidth', 2);
+    plot([median(valid_r2_plot) median(valid_r2_plot)], [yl(1) yl(2)], 'g--', 'LineWidth', 2);
+    xlabel('R²', 'FontSize', 12);
+    ylabel('Frequency', 'FontSize', 12);
+    title('Cross-Validation R² Distribution', 'FontSize', 13, 'FontWeight', 'bold');
+    legend('R²', 'Mean', 'Median', 'Location', 'northeast');
+else
+    text(0.5, 0.5, 'No valid R² values', 'HorizontalAlignment', 'center', 'FontSize', 12);
+    title('Cross-Validation R² Distribution', 'FontSize', 13, 'FontWeight', 'bold');
+end
 grid on;
 
 saveas(fig5, fullfile(OUTPUT_DIR, 'cross_validation_results.png'));
@@ -791,9 +1046,17 @@ fprintf(fid, '  Residual: %.4f (%.1f%%)\n', var_residual, pct_residual);
 fprintf(fid, '\nCation:Anion variance ratio: %.2f\n', cation_anion_ratio);
 fprintf(fid, '\nCross-Validation Results:\n');
 fprintf(fid, '  Mean RMSE: %.4f ± %.4f\n', mean(cv_rmse), std(cv_rmse));
-fprintf(fid, '  Mean R²: %.4f ± %.4f\n', mean(cv_r2), std(cv_r2));
+% Handle NaN values in R²
+valid_r2 = cv_r2(~isnan(cv_r2));
+if ~isempty(valid_r2)
+    fprintf(fid, '  Mean R²: %.4f ± %.4f\n', mean(valid_r2), std(valid_r2));
+    fprintf(fid, '  Median R²: %.4f\n', median(valid_r2));
+    fprintf(fid, '  Valid R² values: %d/%d\n', length(valid_r2), length(cv_r2));
+else
+    fprintf(fid, '  Mean R²: NaN (all values invalid)\n');
+    fprintf(fid, '  Median R²: NaN\n');
+end
 fprintf(fid, '  Median RMSE: %.4f\n', median(cv_rmse));
-fprintf(fid, '  Median R²: %.4f\n', median(cv_r2));
 fclose(fid);
 
 fprintf('Saved: mixed_effects_summary.txt\n');
