@@ -170,7 +170,7 @@ h1 = plot(NaN,NaN,'k-','LineWidth',1.5,'DisplayName','Endothermic');
 h2 = plot(NaN,NaN,'k--','LineWidth',1.5,'DisplayName','Exothermic');
 legend([h1, h2], 'Location', 'northwest');
 
-print(fullfile(filepath, '..', 'figures', 'Uptake_All_gg'),'-dpng','-r600');
+print(fullfile(filepath, '..', 'figures', 'uptake', 'Uptake_All_gg'),'-dpng','-r600');
 
 % --- Figure 2: mol/mol Uptake ---
 fig2 = figure('Position', [150, 150, 900, 700]);
@@ -198,7 +198,7 @@ grid on; set(gcf,'color','w');
 xlim([0, 100]);
 legend([h1, h2], 'Location', 'northwest');
 
-print(fullfile(filepath, '..', 'figures', 'Uptake_All_molmol'),'-dpng','-r600');
+print(fullfile(filepath, '..', 'figures', 'uptake', 'Uptake_All_molmol'),'-dpng','-r600');
 
 
 %% VALIDATION: Solubility Comparison
@@ -304,7 +304,7 @@ if isfile(baselineFile)
                 ylim([0, maxVal]);
                 legend('Data', '1:1 Line', 'Location', 'northwest');
                 
-                print(fullfile(filepath, '..', 'figures', 'Solubility_Validation'), '-dpng', '-r600');
+                print(fullfile(filepath, '..', 'figures', 'uptake', 'Solubility_Validation'), '-dpng', '-r600');
                 disp('Solubility validation plot generated successfully.');
              else
                  warning('No matching valid data points found for validation plot.');

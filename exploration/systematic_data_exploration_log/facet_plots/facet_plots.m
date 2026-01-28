@@ -529,8 +529,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
 caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
 ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_I_by_anion.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_I_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_aw_vs_I_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_aw_vs_I_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -601,8 +601,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
 caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
 ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_I_by_cation.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_I_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_aw_vs_I_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_aw_vs_I_by_cation.fig'));
 
 write_output('Generated ln(aw) vs Ionic Strength faceted plots\n');
 
@@ -675,8 +675,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
 caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
 ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_xwater_by_anion.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_xwater_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_aw_vs_xwater_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_aw_vs_xwater_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -745,8 +745,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
 caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
 ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_xwater_by_cation.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_aw_vs_xwater_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_aw_vs_xwater_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_aw_vs_xwater_by_cation.fig'));
 
 write_output('Generated ln(aw) vs Mole Fraction Water faceted plots\n');
 
@@ -821,8 +821,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
 caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
 ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_I_by_anion.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_I_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_I_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_I_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -893,8 +893,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
     caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
     ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_I_by_cation.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_I_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_I_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_I_by_cation.fig'));
 
 write_output('Generated ln(gamma) vs Ionic Strength faceted plots\n');
 
@@ -970,8 +970,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
     caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
     ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_xwater_by_anion.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_xwater_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_xwater_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_xwater_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -1043,8 +1043,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
     caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
     ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_xwater_by_cation.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_xwater_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_xwater_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_xwater_by_cation.fig'));
 
 write_output('Generated ln(gamma) vs Mole Fraction Water faceted plots\n');
 
@@ -1120,8 +1120,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
     caxis(cb_ax, [69, 167]);  % Set to actual radius range in pm
     ylabel(cb, 'Cation Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_RH_by_anion.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_RH_by_anion.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_RH_by_anion.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_RH_by_anion.fig'));
 
 % Version B: Faceted by Cation, Colored by Anion Radius
 figure('Position', [100, 100, 1800, 1200]);
@@ -1193,8 +1193,8 @@ cb = colorbar(cb_ax, 'Location', 'east');
     caxis(cb_ax, [133, 244]);  % Set to actual anion radius range in pm
     ylabel(cb, 'Anion Radius (pm)', 'FontWeight', 'bold', 'FontSize', 11);
 
-saveas(gcf, fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_RH_by_cation.png'));
-savefig(fullfile(filepath, '../../..', 'figures', 'faceted_ln_gamma_vs_RH_by_cation.fig'));
+saveas(gcf, fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_RH_by_cation.png'));
+savefig(fullfile(filepath, '../../..', 'figures', 'facet_plots', 'faceted_ln_gamma_vs_RH_by_cation.fig'));
 
 write_output('Generated ln(gamma) vs RH faceted plots\n');
 write_output('All faceted plots completed! Generated 10 figure sets.\n\n');

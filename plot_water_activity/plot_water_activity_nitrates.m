@@ -163,7 +163,7 @@ ylim([0.7 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction_Nitrates'), '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction_Nitrates'), '-dpng', '-r600')
 
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity (Nitrates)
@@ -192,6 +192,6 @@ ylim([0.7 1.1])
 set(gca, 'FontSize', 12)
 set(gcf, 'color', 'w');
 
-print(fullfile(filepath, '..', 'figures', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH_Nitrates'), '-dpng', '-r600')
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH_Nitrates'), '-dpng', '-r600')
 
 disp('Nitrate plots generated successfully!')

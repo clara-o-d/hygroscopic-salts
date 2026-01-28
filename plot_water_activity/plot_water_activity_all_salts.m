@@ -8,7 +8,7 @@ addpath(fullfile(filepath, '..', 'calculate_mf'));
 addpath(fullfile(filepath, '..', 'util'));
 
 % Define output directory for figures
-fig_out_dir = fullfile(filepath, '..', 'figures');
+fig_out_dir = fullfile(filepath, '..', 'figures', 'activity_coefficient');
 if ~exist(fig_out_dir, 'dir')
     mkdir(fig_out_dir);
 end
@@ -336,4 +336,4 @@ for d = 1:length(definitions)
     
 end
 
-disp('All plots generated successfully in: ../figures/')
+disp('All plots generated successfully in: ../figures/activity_coefficient')
