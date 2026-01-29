@@ -9,7 +9,7 @@ addpath('../calculate_mf');
 csv_path = '../data/baseline_with_ion_properties_legacy.csv';
 
 % Output Setup
-output_dir = '../figures/activity_coefficient_subsets';
+output_dir = '../figures/pitzer_comparisons';
 if ~exist(output_dir, 'dir'), mkdir(output_dir); end
 
 T = 25;       % Temperature in Celsius

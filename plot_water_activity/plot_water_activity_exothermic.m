@@ -204,6 +204,23 @@ c_fit = 1 - 10000*a_fit - 100*b_fit;
 x_fit_line = linspace(0, 100, 200);
 y_fit_line = a_fit * x_fit_line.^2 + b_fit * x_fit_line + c_fit;
 
+%% Goodness of Fit Metrics (R^2 and RMSE)
+
+% Predicted gamma values for the fit data
+gamma_pred = a_fit * all_RH_fit.^2 + b_fit * all_RH_fit + c_fit;
+
+% Residuals
+residuals = all_gamma_fit - gamma_pred;
+
+% RMSE
+RMSE = sqrt(mean(residuals.^2));
+
+% R-squared
+SS_res = sum(residuals.^2);
+SS_tot = sum((all_gamma_fit - mean(all_gamma_fit)).^2);
+R_squared = 1 - SS_res / SS_tot;
+
+
 %% FIGURE 1: Activity Coefficient vs Mole Fraction
 figure('Position', [100, 100, 900, 700]);
 hold on; grid on; box on;
@@ -231,8 +248,9 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction'), '-dpng', '-r600')
-savefig(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction.fig'))
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction_Exothermic_fitted'), '-dpng', '-r600')
+savefig(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_Mole_Fraction_Exothermic_fitted.fig'))
+
 
 %% FIGURE 2: Activity Coefficient vs Relative Humidity
 figure('Position', [100, 100, 900, 700]);
@@ -265,9 +283,24 @@ set(gcf, 'color', 'w');
 fig = gcf;
 fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 9 7]; 
-print(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH'), '-dpng', '-r600')
-savefig(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH.fig'))
+
+%% Equation String, Annotate Fit Equation and Statistics
+
+eqn_str = sprintf(['$\\gamma_w = %.6f\\,RH^2 %+ .6f\\,RH %+ .6f$\n' ...
+                   '$R^2 = %.4f$,   RMSE = %.4f'], ...
+                   a_fit, b_fit, c_fit, R_squared, RMSE);
+
+annotation('textbox', [0.10 0.70 0.45 0.08], ...
+    'String', eqn_str, ...
+    'Interpreter', 'latex', ...
+    'FontSize', 12, ...
+    'BackgroundColor', 'white', ...
+    'EdgeColor', 'black', ...
+    'LineWidth', 1.1);
+
+print(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH_Exothermic_fitted'), '-dpng', '-r600')
+savefig(fullfile(filepath, '..', 'figures', 'activity_coefficient', 'activity_coefficient_subsets', 'Activity_Coefficient_vs_RH_Exothermic_fitted.fig'))
 
 disp('Plots generated successfully!')
-disp('  - figures/activity_coefficient/activity_coefficient_subsets/Activity_Coefficient_vs_Mole_Fraction.png')
-disp('  - figures/activity_coefficient/activity_coefficient_subsets/Activity_Coefficient_vs_RH.png')
+disp('  - figures/activity_coefficient/activity_coefficient_subsets/Activity_Coefficient_vs_Mole_Fraction_Exothermic_fitted.png')
+disp('  - figures/activity_coefficient/activity_coefficient_subsets/Activity_Coefficient_vs_RH_Exothermic_fitted.png')
