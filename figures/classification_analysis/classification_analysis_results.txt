@@ -1,0 +1,143 @@
+========================================
+CLASSIFICATION EFFECTIVENESS ANALYSIS
+========================================
+
+Analysis Date: 01-Feb-2026 00:48:16
+
+METRICS EXPLANATION:
+  - F-statistic: Ratio of between-group to within-group variance
+    Higher values indicate better separation between classes
+  - Mean Separation: Average distance between class means
+    Higher values indicate classes are further apart
+  - Coefficient of Variation: Standard deviation / mean of class means
+    Lower values indicate more consistent separation
+
+========================================
+SEPARATION METRICS BY CLASSIFICATION - MOLECULAR BASIS
+========================================
+
+--- Endothermic vs Exothermic ---
+  Number of classes: 2
+  Valid RH points: 3
+  Mean F-statistic: 7.9989
+  Mean separation: 0.0219
+  Mean CV: 0.1260
+
+--- Cation Class ---
+  Number of classes: 2
+  Valid RH points: 1
+  Mean F-statistic: 3.9464
+  Mean separation: 0.0131
+  Mean CV: 0.1667
+
+--- Anion Class ---
+  Number of classes: 3
+  Valid RH points: 5
+  Mean F-statistic: 0.2574
+  Mean separation: 0.0065
+  Mean CV: 0.0198
+
+--- Electrolyte Type ---
+  Number of classes: 3
+  Valid RH points: 5
+  Mean F-statistic: 11.6096
+  Mean separation: 0.0270
+  Mean CV: 0.0878
+
+--- Anion Family ---
+  Number of classes: 5
+  Valid RH points: 3
+  Mean F-statistic: 2.3553
+  Mean separation: 0.0245
+  Mean CV: 0.1136
+
+--- Combined Ion Classes ---
+  Number of classes: 6
+  Valid RH points: 5
+  Mean F-statistic: 0.4994
+  Mean separation: 0.0103
+  Mean CV: 0.0426
+
+========================================
+BEST CLASSIFICATIONS - MOLECULAR BASIS
+========================================
+
+Best by F-statistic: Electrolyte Type (F=11.6096)
+Best by mean separation: Electrolyte Type (sep=0.0270)
+Best by CV (lowest): Anion Class (CV=0.0198)
+Best by combined score: Electrolyte Type (score=3.5352)
+
+========================================
+SEPARATION METRICS BY CLASSIFICATION - IONIC BASIS
+========================================
+
+--- Endothermic vs Exothermic ---
+  Number of classes: 2
+  Valid RH points: 3
+  Mean F-statistic: 1.1694
+  Mean separation: 0.0112
+  Mean CV: 24.8074
+
+--- Cation Class ---
+  Number of classes: 2
+  Valid RH points: 1
+  Mean F-statistic: 1.7233
+  Mean separation: 0.0153
+  Mean CV: 3.1426
+
+--- Anion Class ---
+  Number of classes: 3
+  Valid RH points: 5
+  Mean F-statistic: 0.3250
+  Mean separation: 0.0136
+  Mean CV: 0.8929
+
+--- Electrolyte Type ---
+  Number of classes: 3
+  Valid RH points: 5
+  Mean F-statistic: 0.7897
+  Mean separation: 0.0210
+  Mean CV: 0.5413
+
+--- Anion Family ---
+  Number of classes: 5
+  Valid RH points: 3
+  Mean F-statistic: 1.3265
+  Mean separation: 0.0276
+  Mean CV: 0.7182
+
+--- Combined Ion Classes ---
+  Number of classes: 6
+  Valid RH points: 5
+  Mean F-statistic: 0.2934
+  Mean separation: 0.0149
+  Mean CV: 3.1741
+
+========================================
+BEST CLASSIFICATIONS - IONIC BASIS
+========================================
+
+Best by F-statistic: Cation Class (F=1.7233)
+Best by mean separation: Anion Family (sep=0.0276)
+Best by CV (lowest): Electrolyte Type (CV=0.5413)
+Best by combined score: Anion Family (score=0.0509)
+
+========================================
+COMPARISON: MOLECULAR vs IONIC BASIS
+========================================
+
+Molecular Basis - Best Classification: Electrolyte Type (score=3.5352)
+Ionic Basis - Best Classification: Anion Family (score=0.0509)
+
+========================================
+CONCLUSION
+========================================
+
+The most effective classification for separating salts based on
+ln(gamma_w) vs RH relationships:
+
+  Molecular Basis: Electrolyte Type (score=3.5352)
+  Ionic Basis: Anion Family (score=0.0509)
+
+These classifications were selected based on a combined score that
+considers F-statistic, mean separation, and coefficient of variation.
