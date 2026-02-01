@@ -1,0 +1,162 @@
+========================================
+PREDICTION OF ln(gamma) SIGN AT HIGH RH
+========================================
+
+Analysis Date: 01-Feb-2026 13:51:51
+
+High RH Threshold: 0.85
+
+Class Distribution - Ionic Basis:
+  ln(gamma) > 0: 27 salts
+  ln(gamma) <= 0: 21 salts
+
+========================================
+CLASSIFICATION SCHEME PERFORMANCE - IONIC BASIS
+========================================
+
+--- Endothermic vs Exothermic ---
+  Accuracy: 0.6875
+  Precision: 0.7143
+  Recall: 0.7407
+  F1 Score: 0.7273
+
+--- Cation Class ---
+  Accuracy: 0.5625
+  Precision: 0.7500
+  Recall: 0.3333
+  F1 Score: 0.4615
+
+--- Anion Class ---
+  Accuracy: 0.6250
+  Precision: 0.9091
+  Recall: 0.3704
+  F1 Score: 0.5263
+
+--- Electrolyte Type ---
+  Accuracy: 0.5833
+  Precision: 0.6061
+  Recall: 0.7407
+  F1 Score: 0.6667
+
+--- Anion Family ---
+  Accuracy: 0.7083
+  Precision: 0.8421
+  Recall: 0.5926
+  F1 Score: 0.6957
+
+--- Combined Ion Classes ---
+  Accuracy: 0.7083
+  Precision: 0.8095
+  Recall: 0.6296
+  F1 Score: 0.7083
+
+Best Classification - Ionic: Endothermic vs Exothermic
+  Accuracy: 0.6875
+  F1 Score: 0.7273
+
+========================================
+MACHINE LEARNING RESULTS - IONIC BASIS
+========================================
+
+Best Model: rf
+  Training Accuracy: 0.9412
+  Test Accuracy: 0.5714
+
+========================================
+CONFUSION MATRIX ANALYSIS
+========================================
+
+Training Set Confusion Matrix:
+                              Predicted
+                    ln(γ_w)>0 (γ_w>1)  ln(γ_w)≤0 (γ_w≤1)
+Actual ln(γ_w)>0 (γ_w>1)       17                2
+Actual ln(γ_w)≤0 (γ_w≤1)       0               15
+
+  True Positives (TP):  17 (correctly predicted ln(gamma) > 0, i.e., gamma_w > 1)
+  True Negatives (TN):  15 (correctly predicted ln(gamma) <= 0, i.e., gamma_w <= 1)
+  False Positives (FP): 0 (incorrectly predicted ln(gamma) > 0, i.e., gamma_w > 1)
+  False Negatives (FN): 2 (incorrectly predicted ln(gamma) <= 0, i.e., gamma_w <= 1)
+
+Test Set Confusion Matrix:
+                              Predicted
+                    ln(γ_w)>0 (γ_w>1)  ln(γ_w)≤0 (γ_w≤1)
+Actual ln(γ_w)>0 (γ_w>1)        4                4
+Actual ln(γ_w)≤0 (γ_w≤1)       2                4
+
+  True Positives (TP):  4 (correctly predicted ln(gamma) > 0, i.e., gamma_w > 1)
+  True Negatives (TN):  4 (correctly predicted ln(gamma) <= 0, i.e., gamma_w <= 1)
+  False Positives (FP): 2 (incorrectly predicted ln(gamma) > 0, i.e., gamma_w > 1)
+  False Negatives (FN): 4 (incorrectly predicted ln(gamma) <= 0, i.e., gamma_w <= 1)
+
+Training Set Metrics:
+  Accuracy:    0.9412 (94.1%)
+  Precision:   1.0000
+  Recall:      0.8947
+  Specificity: 1.0000
+  F1 Score:    0.9444
+
+Test Set Metrics:
+  Accuracy:    0.5714 (57.1%)
+  Precision:   0.6667
+  Recall:      0.5000
+  Specificity: 0.6667
+  F1 Score:    0.5714
+
+========================================
+FEATURE GAIN ANALYSIS
+========================================
+
+Baseline Test Accuracy (all features): 0.5714
+
+Gain = Baseline Accuracy - Accuracy Without Feature
+Higher gain = more important feature
+
+Feature Gain Rankings:
+  1. AnionFamily: Gain = 0.0714 (12.50% of baseline, acc without: 0.5000)
+  2. Thermal: Gain = 0.0000 (0.00% of baseline, acc without: 0.5714)
+  3. CationClass: Gain = 0.0000 (0.00% of baseline, acc without: 0.5714)
+  4. AnionClass: Gain = 0.0000 (0.00% of baseline, acc without: 0.5714)
+  5. MW: Gain = 0.0000 (0.00% of baseline, acc without: 0.5714)
+  6. n_cat: Gain = 0.0000 (0.00% of baseline, acc without: 0.5714)
+  7. n_an: Gain = 0.0000 (0.00% of baseline, acc without: 0.5714)
+  8. nu: Gain = 0.0000 (0.00% of baseline, acc without: 0.5714)
+  9. ElectrolyteType: Gain = -0.0714 (-12.50% of baseline, acc without: 0.6429)
+
+Most Important Feature: AnionFamily (Gain: 0.0714, 12.50% of baseline)
+
+Detailed Statistics for Top 3 Features:
+
+AnionFamily (Gain: 0.0714, 12.50% of baseline):
+  ln(gamma) > 0: mean=2.0741, std=1.1068, range=[1.0000, 5.0000], n=27
+  ln(gamma) <= 0: mean=1.5238, std=1.1670, range=[1.0000, 5.0000], n=21
+  Effect size (Cohen's d): 0.4838 (small effect)
+
+Thermal (Gain: 0.0000, 0.00% of baseline):
+  ln(gamma) > 0: mean=0.7407, std=0.4466, range=[0.0000, 1.0000], n=27
+  ln(gamma) <= 0: mean=0.3810, std=0.4976, range=[0.0000, 1.0000], n=21
+  Effect size (Cohen's d): 0.7610 (medium effect)
+
+CationClass (Gain: 0.0000, 0.00% of baseline):
+  ln(gamma) > 0: mean=1.3333, std=0.4804, range=[1.0000, 2.0000], n=27
+  ln(gamma) <= 0: mean=1.1429, std=0.3586, range=[1.0000, 2.0000], n=21
+  Effect size (Cohen's d): 0.4494 (small effect)
+
+Model-Specific Information:
+  Model Type: Random Forest
+  Number of trees: 100
+  Importance measured by OOB permuted predictor error.
+
+========================================
+SUMMARY: KEY FINDINGS
+========================================
+
+Best ML Model: rf (Test Accuracy: 57.14%)
+
+Most Important Features for Prediction (by Gain):
+  1. AnionFamily (Gain: 0.0714, 12.50% of baseline)
+  2. Thermal (Gain: 0.0000, 0.00% of baseline)
+  3. CationClass (Gain: 0.0000, 0.00% of baseline)
+
+These features are the primary drivers of whether a salt will have
+ln(gamma) > 0 or <= 0 at high relative humidity (RH >= 0.85).
+Gain represents how much model accuracy drops when each feature is removed.
