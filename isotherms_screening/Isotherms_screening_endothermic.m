@@ -4,11 +4,17 @@ clc
 
 % --- Setup Paths ---
 [filepath,~,~] = fileparts(mfilename('fullpath'));
+% Ensure you have these folders or comment them out if not needed
 addpath(fullfile(filepath, '..', 'calculate_mf')); 
 addpath(fullfile(filepath, '..', 'util'));         
 
+output_dir = '../figures/uptake';
+if ~exist(output_dir, 'dir'), mkdir(output_dir); end
+
 % --- Constants ---
-MWw = 18.015; % Molecular weight of water
+MWw = 18.015;   % Molecular weight of water
+R   = 8.314;    % Gas constant (J / mol K)
+T   = 298.15;   % Temperature (K)
 
 % --- Data Input ---
 % Cols: {Name, MW, RH_min, RH_max, FuncName, IsExo, Cation_n, Anion_n}
@@ -74,36 +80,86 @@ salt_data = {
     {'LiClO4', 106.39, 0.7785, 0.9869, 'calculate_mf_LiClO4', 0, 1, 1}; 
 };
 
-% --- Processing Loop ---
-results = struct();
+%% LOAD REFERENCE DATA
+baselineFile = fullfile(filepath, '..', 'data', 'baseline_numeric_only.csv');
+ref_map_drh = containers.Map();
+ref_map_sol = containers.Map();
 
-for i = 1:length(salt_data)
-    % 1. Extract the row
-    row = salt_data{i}; 
+if isfile(baselineFile)
+    opts = detectImportOptions(baselineFile);
+    opts.VariableNamingRule = 'preserve'; 
+    tbl = readtable(baselineFile, opts);
+    varNames = tbl.Properties.VariableNames;
     
-    % 2. Extract parameters
+    % Identify Columns
+    idx_elec = find(strcmpi(varNames, 'electrolyte'), 1);
+    idx_sol  = find(ismember(lower(varNames), {'solubility','solubility_limit','solubilitylimit'}), 1);
+    idx_drh  = find(ismember(lower(varNames), {'deliquescence_humidity','drh','deliquescencehumidity'}), 1);
+    
+    if ~isempty(idx_elec)
+        raw_names = string(tbl.(varNames{idx_elec}));
+        clean_names = erase(raw_names, ["(", ")"]);
+        clean_names = strtrim(clean_names);
+        
+        % Store Solubility
+        if ~isempty(idx_sol)
+            sol_vals = tbl.(varNames{idx_sol});
+            for k = 1:length(clean_names)
+                ref_map_sol(upper(clean_names{k})) = sol_vals(k);
+            end
+        end
+        
+        % Store DRH
+        if ~isempty(idx_drh)
+            drh_vals = tbl.(varNames{idx_drh});
+            for k = 1:length(clean_names)
+                ref_map_drh(upper(clean_names{k})) = drh_vals(k);
+            end
+        end
+    end
+else
+    warning('Baseline CSV not found.');
+end
+
+%% PROCESSING LOOP
+results = struct();
+for i = 1:length(salt_data)
+    row = salt_data{i}; 
     name    = row{1};
     MW_salt = row{2};
-    rh_min  = row{3};
+    rh_min_calc = row{3}; 
     rh_max  = row{4};
     funcStr = row{5};
-    isExo   = row{6}; % The 6th column: 1 if Exothermic, 0 if Endothermic
+    isExo   = row{6};
     nu      = row{7} + row{8}; 
     
-    % Determine Line Style
-    if isExo == 1
-        lineStyle = '--';
-    else
-        lineStyle = '-';
+    % --- Determine Best DRH ---
+    best_drh = rh_min_calc;
+    is_drh_from_csv = false;
+    csv_solubility = NaN;
+    
+    % Try to find in CSV
+    if isKey(ref_map_drh, upper(name))
+        csv_val = ref_map_drh(upper(name));
+        if ~isnan(csv_val) && csv_val > 0
+            if csv_val > 1.0 
+                csv_val = csv_val / 100.0;
+            end
+            best_drh = csv_val;
+            is_drh_from_csv = true;
+        end
+    end
+    
+    if isKey(ref_map_sol, upper(name))
+        csv_solubility = ref_map_sol(upper(name));
     end
 
-    % Generate RH vector
-    rh_vec = linspace(rh_min, rh_max, 100);
+    % --- Calculations ---
+    lineStyle = '-';
+    if isExo == 1, lineStyle = '--'; end
     
-    % Get function handle and calculate
+    rh_vec = linspace(rh_min_calc, rh_max, 100);
     calc_func = str2func(funcStr);
-    
-    % Safe calculation loop
     mf_vec = zeros(size(rh_vec));
     for j = 1:length(rh_vec)
         try
@@ -113,64 +169,42 @@ for i = 1:length(salt_data)
         end
     end
     
-    % Calculate Uptake (g/g)
-    % U_gg = m_water / m_salt = (1/mf) - 1
     u_gg = (1 ./ mf_vec) - 1;
-    
-    % Calculate Uptake (mol/mol)
     u_mm = u_gg * (MW_salt / (nu * MWw));
     
-    % Format name for Legend
     cleanName = regexprep(name, '(\d+)', '_$1');
     
-    % Store in struct
     results(i).Name = name;
     results(i).LegendName = cleanName;
     results(i).MW = MW_salt; 
+    results(i).Nu = nu;
     results(i).RH = rh_vec;
     results(i).U_gg = u_gg;
     results(i).U_mm = u_mm;
     results(i).LineStyle = lineStyle;
     results(i).IsExo = isExo;
+    results(i).BestDRH = best_drh;
+    results(i).IsDRHFromCSV = is_drh_from_csv;
+    results(i).CSVSolubility = csv_solubility;
+    results(i).CalcFunc = calc_func;
 end
 
-%% PLOTTING
-
-% Define a set of colors to cycle through
+%% PLOTTING 1 & 2 (Standard Uptake Curves)
 colors = lines(length(results));
 
 % --- Figure 1: g/g Uptake ---
 fig1 = figure('Position', [100, 100, 900, 700]);
 hold on
 for i = 1:length(results)
-    % Plot with specific LineStyle
-    p = plot(results(i).RH, results(i).U_gg, 'LineWidth', 1.5, ...
+    plot(results(i).RH, results(i).U_gg, 'LineWidth', 1.5, ...
          'LineStyle', results(i).LineStyle, 'Color', colors(i,:));
-     
-    % Label at start of curve (approx Deliquescence Point)
-    x_label = results(i).RH(1);
-    y_label = results(i).U_gg(1);
-    
-    text(x_label, y_label, ['  ' results(i).LegendName], ...
-        'Color', colors(i,:), ...
-        'FontSize', 8, ...
-        'FontWeight', 'bold', ...
-        'VerticalAlignment', 'bottom', ...
-        'Interpreter', 'tex');
+    text(results(i).RH(1), results(i).U_gg(1), ['  ' results(i).LegendName], ...
+        'Color', colors(i,:), 'FontSize', 8, 'FontWeight', 'bold', 'Interpreter', 'tex');
 end
+xlabel('Relative Humidity (RH)'); ylabel('Uptake (g/g)');
+title('Salt Water Uptake (Mass Basis)'); grid on; set(gcf,'color','w'); xlim([0, 1]);
+save_fig(fig1, output_dir, ['RH_vs_Uptake_gg']);
 
-xlabel('Relative Humidity (RH)');
-ylabel('Uptake (g/g)');
-title('Salt Water Uptake (Mass Basis)');
-grid on; set(gcf,'color','w');
-xlim([0, 1]);
-
-% Legend for Line Styles only
-h1 = plot(NaN,NaN,'k-','LineWidth',1.5,'DisplayName','Endothermic');
-h2 = plot(NaN,NaN,'k--','LineWidth',1.5,'DisplayName','Exothermic');
-legend([h1, h2], 'Location', 'northwest');
-
-print(fullfile(filepath, '..', 'figures', 'uptake', 'Uptake_All_gg'),'-dpng','-r600');
 
 % --- Figure 2: mol/mol Uptake ---
 fig2 = figure('Position', [150, 150, 900, 700]);
@@ -178,146 +212,268 @@ hold on
 for i = 1:length(results)
     plot(results(i).RH * 100, results(i).U_mm, 'LineWidth', 1.5, ...
          'LineStyle', results(i).LineStyle, 'Color', colors(i,:));
-     
-    % Label at start
-    x_label = results(i).RH(1) * 100;
-    y_label = results(i).U_mm(1);
-    
-    text(x_label, y_label, ['  ' results(i).LegendName], ...
-        'Color', colors(i,:), ...
-        'FontSize', 8, ...
-        'FontWeight', 'bold', ...
-        'VerticalAlignment', 'bottom', ...
-        'Interpreter', 'tex');
+    text(results(i).RH(1)*100, results(i).U_mm(1), ['  ' results(i).LegendName], ...
+        'Color', colors(i,:), 'FontSize', 8, 'FontWeight', 'bold', 'Interpreter', 'tex');
+end
+xlabel('Relative Humidity (%)'); ylabel('Uptake (mol/mol)');
+title('Salt Water Uptake (Molar Basis)'); grid on; set(gcf,'color','w'); xlim([0, 100]);
+save_fig(fig2, output_dir, ['RH_vs_Uptake_molmol']);
+
+
+%% ENTHALPY VS LOG(DRH) PLOT
+enthalpyMap = containers.Map();
+% Standard Enthalpy of Solution (kJ/mol) at 25C
+enthalpyMap('NaCl') = 3.88; enthalpyMap('KCl') = 17.22; enthalpyMap('NH4Cl') = 14.77;
+enthalpyMap('CsCl') = 17.78; enthalpyMap('NaNO3') = 20.50; enthalpyMap('AgNO3') = 22.59;
+enthalpyMap('KI') = 20.33; enthalpyMap('KNO3') = 34.89; enthalpyMap('NaClO4') = 13.88;
+enthalpyMap('KClO3') = 41.38; enthalpyMap('KBr') = 19.87; enthalpyMap('RbCl') = 17.28;
+enthalpyMap('K2SO4') = 23.8; enthalpyMap('NH42SO4') = 6.6;
+
+% Grouping
+group_csv.x = []; group_csv.y = []; group_csv.lbl = {};
+group_calc.x = []; group_calc.y = []; group_calc.lbl = {};
+
+for i = 1:length(results)
+    sName = results(i).Name;
+    if isKey(enthalpyMap, sName)
+        dH = enthalpyMap(sName);
+        drh_val = results(i).BestDRH;
+        
+        x_plot = log(drh_val);
+        y_plot = dH;
+        
+        if results(i).IsDRHFromCSV
+            group_csv.x(end+1) = x_plot; group_csv.y(end+1) = y_plot; group_csv.lbl{end+1} = results(i).LegendName;
+        else
+            group_calc.x(end+1) = x_plot; group_calc.y(end+1) = y_plot; group_calc.lbl{end+1} = results(i).LegendName;
+        end
+    end
 end
 
-xlabel('Relative Humidity (%)');
-ylabel('Uptake (mol water / mol dissociation particle)');
-title('Salt Water Uptake (Molar Basis)');
-grid on; set(gcf,'color','w');
-xlim([0, 100]);
-legend([h1, h2], 'Location', 'northwest');
+% --- Figure 3 ---
+fig3 = figure('Position', [200, 200, 800, 600]);
+hold on;
+h_csv = scatter(group_csv.x, group_csv.y, 80, 'filled', ...
+    'MarkerFaceColor', [0.8500 0.3250 0.0980], 'MarkerEdgeColor', 'k');
+h_calc = scatter(group_calc.x, group_calc.y, 80, 'filled', ...
+    'MarkerFaceColor', [0.6 0.6 0.6], 'MarkerEdgeColor', 'k');
 
-print(fullfile(filepath, '..', 'figures', 'uptake', 'Uptake_All_molmol'),'-dpng','-r600');
-
+for k = 1:length(group_csv.lbl)
+    text(group_csv.x(k), group_csv.y(k), ['  ' group_csv.lbl{k}], 'FontSize', 9, 'VerticalAlignment', 'middle');
+end
+for k = 1:length(group_calc.lbl)
+    text(group_calc.x(k), group_calc.y(k), ['  ' group_calc.lbl{k}], 'FontSize', 9, 'VerticalAlignment', 'middle', 'Color', [0.4 0.4 0.4]);
+end
+xlabel('Natural Log of Deliquescence RH (ln(DRH))');
+ylabel('Standard Enthalpy of Solution (\DeltaH_{soln}^{\circ}, kJ/mol)');
+title('Enthalpy of Solution vs. DRH (Endothermic Salts)');
+grid on; set(gcf, 'color', 'w');
+leg_handles = []; leg_txt = {};
+if ~isempty(group_csv.x), leg_handles(end+1) = h_csv; leg_txt{end+1} = 'Lit. DRH'; end
+if ~isempty(group_calc.x), leg_handles(end+1) = h_calc; leg_txt{end+1} = 'Est. DRH'; end
+if ~isempty(leg_handles), legend(leg_handles, leg_txt, 'Location', 'best'); end
+save_fig(fig3, output_dir, ['Enthalpy_vs_DRH']);
 
 %% VALIDATION: Solubility Comparison
-baselineFile = fullfile(filepath, '..', 'data', 'baseline_numeric_only.csv');
-fprintf('Processing validation against: %s\n', baselineFile);
+val_csv.x = []; val_csv.y = []; val_csv.lbl = {};
+val_calc.x = []; val_calc.y = []; val_calc.lbl = {};
 
-if isfile(baselineFile)
-    opts = detectImportOptions(baselineFile);
-    opts.VariableNamingRule = 'preserve'; 
-    tbl = readtable(baselineFile, opts);
-    varNames = tbl.Properties.VariableNames;
-    
-    % 1. Identify "electrolyte" column
-    elec_col_name = '';
-    % Case insensitive search for 'electrolyte'
-    col_idx = find(strcmpi(varNames, 'electrolyte'));
-    
-    if ~isempty(col_idx)
-        elec_col_name = varNames{col_idx(1)};
-        fprintf('Found electrolyte column: "%s"\n', elec_col_name);
-        
-        % 2. Identify "solubility_limit" column
-        sol_col_name = '';
-        possibleSolNames = {'solubility_limit', 'solubility', 'Solubility', 'SolubilityLimit'};
-        for k = 1:length(possibleSolNames)
-            if ismember(possibleSolNames{k}, varNames)
-                sol_col_name = possibleSolNames{k};
-                break;
-            end
-        end
-        
-        if ~isempty(sol_col_name)
-             fprintf('Found solubility column: "%s"\n', sol_col_name);
-             
-             % Get CSV Data
-             raw_names = string(tbl.(elec_col_name));
-             sol_values = tbl.(sol_col_name);
-             
-             % Clean CSV names: Remove parentheses ()
-             clean_csv_names = erase(raw_names, ["(", ")"]);
-             % Trim whitespace
-             clean_csv_names = strtrim(clean_csv_names);
-             
-             sol_ref_vec = [];
-             sol_calc_vec = [];
-             labels = {};
-             
-             % Loop through our salt data
-             for i = 1:length(results)
-                 target_name = results(i).Name;
-                 
-                 % Find match in cleaned CSV names (Case Insensitive)
-                 idx = find(strcmpi(clean_csv_names, target_name), 1);
-                 
-                 if ~isempty(idx)
-                     s_limit = sol_values(idx);
-                     
-                     if s_limit > 0 && ~isnan(s_limit)
-                         u_calc_drh = results(i).U_gg(1);
-                         
-                         if u_calc_drh > 0
-                             s_calc = (1 / u_calc_drh) * 100;
-                             
-                             sol_ref_vec(end+1) = s_limit;
-                             sol_calc_vec(end+1) = s_calc;
-                             labels{end+1} = results(i).LegendName;
-                         else
-                             fprintf('Skipping %s: Calculated uptake is zero/invalid.\n', target_name);
-                         end
-                     else
-                         fprintf('Skipping %s: CSV Solubility is %f (invalid).\n', target_name, s_limit);
-                     end
-                 else
-                     fprintf('No match found in CSV for: %s (Looked for "%s")\n', target_name, target_name);
-                 end
-             end
-             
-             % --- Plot Validation ---
-             if ~isempty(sol_ref_vec)
-                fig3 = figure('Position', [200, 200, 700, 700]);
-                
-                scatter(sol_ref_vec, sol_calc_vec, 60, 'filled', ...
-                    'MarkerFaceColor', [0 0.4470 0.7410], 'MarkerEdgeColor', 'k');
-                hold on;
-                
-                % Add Labels to Scatter Points
-                for k = 1:length(labels)
-                    text(sol_ref_vec(k), sol_calc_vec(k), ['  ' labels{k}], ...
-                        'FontSize', 8, 'Interpreter', 'tex', ...
-                        'VerticalAlignment', 'middle');
+for i = 1:length(results)
+    s_limit = results(i).CSVSolubility;
+    if ~isnan(s_limit) && s_limit > 0
+        calc_drh = results(i).BestDRH;
+        func = results(i).CalcFunc;
+        try
+            mf_at_drh = func(calc_drh);
+            u_gg_at_drh = (1 / mf_at_drh) - 1;
+            if u_gg_at_drh > 0
+                s_calc = (1 / u_gg_at_drh) * 100;
+                if results(i).IsDRHFromCSV
+                    val_csv.x(end+1) = s_limit; val_csv.y(end+1) = s_calc; val_csv.lbl{end+1} = results(i).LegendName;
+                else
+                    val_calc.x(end+1) = s_limit; val_calc.y(end+1) = s_calc; val_calc.lbl{end+1} = results(i).LegendName;
                 end
-                
-                % 1:1 Line
-                maxVal = max([sol_ref_vec, sol_calc_vec]) * 1.1;
-                plot([0, maxVal], [0, maxVal], 'k--', 'LineWidth', 1.5, 'DisplayName', '1:1 Match');
-                
-                xlabel('Literature Solubility (g salt / 100 g water)');
-                ylabel('Calculated Solubility from DRH (g salt / 100 g water)');
-                title('Validation: Calculated vs Literature Solubility');
-                grid on; set(gcf, 'color', 'w');
-                axis square;
-                xlim([0, maxVal]);
-                ylim([0, maxVal]);
-                legend('Data', '1:1 Line', 'Location', 'northwest');
-                
-                print(fullfile(filepath, '..', 'figures', 'uptake', 'Solubility_Validation'), '-dpng', '-r600');
-                disp('Solubility validation plot generated successfully.');
-             else
-                 warning('No matching valid data points found for validation plot.');
-             end
-             
-        else
-            warning('Could not find solubility column. Checked: %s', strjoin(possibleSolNames, ', '));
+            end
+        catch
         end
-    else
-        warning('Could not find "electrolyte" column in CSV.');
     end
-else
-    warning('Baseline CSV file not found at: %s', baselineFile);
 end
 
+% --- Figure 4 ---
+fig4 = figure('Position', [250, 250, 700, 700]);
+hold on;
+h_v_csv = scatter(val_csv.x, val_csv.y, 60, 'filled', ...
+    'MarkerFaceColor', [0 0.4470 0.7410], 'MarkerEdgeColor', 'k');
+h_v_calc = scatter(val_calc.x, val_calc.y, 60, 'filled', ...
+    'MarkerFaceColor', [0.9290 0.6940 0.1250], 'MarkerEdgeColor', 'k');
+
+for k = 1:length(val_csv.lbl)
+    text(val_csv.x(k), val_csv.y(k), ['  ' val_csv.lbl{k}], 'FontSize', 8, 'Interpreter', 'tex');
+end
+for k = 1:length(val_calc.lbl)
+    text(val_calc.x(k), val_calc.y(k), ['  ' val_calc.lbl{k}], 'FontSize', 8, 'Interpreter', 'tex', 'Color', [0.4 0.4 0.4]);
+end
+maxVal = max([val_csv.x, val_csv.y, val_calc.x, val_calc.y]) * 1.1;
+plot([0, maxVal], [0, maxVal], 'k--', 'LineWidth', 1.5, 'DisplayName', '1:1 Match');
+xlabel('Literature Solubility (g salt / 100 g water)');
+ylabel('Calculated Solubility from DRH (g salt / 100 g water)');
+title('Validation: Calculated vs Literature Solubility');
+grid on; set(gcf, 'color', 'w'); axis square; xlim([0, maxVal]); ylim([0, maxVal]);
+leg_handles = []; leg_txt = {};
+if ~isempty(val_csv.x), leg_handles(end+1) = h_v_csv; leg_txt{end+1} = 'Lit. DRH'; end
+if ~isempty(val_calc.x), leg_handles(end+1) = h_v_calc; leg_txt{end+1} = 'Est. DRH'; end
+legend(leg_handles, leg_txt, 'Location', 'northwest');
+save_fig(fig4, output_dir, ['Solubility_vs_Est_Solubility']);
+
+%% FIGURE 5: Excess Gibbs Energy of Mixing (G_ex) Curves
+% Plotting G_ex across the full range of water concentration (xw)
+% from xw = 1 (pure water) down to xw_sat (saturation).
+
+fig5 = figure('Position', [300, 300, 900, 700]);
+hold on;
+
+for i = 1:length(results)
+    drh = results(i).BestDRH;
+    func = results(i).CalcFunc;
+    MW_salt = results(i).MW;
+    name = results(i).LegendName;
+    
+    % 1. Determine saturation state
+    try
+        ws_sat = func(drh); 
+        if isnan(ws_sat) || ws_sat <= 0 || ws_sat >= 1, continue; end
+        
+        % Calculate saturation mole fraction of salt
+        ns_sat = ws_sat / MW_salt;
+        nw_sat = (1 - ws_sat) / MWw;
+        xs_sat = ns_sat / (ns_sat + nw_sat);
+        
+    catch
+        continue;
+    end
+    
+    % 2. Create Grid for Salt Mole Fraction (xs)
+    % From 0 (pure water) to xs_sat
+    xs_grid = linspace(0, xs_sat, 100);
+    
+    % Avoid exact 0 for numerical stability during root finding if needed
+    xs_grid(1) = 1e-6; 
+    
+    ln_aw_vec = zeros(size(xs_grid));
+    valid_mask = true(size(xs_grid));
+    
+    % 3. Loop through grid to find ln(aw) at each xs
+    for k = 1:length(xs_grid)
+        xs_val = xs_grid(k);
+        
+        % Convert xs -> ws
+        % ws = xs * MWs / (xs * MWs + (1-xs) * MWw)
+        ws_val = (xs_val * MW_salt) / (xs_val * MW_salt + (1 - xs_val) * MWw);
+        
+        % Find RH (aw) that gives this ws
+        % obj = ws_val - func(rh)
+        % Use squared error for robustness
+        obj_func_sq = @(rh) (ws_val - func(rh))^2;
+        
+        try
+            % Limit search to valid RH range for the salt.
+            aw_val = fminbnd(obj_func_sq, 1e-5, 0.9999);
+            
+            if aw_val <= 0
+                valid_mask(k) = false;
+            else
+                ln_aw_vec(k) = log(aw_val);
+            end
+        catch
+            valid_mask(k) = false;
+        end
+    end
+    
+    % 4. Integrate Cumulative Trapezoidal
+    % G_ex(xs) = RT * int_0^xs (ln(aw)/(1-xs')) dxs'
+    if sum(valid_mask) > 10
+        xs_valid = xs_grid(valid_mask);
+        ln_aw_valid = ln_aw_vec(valid_mask);
+        
+        integrand = ln_aw_valid ./ (1 - xs_valid);
+        cum_integral = cumtrapz(xs_valid, integrand);
+        g_ex_curve = R * T * cum_integral;
+        
+        % 5. Plot vs Water Mole Fraction (xw = 1 - xs)
+        xw_plot = 1 - xs_valid;
+        
+        plot(xw_plot, g_ex_curve, 'LineWidth', 1.5, ...
+             'LineStyle', results(i).LineStyle, 'Color', colors(i,:));
+    end
+end
+
+xlabel('Mole Fraction of Water (x_w)');
+ylabel('Excess Gibbs Energy of Mixing (G^{ex}, J/mol)');
+title('Excess Gibbs Energy of Mixing vs. Water Concentration');
+grid on; set(gcf, 'color', 'w');
+xlim([0.8, 1.0]); 
+h_endo = plot(NaN,NaN,'k-','LineWidth',1.5,'DisplayName','Endothermic');
+h_exo = plot(NaN,NaN,'k--','LineWidth',1.5,'DisplayName','Exothermic');
+legend([h_endo, h_exo], 'Location', 'southwest');
+save_fig(fig5, output_dir, ['Mole_Fraction_vs_Gmix_excess']);
+% 
+% 
+% %% FIGURE 6: Water Activity Coefficient vs Water Concentration at Saturation
+% % Endothermic Salts Only.
+% % Y-Axis: Gamma_w at saturation = a_w / x_w = DRH / x_w
+% % X-Axis: x_w at saturation
+% 
+% fig6 = figure('Position', [350, 350, 800, 600]);
+% hold on;
+% 
+% for i = 1:length(results)
+%     % Filter: Endothermic salts only
+%     if results(i).IsExo == 1, continue; end
+% 
+%     drh = results(i).BestDRH;
+%     func = results(i).CalcFunc;
+%     MW_salt = results(i).MW;
+% 
+%     try
+%         % 1. Calculate Mass Fraction at Saturation (from DRH)
+%         ws_sat = func(drh); 
+% 
+%         if isnan(ws_sat) || ws_sat <= 0 || ws_sat >= 1, continue; end
+% 
+%         % 2. Convert to Water Mole Fraction (x_w)
+%         ns = ws_sat / MW_salt;
+%         nw = (1 - ws_sat) / MWw;
+% 
+%         xw_sat = nw / (ns + nw);
+% 
+%         % 3. Calculate Activity Coefficient of Water (gamma_w)
+%         % a_w = gamma_w * x_w  => gamma_w = a_w / x_w
+%         % a_w is simply the DRH fraction.
+%         aw_sat = drh;
+%         gamma_w_sat = aw_sat / xw_sat;
+% 
+%         % 4. Plot
+%         scatter(log(xw_sat), log(gamma_w_sat), 80, 'filled', ...
+%             'MarkerFaceColor', [0.8500 0.3250 0.0980], 'MarkerEdgeColor', 'k');
+% 
+%         text(xw_sat, gamma_w_sat, ['  ' results(i).LegendName], ...
+%             'FontSize', 9, 'VerticalAlignment', 'middle');
+% 
+%     catch
+%         continue;
+%     end
+% end
+% 
+% xlabel('Mole Fraction of Water at Saturation (x_{w,sat})');
+% ylabel('Activity Coefficient of Water at Saturation (\gamma_{w,sat})');
+% title('Water Activity Coefficient vs Concentration at Saturation (Endothermic)');
+% grid on; set(gcf, 'color', 'w');
+
 disp('All tasks completed.');
+
+function save_fig(h, dir, name)
+    set(h, 'Color', 'w');
+    fname = fullfile(dir, name);
+    print(h, fname, '-dpng', '-r150');
+    close(h);
+end
