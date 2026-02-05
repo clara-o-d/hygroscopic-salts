@@ -507,7 +507,7 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     xlabel('Relative Humidity (%)', 'FontSize', 14); ylabel('ln(Activity Coefficient $\gamma_w$) or ln(Mole Fraction $x_w$)','FontSize', 14, 'Interpreter', 'latex');
     title('ln(Water Activity Coefficient (Ionic)) and ln(Water Mole Fraction (Ionic))  vs RH', 'FontSize', 16);
     % xlim([0 100]);
-    print(fullfile(fig_out_dir, 'Activity_Coefficient_and_Mol_Ionic_vs_RH_Ln'), '-dpng', '-r300');
+    print(fullfile(fig_out_dir, 'ln_Activity_Coefficient_and_ln_Mol_Ionic_vs_RH'), '-dpng', '-r300');
 
     % 2d. Gamma vs RH and x_w vs RH ln
     figure('Position', [150, 150, 1200, 800]); hold on; grid on; box on;
@@ -521,7 +521,7 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     xlabel('ln (Relative Humidity (Fractional)', 'FontSize', 14); ylabel('ln(Activity Coefficient $\gamma_w$) or ln(Mole Fraction $x_w$)','FontSize', 14, 'Interpreter', 'latex');
     title('ln(Water Activity Coefficient (Ionic)) and ln(Water Mole Fraction (Ionic))  vs ln(RH)', 'FontSize', 16);
     % xlim([0 100]);
-    print(fullfile(fig_out_dir, 'Activity_Coefficient_and_Mol_Ionic_vs_RH_Fractional_Ln'), '-dpng', '-r300');
+    print(fullfile(fig_out_dir, 'ln_Activity_Coefficient_and_ln_Mol_Ionic_vs_ln_aw'), '-dpng', '-r300');
     
     % 3. Scatter at 90% RH
     figure('Position', [200, 200, 900, 700]); hold on; grid on; box on;
