@@ -668,7 +668,7 @@ function solutes = load_all_data()
 
     i = i + 1;
     solutes(i).name = 'CsI';
-    solutes(i).degree = standard_degree;
+    solutes(i).degree = standard_degree-1; % Done since standard fit led to problematic fzero
     solutes(i).data = [
 0.258954305	0.962440347
 0.286563408	0.955352044

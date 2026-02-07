@@ -17,9 +17,9 @@ R   = 8.314;    % Gas constant (J / mol K)
 T   = 298.15;   % Temperature (K)
 
 % --- Data Input ---
-% Cols: {Name, MW, RH_min, RH_max, FuncName, IsExo, Cation_n, Anion_n}
+% Cols: {Name, MW, RH_min, RH_max, FuncName, should_plot, Cation_n, Anion_n}
 salt_data = {
-    % Endothermic salts (IsExo = 0)
+    % Endothermic salts (should_plot = 0)
     {'NaCl', 58.443, 0.765, 0.99, 'calculate_mf_NaCl', 0, 1, 1};
     {'KCl', 74.551, 0.855, 0.99, 'calculate_mf_KCl', 0, 1, 1};
     {'NH4Cl', 53.491, 0.815, 0.99, 'calculate_mf_NH4Cl', 0, 1, 1};
@@ -38,12 +38,12 @@ salt_data = {
     {'CsBr', 212.81, 0.848, 0.9472, 'calculate_mf_CsBr', 0, 1, 1};    
     {'CsI', 259.81, 0.913, 0.9614, 'calculate_mf_CsI', 0, 1, 1};      
     
-    % Exothermic salts (IsExo = 1)
-    {'LiCl', 42.4, 0.12, 0.97, 'calculate_mf_LiCl', 1, 1, 1};
+    % Exothermic salts (should_plot = 1)
+    {'LiCl', 42.4, 0.12, 0.97, 'calculate_mf_LiCl', 0, 1, 1};
     {'LiOH', 24, 0.85, 0.97, 'calculate_mf_LiOH', 0, 1, 1};
     {'NaOH', 40, 0.23, 0.97, 'calculate_mf_NaOH', 0, 1, 1};
     {'HCl', 36.5, 0.17, 0.97, 'calculate_mf_HCl', 0, 1, 1};
-    {'CaCl2', 111, 0.31, 0.97, 'calculate_mf_CaCl', 1, 1, 2};
+    {'CaCl2', 111, 0.31, 0.97, 'calculate_mf_CaCl', 0, 1, 2};
     {'MgCl2', 95.2, 0.33, 0.97, 'calculate_mf_MgCl', 0, 1, 2};
     {'MgNO3', 148.3, 0.55, 0.9, 'calculate_mf_MgNO3', 0, 1, 2};
     {'LiBr', 86.85, 0.07, 0.97, 'calculate_mf_LiBr', 0, 1, 1};
@@ -130,7 +130,7 @@ for i = 1:length(salt_data)
     rh_min_calc = row{3}; 
     rh_max  = row{4};
     funcStr = row{5};
-    isExo   = row{6};
+    should_plot   = row{6};
     nu      = row{7} + row{8}; 
     
     % --- Determine Best DRH ---
@@ -156,7 +156,7 @@ for i = 1:length(salt_data)
 
     % --- Calculations ---
     lineStyle = '-';
-    if isExo == 1, lineStyle = '--'; end
+    if should_plot == 1, lineStyle = '--'; end
     
     rh_vec = linspace(rh_min_calc, rh_max, 100);
     calc_func = str2func(funcStr);
@@ -182,7 +182,7 @@ for i = 1:length(salt_data)
     results(i).U_gg = u_gg;
     results(i).U_mm = u_mm;
     results(i).LineStyle = lineStyle;
-    results(i).IsExo = isExo;
+    results(i).should_plot = should_plot;
     results(i).BestDRH = best_drh;
     results(i).IsDRHFromCSV = is_drh_from_csv;
     results(i).CSVSolubility = csv_solubility;
@@ -202,7 +202,7 @@ for i = 1:length(results)
         'Color', colors(i,:), 'FontSize', 8, 'FontWeight', 'bold', 'Interpreter', 'tex');
 end
 xlabel('Relative Humidity (RH)'); ylabel('Uptake (g/g)');
-title('Salt Water Uptake (Mass Basis)'); grid on; set(gcf,'color','w'); xlim([0, 1]);
+title('Salt Water Uptake (Mass Basis)'); grid on; set(gcf,'color','w'); xlim([0, 1]); ylim([0, 15]);
 save_fig(fig1, output_dir, ['RH_vs_Uptake_gg']);
 
 
@@ -216,7 +216,7 @@ for i = 1:length(results)
         'Color', colors(i,:), 'FontSize', 8, 'FontWeight', 'bold', 'Interpreter', 'tex');
 end
 xlabel('Relative Humidity (%)'); ylabel('Uptake (mol/mol)');
-title('Salt Water Uptake (Molar Basis)'); grid on; set(gcf,'color','w'); xlim([0, 100]);
+title('Salt Water Uptake (Molar Basis)'); grid on; set(gcf,'color','w'); xlim([0, 100]); ylim([0, 15]);
 save_fig(fig2, output_dir, ['RH_vs_Uptake_molmol']);
 
 
@@ -354,7 +354,7 @@ for i = 1:length(results)
     
     % 2. Create Grid for Salt Mole Fraction (xs)
     % From 0 (pure water) to xs_sat
-    xs_grid = linspace(0, xs_sat, 100);
+    xs_grid = linspace(0.01, 0.9*xs_sat, 20);
     
     % Avoid exact 0 for numerical stability during root finding if needed
     xs_grid(1) = 1e-6; 
@@ -428,7 +428,7 @@ save_fig(fig5, output_dir, ['Mole_Fraction_vs_Gmix_excess']);
 % 
 % for i = 1:length(results)
 %     % Filter: Endothermic salts only
-%     if results(i).IsExo == 1, continue; end
+%     if results(i).should_plot == 1, continue; end
 % 
 %     drh = results(i).BestDRH;
 %     func = results(i).CalcFunc;
@@ -475,5 +475,5 @@ function save_fig(h, dir, name)
     set(h, 'Color', 'w');
     fname = fullfile(dir, name);
     print(h, fname, '-dpng', '-r150');
-    close(h);
+    % close(h);
 end
