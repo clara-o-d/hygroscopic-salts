@@ -1,0 +1,48 @@
+species1,species2,lambda,source
+Al+++,O2(aq),.3095,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Am(OH)3(aq),Cl-,-.2,98Fan/Kim (Table 1).
+Am(OH)3(aq),Na+,-.2,98Fan/Kim (Table 1).
+Ba++,O2(aq),.285,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Br-,O2(aq),-.0347,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Ca++,CO2(aq),.23088047 -.0025364716 554.02998 2.3615659,90Cor/dePab
+Ca++,O2(aq),.2497,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+CaCl2(aq),CaCl2(aq),3.7093994 .019903147 5485.6174 -1.01905e-10,98ste/fel (Model 3)
+Cl-,Cm(OH)3(aq),-.2,98Fan/Kim (Table 1).
+Cl-,Nd(OH)3(aq),-.2,98Fan/Kim (Table 1).
+Cl-,NpO2OH(aq),-.19,95Fan/Nec (Table 3)
+Cl-,Pu(OH)3(aq),-.2,98Fan/Kim (Table 1).
+Cl-,SiO2(aq),.142309 -.00321903 167.356 1.50701,94Fel/Sch [Pitzer_NMX_SiO2.xls]
+Cl-,Th(SO4)2(aq),.29,99Fel/Rai (Table III)
+ClO4-,CO2(aq),-.07,99Kon/Kon (Table 4; 25C value)
+ClO4-,PuO2CO3(aq),.05,97Pas/Czer (Table 6)
+ClO4-,UO2CO3(aq),.05,97Pas/Czer (Table 6)
+Cm(OH)3(aq),Na+,-.2,98Fan/Kim (Table 1).
+CO2(aq),CO2(aq),-.011485622 -.0068001275 1172.9911 5.6247001,90Cor/dePab
+CO2(aq),K+,.11544024 -.0012682358 277.01499 1.180783,Same as CO2(aq)-Na+; 90Cor/dePab
+CO2(aq),Mg++,.23088047 -.0025364716 554.02998 2.3615659,90Cor/dePab
+CO2(aq),Na+,.11544024 -.0012682358 277.01499 1.180783,90Cor/dePab
+CO2(aq),SO4--,.093855057 -.0018332633 640.65164 2.1962946,93Rum/Mau
+CO3--,O2(aq),.09648925 -3.034302e-13 -277.074 2.030064e-10,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+H+,H3PO4(aq),.29,95Rai/Fel (Table IV)
+H+,O2(aq),.035284639 1.21206e-13 81.45 -8.09461e-11,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+H2PO4-,H3PO4(aq),-.4,95Rai/Fel (Table IV)
+H3PO4(aq),H3PO4(aq),.0503,95Rai/Fel (Table IV)
+HCO3-,O2(aq),.0854,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+HSO4-,Th(SO4)2(aq),.68,99Fel/Rai (Table III)
+I-,O2(aq),-.0744,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+K+,O2(aq),.151915 -1.14341e-12 199.431 7.64677e-10,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Li+,O2(aq),.149,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Mg++,O2(aq),.229806 3.23403e-13 305.513 -2.15815e-10,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Mg++,SiO2(aq),.082109605 -.0018133 -3.83318e-9 -2.32691e-11,94Fel/Sch [Pitzer_NMX_SiO2.xls]
+Na+,Nd(OH)3(aq),-.2,98Fan/Kim (Table 1).
+Na+,O2(aq),.160236 .0018462 72.8644 -.616311,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Na+,Pu(OH)3(aq),-.2,98Fan/Kim (Table 1).
+Na+,PuO2CO3(aq),.05,97Pas/Czer (Table 6)
+Na+,SiO2(aq),-.0788994 .000118667 -1.43923e-7 -8.63577e-10,94Fel/Sch [Pitzer_NMX_SiO2.xls]
+Na+,UO2CO3(aq),.05,97Pas/Czer (Table 6)
+NH4+,O2(aq),.0751,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+NO3-,O2(aq),-.0377,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+NO3-,SiO2(aq),.134079 -.0502191 6301.5 35.5262,94Fel/Sch [Pitzer_NMX_SiO2.xls]
+O2(aq),OH-,.05222539 4.101025e-13 15.571 -2.740323e-10,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+O2(aq),SO4--,.087774406 -1.9872766e-12 -274.085 1.3290659e-9,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+SiO2(aq),SO4--,.07759934 .00055333 1.55517e-7 9.33172e-10,94Fel/Sch [Pitzer_NMX_SiO2.xls]

@@ -1,0 +1,94 @@
+species1,species2,theta,source
+AlO2-,NO3-,.038,94Fel/Rus
+AlO2-,OH-,.014,94Fel/Rus
+Am+++,Ca++,.2,98Fan/Kim (Table 1).
+Am+++,Na+,.1,98Fan/Kim (Table 1).
+AmCl++,Ca++,-.014,98Fan/Kim (Table 1).
+AmCl2+,Ca++,-.196,98Fan/Kim (Table 1).
+B(OH)4-,Cl-,-.065,86Fel/Wea(Table 4)
+B(OH)4-,SO4--,-.012,86Fel/Wea(Table 4)
+B3O3(OH)4-,Cl-,.12,86Fel/Wea(Table 4)
+B3O3(OH)4-,HCO3-,-.1,86Fel/Wea(Table 4)
+B3O3(OH)4-,SO4--,.1,86Fel/Wea(Table 4)
+B4O5(OH)4--,Cl-,.074,86Fel/Wea(Table 4)
+B4O5(OH)4--,HCO3-,-.087,86Fel/Wea(Table 4)
+B4O5(OH)4--,SO4--,.12,86Fel/Wea(Table 4)
+Ba++,H+,.0991,88Kim/Fre(2) (Table IV)
+Br-,Cr2O7--,-.05,"98Chr, Table 3"
+Br-,OH-,-.065,91Pit (p. 118; 25C value)
+Ca++,Cm+++,.2,98Fan/Kim (Table 1).
+Ca++,CmCl++,-.014,98Fan/Kim (Table 1).
+Ca++,CmCl2+,-.196,98Fan/Kim (Table 1).
+Ca++,Co++,.1722,88Kim/Fre(2) (Table IV)
+Ca++,H+,.092,91Pit (p. 118; 25C value)
+Ca++,K+,.1156 1.4210855e-14 9.3132258e-10,refit of 89Gre/Mol [FitPitzerNC_MM_K_Ca.xls]
+Ca++,Mg++,.007,91Pit (p. 118; 25C value)
+Ca++,Na+,.05 0.0 1.8626452e-9 7.2759576e-12,refit of 89Gre/Mol [FitPitzerNC_MM_Na_Ca.xls]
+Ca++,Nd+++,.2,98Fan/Kim (Table 1).
+Ca++,NdCl++,-.014,98Fan/Kim (Table 1).
+Ca++,NdCl2+,-.196,98Fan/Kim (Table 1).
+Ca++,Pu+++,.2,98Fan/Kim (Table 1).
+Ca++,PuCl++,-.014,98Fan/Kim (Table 1).
+Ca++,PuCl2+,-.196,98Fan/Kim (Table 1).
+Cl-,ClO4-,.0341,97Kon/Nec (Table I))
+Cl-,CO3--,-.092,82pei/pit
+Cl-,Cr2O7--,.1,"98Chr, Table 3"
+Cl-,CrO4--,.02,"02Chr/Iva, p. 992"
+Cl-,HCO3-,.0359,82pei/pit
+Cl-,HSO4-,-.006,91Pit (p. 118; 25C value)
+Cl-,MoO4--,.035,"92Gra/Mul, p.75"
+Cl-,NO3-,.016,91Pit (p. 116; 25C value)
+Cl-,NpO2(CO3)2---,-.26,99Fel/Rai (Table VI) and 95Fan/Nec (Table 3)
+Cl-,NpO2(CO3)3-----,-.26,99Fel/Rai (Table VI) and 95Fan/Nec (Table 3)
+Cl-,NpO2(OH)2-,-.24,99Fel/Rai (Table VI) and 95Fan/Nec (Table 3)
+Cl-,NpO2CO3-,-.21,99Fel/Rai (Table VI) and 95Fan/Nec (Table 3)
+Cl-,OH-,-.05,87Pab/Pit
+Cl-,SO4--,.07032788 -.002332227 182.51346 1.3257306,refit of 89Gre/Mol [FitPitzerNC_XX_Cl_SO4.xls]
+Cl-,TcO4-,.067,98Nec/Kon(1) (Table IV)
+ClO4-,CO3--,.07,99Kon/Kon (Table 4; 25C value)
+ClO4-,HCO3-,.081,99Kon/Kon (Table 4; 25C value)
+ClO4-,OH-,-.032,99Kon/Kon (Table 4; 25C value)
+ClO4-,SO4--,.02,95Rai/Fel (Table IV)
+ClO4-,Th(CO3)5------,5.5,97Fel/Rai (Table I)
+Cm+++,Na+,.1,98Fan/Kim (Table 1).
+Co++,H+,.0829,88Kim/Fre(2) (Table IV)
+Co++,K+,.0559,"91Sar/Ana, Table II"
+Co++,Na+,.0382,88Kim/Fre(2) (Table IV)
+CO3--,HCO3-,-.04,91Pit (p. 118; 25C value)
+CO3--,NpO2(CO3)3-----,-1.9,98Mah/Nov (Table 5)
+CO3--,OH-,.1,91Pit (p. 118; 25C value)
+CO3--,SO4--,.02,91Pit (p. 118; 25C value)
+Cr(OH)4-,OH-,.014,"02Rai/Hes, p. 359."
+Cr+++,K+,-.07,"03Chr, p. 916."
+Cs+,H+,-.044,91Pit (p. 116; 25C value)
+Cs+,Li+,-.1242,91Pit (p. 118; 25C value)
+Cs+,Mg++,-.078,98Nec/Kon(2) (Table 2)
+Cs+,Na+,-.03886,98Nec/Kon(2) (Table 2)
+Cu++,H+,.084,"93Bae/Rea, Table V, parameter set 11."
+Cu++,K+,-.16,"99Chr, Table 4"
+Cu++,Na+,.037,88Kim/Fre(2) (Table IV)
+Gd+++,H+,.07,00Roy/Gre (Table III)
+H+,K+,.005,91Pit (p. 118; 25C value)
+H+,Li+,.015,91Pit (p. 116; 25C value)
+H+,Mg++,.1,91Pit (p. 118; 25C value)
+H+,Na+,.036,91Pit (p. 118; 25C value)
+H+,NH4+,-.019,91Pit (p. 116; 25C value)
+H+,Ni++,.069,"00Roy/Cof, Table 2"
+H+,Sr++,.0642,91Pit (p. 118; 25C value)
+H+,Th++++,.6,92Roy/Vog (Table II)
+H+,UO2++,.1377,88Kim/Fre(2) (Table IV)
+HCO3-,SO4--,.01,91Pit (p. 118; 25C value)
+HSO4-,SO4--,-.11684249 .015402823 -3090.8334 -14.002041,refit of 94Hol/Mes [FitPitzerNC_XX_HSO4_SO4.xls]
+K+,Li+,-.0563,91Pit (p. 118; 25C value)
+K+,Na+,-.0032034932 -2.6645353e-15 14.021314 9.094947e-13,refit of 89Gre/Mol [FitPitzerNC_MM_Na_K.xls]
+Li+,Na+,.0029,91Pit (p. 118; 25C value)
+Mg++,Na+,.07,87Pab/Pit
+Mg++,Th++++,.6,97Rai/Fel (Table 3)
+Mn++,Na+,.0907,88Kim/Fre(2) (Table IV)
+Na+,Nd+++,.1,98Fan/Kim (Table 1).
+Na+,Pu+++,.1,98Fan/Kim (Table 1).
+Na+,PuO2++,.0231,97Pas/Cze (Table 6).
+Na+,Th++++,.42,97Rai/Fel (Table 3)
+Na+,UO2++,.0231,88Kim/Fre(2) (Table IV)
+OH-,SO4--,-.013,87Pab/Pit
+SO4--,TcO4-,.179,98Nec/Kon(1) (Table IV)
