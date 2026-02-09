@@ -9,7 +9,7 @@ end
 if RH > 1 
     error("RH should be 0 < RH < 1")
 end 
-if RH < 0.8221 || RH > 0.9587 
+if RH < 0.7454 || RH > 0.9587 
     error("below deliquescence relative humidity or above range") 
 end  
 A_4 = -26.02; 

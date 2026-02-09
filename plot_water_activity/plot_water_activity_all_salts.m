@@ -71,13 +71,14 @@ function plot_water_activity_all_salts()
         % Nitrates/Halides/Chlorates
         {'BaNO3', 261.34, 0.9869, 0.9948, 'calculate_mf_BaNO32', 0, 1, 2};
         {'CaNO3', 164.09, 0.6474, 0.9945, 'calculate_mf_CaNO32', 0, 1, 2};
-        {'CaBr2', 199.89, 0.6405, 0.9530, 'calculate_mf_CaBr2', 0, 1, 2};
-        {'CaI2', 293.89, 0.8331, 0.9514, 'calculate_mf_CaI2', 0, 1, 2};
-        {'SrCl2', 158.53, 0.8069, 0.9768, 'calculate_mf_SrCl2', 0, 1, 2};
-        {'SrBr2', 247.43, 0.7786, 0.9561, 'calculate_mf_SrBr2', 0, 1, 2};
-        {'SrI2', 341.43, 0.6795, 0.9559, 'calculate_mf_SrI2', 0, 1, 2};
-        {'BaCl2', 208.23, 0.9385, 0.9721, 'calculate_mf_BaCl2', 0, 1, 2};
-        {'BaBr2', 297.14, 0.8231, 0.9577, 'calculate_mf_BaBr2', 0, 1, 2};
+        {'CaBr2', 199.89, 0.5114, 0.9318, 'calculate_mf_CaBr2', 0, 1, 2};
+        {'CaI2', 293.89, 0.7590, 0.9294, 'calculate_mf_CaI2', 0, 1, 2};
+        {'SrCl2', 158.53, 0.7235, 0.9669, 'calculate_mf_SrCl2', 0, 1, 2};
+        {'SrBr2', 247.43, 0.6857, 0.9364, 'calculate_mf_SrBr2', 0, 1, 2};
+        {'SrI2', 341.43, 0.5589, 0.9361, 'calculate_mf_SrI2', 0, 1, 2};
+        {'BaCl2', 208.23, 0.9078, 0.9600, 'calculate_mf_BaCl2', 0, 1, 2};
+        {'BaBr2', 297.14, 0.7454, 0.9387, 'calculate_mf_BaBr2', 0, 1, 2};
+        {'NH4NO3', 80.043, 0.62, 0.95, 'calculate_mf_NH4NO3', 0, 1, 1};
         {'LiClO4', 106.39, 0.7785, 0.9869, 'calculate_mf_LiClO4', 0, 1, 1};
     };
     

@@ -9,14 +9,14 @@ end
 if RH > 1 
     error("RH should be 0 < RH < 1")
 end 
-if RH < 0.7776 || RH > 0.9571 
+if RH < 0.6857 || RH > 0.9364 
     error("below deliquescence relative humidity or above range") 
 end  
-A_4 = -10.12; 
-A_3 = 11.73; 
-A_2 = -7.073;
-A_1 = 1.596; 
-A_0 = 0.8409;
+A_4 = -11.94;
+A_3 = 14.8;
+A_2 = -9.595;
+A_1 = 2.226;
+A_0 = 0.7723;
 f = @(xi) RH - A_0 - A_1.*xi - A_2.*xi.^2 - A_3.*xi.^3 - A_4.*xi.^4;
 mf = robust_fzero(f, 0.1652, 0.4525, 0.3089);
 
