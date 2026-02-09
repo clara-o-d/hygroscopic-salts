@@ -17,6 +17,28 @@ import re
 from pathlib import Path
 
 
+def parse_temp_coefficients(value_string):
+    """
+    Parse temperature-dependent coefficients from a string.
+    Returns dict with a1, a2, a3, a4 (can be None if not present).
+    
+    Temperature function: x(T) = a1 + a2*(1/T - 1/298.15) + a3*ln(T/298.15) + a4*(T - 298.15)
+    """
+    if not value_string:
+        return {'a1': None, 'a2': None, 'a3': None, 'a4': None}
+    
+    vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', value_string)
+    
+    result = {
+        'a1': vals[0] if len(vals) > 0 else None,
+        'a2': vals[1] if len(vals) > 1 else None,
+        'a3': vals[2] if len(vals) > 2 else None,
+        'a4': vals[3] if len(vals) > 3 else None
+    }
+    
+    return result
+
+
 def parse_elements(lines, start_idx):
     """Parse elements section."""
     elements = []
@@ -150,10 +172,10 @@ def parse_pitzer_binary_parameters(lines, start_idx):
                 current_param = {
                     'species1': match.group(1),
                     'species2': match.group(2),
-                    'beta0': None,
-                    'beta1': None,
-                    'beta2': None,
-                    'cphi': None,
+                    'beta0_a1': None, 'beta0_a2': None, 'beta0_a3': None, 'beta0_a4': None,
+                    'beta1_a1': None, 'beta1_a2': None, 'beta1_a3': None, 'beta1_a4': None,
+                    'beta2_a1': None, 'beta2_a2': None, 'beta2_a3': None, 'beta2_a4': None,
+                    'cphi_a1': None, 'cphi_a2': None, 'cphi_a3': None, 'cphi_a4': None,
                     'alpha1': None,
                     'alpha2': None,
                     'source': None
@@ -162,21 +184,37 @@ def parse_pitzer_binary_parameters(lines, start_idx):
         # Parse parameters
         elif current_param:
             if line.startswith('beta0'):
-                vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', line)
-                if vals:
-                    current_param['beta0'] = ' '.join(vals)
+                match_val = re.search(r'=\s*(.+)', line)
+                if match_val:
+                    coeffs = parse_temp_coefficients(match_val.group(1))
+                    current_param['beta0_a1'] = coeffs['a1']
+                    current_param['beta0_a2'] = coeffs['a2']
+                    current_param['beta0_a3'] = coeffs['a3']
+                    current_param['beta0_a4'] = coeffs['a4']
             elif line.startswith('beta1'):
-                vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', line)
-                if vals:
-                    current_param['beta1'] = ' '.join(vals)
+                match_val = re.search(r'=\s*(.+)', line)
+                if match_val:
+                    coeffs = parse_temp_coefficients(match_val.group(1))
+                    current_param['beta1_a1'] = coeffs['a1']
+                    current_param['beta1_a2'] = coeffs['a2']
+                    current_param['beta1_a3'] = coeffs['a3']
+                    current_param['beta1_a4'] = coeffs['a4']
             elif line.startswith('beta2'):
-                vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', line)
-                if vals:
-                    current_param['beta2'] = ' '.join(vals)
+                match_val = re.search(r'=\s*(.+)', line)
+                if match_val:
+                    coeffs = parse_temp_coefficients(match_val.group(1))
+                    current_param['beta2_a1'] = coeffs['a1']
+                    current_param['beta2_a2'] = coeffs['a2']
+                    current_param['beta2_a3'] = coeffs['a3']
+                    current_param['beta2_a4'] = coeffs['a4']
             elif line.startswith('cphi'):
-                vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', line)
-                if vals:
-                    current_param['cphi'] = ' '.join(vals)
+                match_val = re.search(r'=\s*(.+)', line)
+                if match_val:
+                    coeffs = parse_temp_coefficients(match_val.group(1))
+                    current_param['cphi_a1'] = coeffs['a1']
+                    current_param['cphi_a2'] = coeffs['a2']
+                    current_param['cphi_a3'] = coeffs['a3']
+                    current_param['cphi_a4'] = coeffs['a4']
             elif line.startswith('alpha1'):
                 vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', line)
                 if vals:
@@ -226,15 +264,19 @@ def parse_theta_parameters(lines, start_idx):
                 current_param = {
                     'species1': match.group(1),
                     'species2': match.group(2),
-                    'theta': None,
+                    'theta_a1': None, 'theta_a2': None, 'theta_a3': None, 'theta_a4': None,
                     'source': None
                 }
         
         # Parse theta value
         elif current_param and line.startswith('theta'):
-            vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', line)
-            if vals:
-                current_param['theta'] = ' '.join(vals)
+            match_val = re.search(r'=\s*(.+)', line)
+            if match_val:
+                coeffs = parse_temp_coefficients(match_val.group(1))
+                current_param['theta_a1'] = coeffs['a1']
+                current_param['theta_a2'] = coeffs['a2']
+                current_param['theta_a3'] = coeffs['a3']
+                current_param['theta_a4'] = coeffs['a4']
         
         # Parse source
         elif current_param and line.startswith('* Source:'):
@@ -278,15 +320,19 @@ def parse_lambda_parameters(lines, start_idx):
                 current_param = {
                     'species1': match.group(1),
                     'species2': match.group(2),
-                    'lambda': None,
+                    'lambda_a1': None, 'lambda_a2': None, 'lambda_a3': None, 'lambda_a4': None,
                     'source': None
                 }
         
         # Parse lambda value
         elif current_param and line.startswith('lambda'):
-            vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', line)
-            if vals:
-                current_param['lambda'] = ' '.join(vals)
+            match_val = re.search(r'=\s*(.+)', line)
+            if match_val:
+                coeffs = parse_temp_coefficients(match_val.group(1))
+                current_param['lambda_a1'] = coeffs['a1']
+                current_param['lambda_a2'] = coeffs['a2']
+                current_param['lambda_a3'] = coeffs['a3']
+                current_param['lambda_a4'] = coeffs['a4']
         
         # Parse source
         elif current_param and line.startswith('* Source:'):
@@ -331,15 +377,19 @@ def parse_psi_parameters(lines, start_idx):
                     'species1': match.group(1),
                     'species2': match.group(2),
                     'species3': match.group(3),
-                    'psi': None,
+                    'psi_a1': None, 'psi_a2': None, 'psi_a3': None, 'psi_a4': None,
                     'source': None
                 }
         
         # Parse psi value
         elif current_param and line.startswith('psi'):
-            vals = re.findall(r'[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?', line)
-            if vals:
-                current_param['psi'] = ' '.join(vals)
+            match_val = re.search(r'=\s*(.+)', line)
+            if match_val:
+                coeffs = parse_temp_coefficients(match_val.group(1))
+                current_param['psi_a1'] = coeffs['a1']
+                current_param['psi_a2'] = coeffs['a2']
+                current_param['psi_a3'] = coeffs['a3']
+                current_param['psi_a4'] = coeffs['a4']
         
         # Parse source
         elif current_param and line.startswith('* Source:'):
@@ -448,8 +498,12 @@ def main():
     print(f"Found {len(binary_params)} binary parameter sets")
     
     with open(output_dir / 'pitzer_binary.csv', 'w', newline='') as f:
-        fieldnames = ['species1', 'species2', 'beta0', 'beta1', 'beta2', 
-                      'cphi', 'alpha1', 'alpha2', 'source']
+        fieldnames = ['species1', 'species2', 
+                      'beta0_a1', 'beta0_a2', 'beta0_a3', 'beta0_a4',
+                      'beta1_a1', 'beta1_a2', 'beta1_a3', 'beta1_a4',
+                      'beta2_a1', 'beta2_a2', 'beta2_a3', 'beta2_a4',
+                      'cphi_a1', 'cphi_a2', 'cphi_a3', 'cphi_a4',
+                      'alpha1', 'alpha2', 'source']
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         writer.writerows(binary_params)
@@ -459,7 +513,8 @@ def main():
     print(f"Found {len(theta_params)} theta parameter sets")
     
     with open(output_dir / 'pitzer_theta.csv', 'w', newline='') as f:
-        fieldnames = ['species1', 'species2', 'theta', 'source']
+        fieldnames = ['species1', 'species2', 
+                      'theta_a1', 'theta_a2', 'theta_a3', 'theta_a4', 'source']
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         writer.writerows(theta_params)
@@ -469,7 +524,8 @@ def main():
     print(f"Found {len(lambda_params)} lambda parameter sets")
     
     with open(output_dir / 'pitzer_lambda.csv', 'w', newline='') as f:
-        fieldnames = ['species1', 'species2', 'lambda', 'source']
+        fieldnames = ['species1', 'species2', 
+                      'lambda_a1', 'lambda_a2', 'lambda_a3', 'lambda_a4', 'source']
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         writer.writerows(lambda_params)
@@ -479,7 +535,8 @@ def main():
     print(f"Found {len(psi_params)} psi parameter sets")
     
     with open(output_dir / 'pitzer_psi.csv', 'w', newline='') as f:
-        fieldnames = ['species1', 'species2', 'species3', 'psi', 'source']
+        fieldnames = ['species1', 'species2', 'species3', 
+                      'psi_a1', 'psi_a2', 'psi_a3', 'psi_a4', 'source']
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         writer.writerows(psi_params)
