@@ -1,4 +1,4 @@
-wclose all 
+close all 
 clear
 clc 
 
@@ -196,6 +196,65 @@ sgtitle('Water Uptake vs RH: Molar and Mass Basis for All Salts', 'FontSize', 26
 set(gcf, 'color', 'w');
 
 filename = 'Water_Uptake_vs_RH_Molar_and_Mass_All_Salts';
+print(fullfile(fig_out_dir, filename), '-dpng', '-r600')
+savefig(fullfile(fig_out_dir, filename))
+
+%% UPTAKE VS RH: MOLAR AND MASS BASIS (All Salts) - WITH LABELS
+
+figure('Position', [50, 50, 2400, 900]);
+
+% Subplot 1: Molar Basis (Molecular) - with labels
+subplot(1, 2, 1);
+hold on; grid on; box on;
+
+for s = 1:num_salts
+    salt_name = salt_names{s};
+    data = all_salts_data.(salt_name);
+    plot(data.RH*100, data.x_water_mol, 'LineWidth', 2.5, 'color', colors(s,:));
+    
+    % Add text label at the beginning of each curve
+    x_coords = data.RH*100;
+    y_coords = data.x_water_mol;
+    text(x_coords(1), y_coords(1), ['  ' salt_name], ...
+         'Color', colors(s,:), 'FontSize', 12, 'FontWeight', 'bold', ...
+         'HorizontalAlignment', 'left');
+end
+
+xlabel('Relative Humidity (%)', 'FontSize', 20, 'FontWeight', 'bold')
+ylabel('Molar Water Uptake (x_w = RH/\gamma_w)', 'FontSize', 20, 'FontWeight', 'bold')
+title('Molar Basis (Molecular)', 'FontSize', 24, 'FontWeight', 'bold')
+xlim([0 100])
+ylim([0 1])
+set(gca, 'FontSize', 18)
+
+% Subplot 2: Mass Basis (from Molecular) - with labels
+subplot(1, 2, 2);
+hold on; grid on; box on;
+
+for s = 1:num_salts
+    salt_name = salt_names{s};
+    data = all_salts_data.(salt_name);
+    plot(data.RH*100, data.mf_water_from_x_mol, 'LineWidth', 2.5, 'color', colors(s,:));
+    
+    % Add text label at the beginning of each curve
+    x_coords = data.RH*100;
+    y_coords = data.mf_water_from_x_mol;
+    text(x_coords(1), y_coords(1), ['  ' salt_name], ...
+         'Color', colors(s,:), 'FontSize', 12, 'FontWeight', 'bold', ...
+         'HorizontalAlignment', 'left');
+end
+
+xlabel('Relative Humidity (%)', 'FontSize', 20, 'FontWeight', 'bold')
+ylabel('Mass-Based Water Uptake (Mass Fraction)', 'FontSize', 20, 'FontWeight', 'bold')
+title('Mass Basis (from Molecular)', 'FontSize', 24, 'FontWeight', 'bold')
+xlim([0 100])
+ylim([0 1])
+set(gca, 'FontSize', 18)
+
+sgtitle('Water Uptake vs RH: Molar and Mass Basis for All Salts (Labeled)', 'FontSize', 26, 'FontWeight', 'bold')
+set(gcf, 'color', 'w');
+
+filename = 'Water_Uptake_vs_RH_Molar_and_Mass_All_Salts_Labeled';
 print(fullfile(fig_out_dir, filename), '-dpng', '-r600')
 savefig(fullfile(fig_out_dir, filename))
 
