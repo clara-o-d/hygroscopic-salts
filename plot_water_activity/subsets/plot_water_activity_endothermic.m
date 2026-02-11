@@ -2,207 +2,47 @@ close all
 clear
 clc 
 
-% Add calculate_mf and util folders to path
+% Add calculate_mf, util, and data folders to path
 [filepath,~,~] = fileparts(mfilename('fullpath'));
-addpath(fullfile(filepath, '..', 'calculate_mf'));
-addpath(fullfile(filepath, '..', 'util'));
+addpath(fullfile(filepath, '..', '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', '..', 'util'));
+addpath(fullfile(filepath, '..', '..', 'data'));
 
 T = 25; 
 MWw = 18.015;
 
-%% NaCl
-MW_NaCl = 58.443;
-RH_NaCl = linspace(0.763, 0.9934, 100);
+%% Load salt data and compute RH, mole fraction, gamma for each endothermic salt
+salt_data = load_salt_data();
+fit_salts = {'KCl', 'NH4Cl', 'CsCl', 'NaNO3', 'AgNO3', 'KI', 'LiNO3', 'KNO3', ...
+             'NaClO4', 'KClO3', 'NaBr', 'NaI', 'KBr', 'RbCl', 'CsBr', 'CsI'};
+num_points = 100;
 
-for i = 1:length(RH_NaCl)
-    mf_salt_NaCl(i) = calculate_mf_NaCl(RH_NaCl(i));
-    mf_water_NaCl(i) = 1 - mf_salt_NaCl(i);
-    x_water_NaCl(i) = (mf_water_NaCl(i) / MWw) / ((mf_water_NaCl(i) / MWw) + (mf_salt_NaCl(i) / MW_NaCl));
+for k = 1:length(fit_salts)
+    salt_name = fit_salts{k};
+    idx = find(cellfun(@(r) strcmp(r{1}, salt_name), salt_data), 1);
+    if isempty(idx), error('Salt %s not found in load_salt_data', salt_name); end
+    r = salt_data{idx};
+    MW_salt = r{2}; RH_min = r{3}; RH_max = r{4}; func_name = r{5}; func_args = r{6}; T_salt = r{9};
+    
+    RH_vec = linspace(RH_min, RH_max, num_points);
+    for i = 1:num_points
+        if func_args == 1
+            mf_s = feval(func_name, RH_vec(i), T_salt);
+        else
+            mf_s = feval(func_name, RH_vec(i));
+        end
+        mf_w = 1 - mf_s;
+        x_w = (mf_w / MWw) / ((mf_w / MWw) + (mf_s / MW_salt));
+        if i == 1, mf_salt_vec = zeros(size(RH_vec)); mf_water_vec = mf_salt_vec; x_water_vec = mf_salt_vec; end
+        mf_salt_vec(i) = mf_s; mf_water_vec(i) = mf_w; x_water_vec(i) = x_w;
+    end
+    gamma_vec = RH_vec ./ x_water_vec;
+    eval(['RH_' salt_name ' = RH_vec;']);
+    eval(['x_water_' salt_name ' = x_water_vec;']);
+    eval(['gamma_' salt_name ' = gamma_vec;']);
 end
-
-%% KCl
-MW_KCl = 74.551;
-RH_KCl = linspace(0.853, 0.9935, 100);
-
-for i = 1:length(RH_KCl)
-    mf_salt_KCl(i) = calculate_mf_KCl(RH_KCl(i));
-    mf_water_KCl(i) = 1 - mf_salt_KCl(i);
-    x_water_KCl(i) = (mf_water_KCl(i) / MWw) / ((mf_water_KCl(i) / MWw) + (mf_salt_KCl(i) / MW_KCl));
-end
-
-%% NH4Cl
-MW_NH4Cl = 53.491;
-RH_NH4Cl = linspace(0.813, 0.993, 100);
-
-for i = 1:length(RH_NH4Cl)
-    mf_salt_NH4Cl(i) = calculate_mf_NH4Cl(RH_NH4Cl(i));
-    mf_water_NH4Cl(i) = 1 - mf_salt_NH4Cl(i);
-    x_water_NH4Cl(i) = (mf_water_NH4Cl(i) / MWw) / ((mf_water_NH4Cl(i) / MWw) + (mf_salt_NH4Cl(i) / MW_NH4Cl));
-end
-
-%% CsCl
-MW_CsCl = 168.363;
-RH_CsCl = linspace(0.817, 0.993, 100);
-
-for i = 1:length(RH_CsCl)
-    mf_salt_CsCl(i) = calculate_mf_CsCl(RH_CsCl(i));
-    mf_water_CsCl(i) = 1 - mf_salt_CsCl(i);
-    x_water_CsCl(i) = (mf_water_CsCl(i) / MWw) / ((mf_water_CsCl(i) / MWw) + (mf_salt_CsCl(i) / MW_CsCl));
-end
-
-%% NaNO3
-MW_NaNO3 = 84.994;
-RH_NaNO3 = linspace(0.9701, 0.9996, 100);
-
-for i = 1:length(RH_NaNO3)
-    mf_salt_NaNO3(i) = calculate_mf_NaNO3(RH_NaNO3(i));
-    mf_water_NaNO3(i) = 1 - mf_salt_NaNO3(i);
-    x_water_NaNO3(i) = (mf_water_NaNO3(i) / MWw) / ((mf_water_NaNO3(i) / MWw) + (mf_salt_NaNO3(i) / MW_NaNO3));
-end
-
-%% AgNO3
-MW_AgNO3 = 169.87;
-RH_AgNO3 = linspace(0.862, 0.986, 100);
-
-for i = 1:length(RH_AgNO3)
-    mf_salt_AgNO3(i) = calculate_mf_AgNO3(RH_AgNO3(i));
-    mf_water_AgNO3(i) = 1 - mf_salt_AgNO3(i);
-    x_water_AgNO3(i) = (mf_water_AgNO3(i) / MWw) / ((mf_water_AgNO3(i) / MWw) + (mf_salt_AgNO3(i) / MW_AgNO3));
-end
-
-%% KI
-MW_KI = 165.998;
-RH_KI = linspace(0.9671, 0.999, 100);
-
-for i = 1:length(RH_KI)
-    mf_salt_KI(i) = calculate_mf_KI(RH_KI(i));
-    mf_water_KI(i) = 1 - mf_salt_KI(i);
-    x_water_KI(i) = (mf_water_KI(i) / MWw) / ((mf_water_KI(i) / MWw) + (mf_salt_KI(i) / MW_KI));
-end
-
-%% LiNO3
-MW_LiNO3 = 68.95;
-RH_LiNO3 = linspace(0.7353, 0.9967, 100);
-
-for i = 1:length(RH_LiNO3)
-    mf_salt_LiNO3(i) = calculate_mf_LiNO3(RH_LiNO3(i));
-    mf_water_LiNO3(i) = 1 - mf_salt_LiNO3(i);
-    x_water_LiNO3(i) = (mf_water_LiNO3(i) / MWw) / ((mf_water_LiNO3(i) / MWw) + (mf_salt_LiNO3(i) / MW_LiNO3));
-end
-
-%% KNO3
-MW_KNO3 = 101.10;
-RH_KNO3 = linspace(0.9315, 0.9967, 100);
-
-for i = 1:length(RH_KNO3)
-    mf_salt_KNO3(i) = calculate_mf_KNO3(RH_KNO3(i));
-    mf_water_KNO3(i) = 1 - mf_salt_KNO3(i);
-    x_water_KNO3(i) = (mf_water_KNO3(i) / MWw) / ((mf_water_KNO3(i) / MWw) + (mf_salt_KNO3(i) / MW_KNO3));
-end
-
-%% NaClO4
-MW_NaClO4 = 122.44;
-RH_NaClO4 = linspace(0.7775, 0.9869, 100);
-
-for i = 1:length(RH_NaClO4)
-    mf_salt_NaClO4(i) = calculate_mf_NaClO4(RH_NaClO4(i));
-    mf_water_NaClO4(i) = 1 - mf_salt_NaClO4(i);
-    x_water_NaClO4(i) = (mf_water_NaClO4(i) / MWw) / ((mf_water_NaClO4(i) / MWw) + (mf_salt_NaClO4(i) / MW_NaClO4));
-end
-
-%% KClO3
-MW_KClO3 = 122.55;
-RH_KClO3 = linspace(0.9800, 0.9936, 100);
-
-for i = 1:length(RH_KClO3)
-    mf_salt_KClO3(i) = calculate_mf_KClO3(RH_KClO3(i));
-    mf_water_KClO3(i) = 1 - mf_salt_KClO3(i);
-    x_water_KClO3(i) = (mf_water_KClO3(i) / MWw) / ((mf_water_KClO3(i) / MWw) + (mf_salt_KClO3(i) / MW_KClO3));
-end
-
-%% NaBr
-MW_NaBr = 102.89;
-RH_NaBr = linspace(0.6133, 0.9290, 100);
-
-for i = 1:length(RH_NaBr)
-    mf_salt_NaBr(i) = calculate_mf_NaBr(RH_NaBr(i));
-    mf_water_NaBr(i) = 1 - mf_salt_NaBr(i);
-    x_water_NaBr(i) = (mf_water_NaBr(i) / MWw) / ((mf_water_NaBr(i) / MWw) + (mf_salt_NaBr(i) / MW_NaBr));
-end
-
-%% NaI
-MW_NaI = 149.89;
-RH_NaI = linspace(0.5801, 0.9669, 100);
-
-for i = 1:length(RH_NaI)
-    mf_salt_NaI(i) = calculate_mf_NaI(RH_NaI(i));
-    mf_water_NaI(i) = 1 - mf_salt_NaI(i);
-    x_water_NaI(i) = (mf_water_NaI(i) / MWw) / ((mf_water_NaI(i) / MWw) + (mf_salt_NaI(i) / MW_NaI));
-end
-
-%% KBr
-MW_KBr = 119.00;
-RH_KBr = linspace(0.8325, 0.9528, 100);
-
-for i = 1:length(RH_KBr)
-    mf_salt_KBr(i) = calculate_mf_KBr(RH_KBr(i));
-    mf_water_KBr(i) = 1 - mf_salt_KBr(i);
-    x_water_KBr(i) = (mf_water_KBr(i) / MWw) / ((mf_water_KBr(i) / MWw) + (mf_salt_KBr(i) / MW_KBr));
-end
-
-%% RbCl
-MW_RbCl = 120.92;
-RH_RbCl = linspace(0.7423, 0.9527, 100);
-
-for i = 1:length(RH_RbCl)
-    mf_salt_RbCl(i) = calculate_mf_RbCl(RH_RbCl(i));
-    mf_water_RbCl(i) = 1 - mf_salt_RbCl(i);
-    x_water_RbCl(i) = (mf_water_RbCl(i) / MWw) / ((mf_water_RbCl(i) / MWw) + (mf_salt_RbCl(i) / MW_RbCl));
-end
-
-%% CsBr
-MW_CsBr = 212.81;
-RH_CsBr = linspace(0.8475, 0.9482, 100);
-
-for i = 1:length(RH_CsBr)
-    mf_salt_CsBr(i) = calculate_mf_CsBr(RH_CsBr(i));
-    mf_water_CsBr(i) = 1 - mf_salt_CsBr(i);
-    x_water_CsBr(i) = (mf_water_CsBr(i) / MWw) / ((mf_water_CsBr(i) / MWw) + (mf_salt_CsBr(i) / MW_CsBr));
-end
-
-%% CsI
-MW_CsI = 259.81;
-RH_CsI = linspace(0.9124, 0.9624, 100);
-
-for i = 1:length(RH_CsI)
-    mf_salt_CsI(i) = calculate_mf_CsI(RH_CsI(i));
-    mf_water_CsI(i) = 1 - mf_salt_CsI(i);
-    x_water_CsI(i) = (mf_water_CsI(i) / MWw) / ((mf_water_CsI(i) / MWw) + (mf_salt_CsI(i) / MW_CsI));
-end
-
-%% Calculate Activity Coefficients (gamma_w = a_w / x_w)
-gamma_NaCl  = RH_NaCl  ./ x_water_NaCl;
-gamma_KCl   = RH_KCl   ./ x_water_KCl;
-gamma_NH4Cl = RH_NH4Cl ./ x_water_NH4Cl;
-gamma_CsCl  = RH_CsCl  ./ x_water_CsCl;
-gamma_NaNO3 = RH_NaNO3 ./ x_water_NaNO3;
-gamma_AgNO3 = RH_AgNO3 ./ x_water_AgNO3;
-gamma_KI    = RH_KI    ./ x_water_KI;
-gamma_LiNO3 = RH_LiNO3 ./ x_water_LiNO3;
-gamma_KNO3  = RH_KNO3  ./ x_water_KNO3;
-gamma_NaClO4 = RH_NaClO4 ./ x_water_NaClO4;
-gamma_KClO3 = RH_KClO3 ./ x_water_KClO3;
-gamma_NaBr  = RH_NaBr  ./ x_water_NaBr;
-gamma_NaI   = RH_NaI   ./ x_water_NaI;
-gamma_KBr   = RH_KBr   ./ x_water_KBr;
-gamma_RbCl  = RH_RbCl  ./ x_water_RbCl;
-gamma_CsBr  = RH_CsBr  ./ x_water_CsBr;
-gamma_CsI   = RH_CsI   ./ x_water_CsI;
 
 %% Calculate Constrained Weighted Polynomial Fit
-% Define the salts to include in the fit
-fit_salts = {'NaCl', 'KCl', 'NH4Cl', 'CsCl', 'NaNO3', 'AgNO3', 'KI', 'LiNO3', 'KNO3', 'NaClO4', 'KClO3', 'NaBr', 'NaI', 'KBr', 'RbCl', 'CsBr', 'CsI'};
-
 % Initialize container arrays for fitting
 all_RH_fit = [];
 all_gamma_fit = [];

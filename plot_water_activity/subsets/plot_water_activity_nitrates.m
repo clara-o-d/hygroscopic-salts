@@ -2,113 +2,47 @@ close all
 clear
 clc 
 
-% Add calculate_mf and util folders to path
+% Add calculate_mf, util, and data folders to path
 [filepath,~,~] = fileparts(mfilename('fullpath'));
-addpath(fullfile(filepath, '..', 'calculate_mf'));
-addpath(fullfile(filepath, '..', 'util'));
+addpath(fullfile(filepath, '..', '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', '..', 'util'));
+addpath(fullfile(filepath, '..', '..', 'data'));
 
 T = 25; 
 MWw = 18.015;
 
-%% 1. NaNO3
-MW_NaNO3 = 85.00;
-% Fit valid: [0.9701, 0.9996] (from calculate_mf_NaNO3_)
-RH_NaNO3 = linspace(0.9701, 0.999, 100); 
+%% Load salt data and compute RH, mole fraction, gamma for each nitrate
+salt_data = load_salt_data();
+fit_salts = {'NaNO3', 'AgNO3', 'LiNO3', 'NH4NO3', 'KNO3', 'BaNO3', 'CaNO3'};
+num_points = 100;
 
-for i = 1:length(RH_NaNO3)
-    mf_salt_NaNO3(i) = calculate_mf_NaNO3(RH_NaNO3(i));
-    mf_water_NaNO3(i) = 1 - mf_salt_NaNO3(i);
-    x_water_NaNO3(i) = (mf_water_NaNO3(i) / MWw) / ...
-        ((mf_water_NaNO3(i) / MWw) + (mf_salt_NaNO3(i) / MW_NaNO3));
+for k = 1:length(fit_salts)
+    salt_name = fit_salts{k};
+    idx = find(cellfun(@(r) strcmp(r{1}, salt_name), salt_data), 1);
+    if isempty(idx), error('Salt %s not found in load_salt_data', salt_name); end
+    r = salt_data{idx};
+    MW_salt = r{2}; RH_min = r{3}; RH_max = r{4}; func_name = r{5}; func_args = r{6}; T_salt = r{9};
+    
+    RH_vec = linspace(RH_min, RH_max, num_points);
+    for i = 1:num_points
+        if func_args == 1
+            mf_s = feval(func_name, RH_vec(i), T_salt);
+        else
+            mf_s = feval(func_name, RH_vec(i));
+        end
+        mf_w = 1 - mf_s;
+        x_w = (mf_w / MWw) / ((mf_w / MWw) + (mf_s / MW_salt));
+        if i == 1, mf_salt_vec = zeros(size(RH_vec)); mf_water_vec = mf_salt_vec; x_water_vec = mf_salt_vec; end
+        mf_salt_vec(i) = mf_s; mf_water_vec(i) = mf_w; x_water_vec(i) = x_w;
+    end
+    gamma_vec = RH_vec ./ x_water_vec;
+    eval(['RH_' salt_name ' = RH_vec;']);
+    eval(['x_water_' salt_name ' = x_water_vec;']);
+    eval(['gamma_' salt_name ' = gamma_vec;']);
 end
-
-%% 2. AgNO3
-MW_AgNO3 = 169.87;
-% Fit valid: approximately [0.896, 0.986] (from data range)
-RH_AgNO3 = linspace(0.897, 0.985, 100);
-
-for i = 1:length(RH_AgNO3)
-    mf_salt_AgNO3(i) = calculate_mf_AgNO3(RH_AgNO3(i));
-    mf_water_AgNO3(i) = 1 - mf_salt_AgNO3(i);
-    x_water_AgNO3(i) = (mf_water_AgNO3(i) / MWw) / ...
-        ((mf_water_AgNO3(i) / MWw) + (mf_salt_AgNO3(i) / MW_AgNO3));
-end
-
-%% 3. LiNO3
-MW_LiNO3 = 68.95;
-% Fit valid: [0.7353, 0.9967]
-RH_LiNO3 = linspace(0.736, 0.995, 100);
-
-for i = 1:length(RH_LiNO3)
-    mf_salt_LiNO3(i) = calculate_mf_LiNO3(RH_LiNO3(i));
-    mf_water_LiNO3(i) = 1 - mf_salt_LiNO3(i);
-    x_water_LiNO3(i) = (mf_water_LiNO3(i) / MWw) / ...
-        ((mf_water_LiNO3(i) / MWw) + (mf_salt_LiNO3(i) / MW_LiNO3));
-end
-
-%% 3b. NH4NO3
-MW_NH4NO3 = 80.043;
-% Fit valid: [0.118, 0.732]
-RH_NH4NO3 = linspace(0.118, 0.732, 100);
-
-for i = 1:length(RH_NH4NO3)
-    mf_salt_NH4NO3(i) = calculate_mf_NH4NO3(RH_NH4NO3(i));
-    mf_water_NH4NO3(i) = 1 - mf_salt_NH4NO3(i);
-    x_water_NH4NO3(i) = (mf_water_NH4NO3(i) / MWw) / ...
-        ((mf_water_NH4NO3(i) / MWw) + (mf_salt_NH4NO3(i) / MW_NH4NO3));
-end
-
-%% 4. KNO3
-MW_KNO3 = 101.10;
-% Fit valid: [0.9315, 0.9967]
-RH_KNO3 = linspace(0.932, 0.995, 100);
-
-for i = 1:length(RH_KNO3)
-    mf_salt_KNO3(i) = calculate_mf_KNO3(RH_KNO3(i));
-    mf_water_KNO3(i) = 1 - mf_salt_KNO3(i);
-    x_water_KNO3(i) = (mf_water_KNO3(i) / MWw) / ...
-        ((mf_water_KNO3(i) / MWw) + (mf_salt_KNO3(i) / MW_KNO3));
-end
-
-%% 5. Ba(NO3)2
-MW_BaNO3 = 261.34;
-% Fit valid: [0.9859, 0.9958]
-RH_BaNO3 = linspace(0.986, 0.995, 100);
-
-for i = 1:length(RH_BaNO3)
-    mf_salt_BaNO3(i) = calculate_mf_BaNO32(RH_BaNO3(i));
-    mf_water_BaNO3(i) = 1 - mf_salt_BaNO3(i);
-    x_water_BaNO3(i) = (mf_water_BaNO3(i) / MWw) / ...
-        ((mf_water_BaNO3(i) / MWw) + (mf_salt_BaNO3(i) / MW_BaNO3));
-end
-
-%% 6. Ca(NO3)2
-MW_CaNO3 = 164.09;
-% Fit valid: [0.6464, 0.9955]
-RH_CaNO3 = linspace(0.647, 0.995, 100);
-
-for i = 1:length(RH_CaNO3)
-    mf_salt_CaNO3(i) = calculate_mf_CaNO32(RH_CaNO3(i));
-    mf_water_CaNO3(i) = 1 - mf_salt_CaNO3(i);
-    x_water_CaNO3(i) = (mf_water_CaNO3(i) / MWw) / ...
-        ((mf_water_CaNO3(i) / MWw) + (mf_salt_CaNO3(i) / MW_CaNO3));
-end
-
-
-%% Calculate Activity Coefficients (gamma_w = a_w / x_w)
-gamma_NaNO3 = RH_NaNO3 ./ x_water_NaNO3;
-gamma_AgNO3 = RH_AgNO3 ./ x_water_AgNO3;
-gamma_LiNO3 = RH_LiNO3 ./ x_water_LiNO3;
-gamma_NH4NO3 = RH_NH4NO3 ./ x_water_NH4NO3;
-gamma_KNO3  = RH_KNO3  ./ x_water_KNO3;
-gamma_BaNO3 = RH_BaNO3 ./ x_water_BaNO3;
-gamma_CaNO3 = RH_CaNO3 ./ x_water_CaNO3;
 
 
 %% Calculate Average Nitrate Fit
-% Define the salts to include in the average
-fit_salts = {'NaNO3', 'AgNO3', 'LiNO3', 'NH4NO3', 'KNO3', 'BaNO3', 'CaNO3'};
-
 all_RH_fit = [];
 all_gamma_fit = [];
 all_weights = [];

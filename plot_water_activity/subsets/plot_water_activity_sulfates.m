@@ -2,140 +2,48 @@ close all
 clear
 clc 
 
-% Add calculate_mf and util folders to path
+% Add calculate_mf, util, and data folders to path
 [filepath,~,~] = fileparts(mfilename('fullpath'));
-addpath(fullfile(filepath, '..', 'calculate_mf'));
-addpath(fullfile(filepath, '..', 'util'));
+addpath(fullfile(filepath, '..', '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', '..', 'util'));
+addpath(fullfile(filepath, '..', '..', 'data'));
 
 T = 25; 
 MWw = 18.015;
 
-%% 1. Na2SO4
-MW_Na2SO4 = 142.04;
-% Fit valid: [0.8990, 0.9957]
-RH_Na2SO4 = linspace(0.900, 0.995, 100); 
+%% Load salt data and compute RH, mole fraction, gamma for each sulfate
+salt_data = load_salt_data();
+fit_salts = {'Na2SO4', 'K2SO4', 'NH42SO4', 'MgSO4', 'MnSO4', ...
+             'Li2SO4', 'NiSO4', 'CuSO4', 'ZnSO4'};
+num_points = 100;
 
-for i = 1:length(RH_Na2SO4)
-    mf_salt_Na2SO4(i) = calculate_mf_Na2SO4(RH_Na2SO4(i));
-    mf_water_Na2SO4(i) = 1 - mf_salt_Na2SO4(i);
-    x_water_Na2SO4(i) = (mf_water_Na2SO4(i) / MWw) / ...
-        ((mf_water_Na2SO4(i) / MWw) + (mf_salt_Na2SO4(i) / MW_Na2SO4));
+for k = 1:length(fit_salts)
+    salt_name = fit_salts{k};
+    idx = find(cellfun(@(r) strcmp(r{1}, salt_name), salt_data), 1);
+    if isempty(idx), error('Salt %s not found in load_salt_data', salt_name); end
+    r = salt_data{idx};
+    MW_salt = r{2}; RH_min = r{3}; RH_max = r{4}; func_name = r{5}; func_args = r{6}; T_salt = r{9};
+    
+    RH_vec = linspace(RH_min, RH_max, num_points);
+    for i = 1:num_points
+        if func_args == 1
+            mf_s = feval(func_name, RH_vec(i), T_salt);
+        else
+            mf_s = feval(func_name, RH_vec(i));
+        end
+        mf_w = 1 - mf_s;
+        x_w = (mf_w / MWw) / ((mf_w / MWw) + (mf_s / MW_salt));
+        if i == 1, mf_salt_vec = zeros(size(RH_vec)); mf_water_vec = mf_salt_vec; x_water_vec = mf_salt_vec; end
+        mf_salt_vec(i) = mf_s; mf_water_vec(i) = mf_w; x_water_vec(i) = x_w;
+    end
+    gamma_vec = RH_vec ./ x_water_vec;
+    eval(['RH_' salt_name ' = RH_vec;']);
+    eval(['x_water_' salt_name ' = x_water_vec;']);
+    eval(['gamma_' salt_name ' = gamma_vec;']);
 end
-
-%% 2. K2SO4
-MW_K2SO4 = 174.26;
-% Fit valid: [0.9720, 0.9958]
-RH_K2SO4 = linspace(0.973, 0.995, 100);
-
-for i = 1:length(RH_K2SO4)
-    mf_salt_K2SO4(i) = calculate_mf_K2SO4(RH_K2SO4(i));
-    mf_water_K2SO4(i) = 1 - mf_salt_K2SO4(i);
-    x_water_K2SO4(i) = (mf_water_K2SO4(i) / MWw) / ...
-        ((mf_water_K2SO4(i) / MWw) + (mf_salt_K2SO4(i) / MW_K2SO4));
-end
-
-%% 3. (NH4)2SO4
-MW_NH42SO4 = 132.14;
-% Fit valid: [0.8310, 0.9959]
-RH_NH42SO4 = linspace(0.832, 0.995, 100);
-
-for i = 1:length(RH_NH42SO4)
-    mf_salt_NH42SO4(i) = calculate_mf_NH42SO4(RH_NH42SO4(i));
-    mf_water_NH42SO4(i) = 1 - mf_salt_NH42SO4(i);
-    x_water_NH42SO4(i) = (mf_water_NH42SO4(i) / MWw) / ...
-        ((mf_water_NH42SO4(i) / MWw) + (mf_salt_NH42SO4(i) / MW_NH42SO4));
-end
-
-%% 4. MgSO4
-MW_MgSO4 = 120.37;
-% Fit valid: [0.9050, 0.9960]
-RH_MgSO4 = linspace(0.906, 0.995, 100);
-
-for i = 1:length(RH_MgSO4)
-    mf_salt_MgSO4(i) = calculate_mf_MgSO4(RH_MgSO4(i));
-    mf_water_MgSO4(i) = 1 - mf_salt_MgSO4(i);
-    x_water_MgSO4(i) = (mf_water_MgSO4(i) / MWw) / ...
-        ((mf_water_MgSO4(i) / MWw) + (mf_salt_MgSO4(i) / MW_MgSO4));
-end
-
-%% 5. MnSO4
-MW_MnSO4 = 151.00;
-% Fit valid: [0.8620 or 0.919, 0.9961]
-RH_MnSO4 = linspace(0.92, 0.995, 100);
-
-for i = 1:length(RH_MnSO4)
-    mf_salt_MnSO4(i) = calculate_mf_MnSO4(RH_MnSO4(i));
-    mf_water_MnSO4(i) = 1 - mf_salt_MnSO4(i);
-    x_water_MnSO4(i) = (mf_water_MnSO4(i) / MWw) / ...
-        ((mf_water_MnSO4(i) / MWw) + (mf_salt_MnSO4(i) / MW_MnSO4));
-end
-
-%% 6. Li2SO4
-MW_Li2SO4 = 109.94;
-% Fit valid: [0.8530, 0.9956]
-RH_Li2SO4 = linspace(0.854, 0.995, 100);
-
-for i = 1:length(RH_Li2SO4)
-    mf_salt_Li2SO4(i) = calculate_mf_Li2SO4(RH_Li2SO4(i));
-    mf_water_Li2SO4(i) = 1 - mf_salt_Li2SO4(i);
-    x_water_Li2SO4(i) = (mf_water_Li2SO4(i) / MWw) / ...
-        ((mf_water_Li2SO4(i) / MWw) + (mf_salt_Li2SO4(i) / MW_Li2SO4));
-end
-
-%% 7. NiSO4
-MW_NiSO4 = 154.75;
-% Fit valid: [0.9390, 0.9962]
-RH_NiSO4 = linspace(0.940, 0.995, 100);
-
-for i = 1:length(RH_NiSO4)
-    mf_salt_NiSO4(i) = calculate_mf_NiSO4(RH_NiSO4(i));
-    mf_water_NiSO4(i) = 1 - mf_salt_NiSO4(i);
-    x_water_NiSO4(i) = (mf_water_NiSO4(i) / MWw) / ...
-        ((mf_water_NiSO4(i) / MWw) + (mf_salt_NiSO4(i) / MW_NiSO4));
-end
-
-%% 8. CuSO4
-MW_CuSO4 = 159.61;
-% Fit valid: [0.9750, 0.9963]
-RH_CuSO4 = linspace(0.976, 0.995, 100);
-
-for i = 1:length(RH_CuSO4)
-    mf_salt_CuSO4(i) = calculate_mf_CuSO4(RH_CuSO4(i));
-    mf_water_CuSO4(i) = 1 - mf_salt_CuSO4(i);
-    x_water_CuSO4(i) = (mf_water_CuSO4(i) / MWw) / ...
-        ((mf_water_CuSO4(i) / MWw) + (mf_salt_CuSO4(i) / MW_CuSO4));
-end
-
-%% 9. ZnSO4
-MW_ZnSO4 = 161.44;
-% Fit valid: [0.9130, 0.9962]
-RH_ZnSO4 = linspace(0.914, 0.995, 100);
-
-for i = 1:length(RH_ZnSO4)
-    mf_salt_ZnSO4(i) = calculate_mf_ZnSO4(RH_ZnSO4(i));
-    mf_water_ZnSO4(i) = 1 - mf_salt_ZnSO4(i);
-    x_water_ZnSO4(i) = (mf_water_ZnSO4(i) / MWw) / ...
-        ((mf_water_ZnSO4(i) / MWw) + (mf_salt_ZnSO4(i) / MW_ZnSO4));
-end
-
-
-%% Calculate Activity Coefficients (gamma_w = a_w / x_w)
-gamma_Na2SO4  = RH_Na2SO4  ./ x_water_Na2SO4;
-gamma_K2SO4   = RH_K2SO4   ./ x_water_K2SO4;
-gamma_NH42SO4 = RH_NH42SO4 ./ x_water_NH42SO4;
-gamma_MgSO4   = RH_MgSO4   ./ x_water_MgSO4;
-gamma_MnSO4   = RH_MnSO4   ./ x_water_MnSO4;
-gamma_Li2SO4  = RH_Li2SO4  ./ x_water_Li2SO4;
-gamma_NiSO4   = RH_NiSO4   ./ x_water_NiSO4;
-gamma_CuSO4   = RH_CuSO4   ./ x_water_CuSO4;
-gamma_ZnSO4   = RH_ZnSO4   ./ x_water_ZnSO4;
 
 
 %% Calculate Average Sulfate Fit
-% Define the salts to include in the average
-fit_salts = {'Na2SO4', 'K2SO4', 'NH42SO4', 'MgSO4', 'MnSO4', ...
-             'Li2SO4', 'NiSO4', 'CuSO4', 'ZnSO4'};
-
 all_RH_fit = [];
 all_gamma_fit = [];
 all_weights = [];

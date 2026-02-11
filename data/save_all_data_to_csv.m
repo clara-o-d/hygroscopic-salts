@@ -6,7 +6,7 @@ clc
 % Saves: molality, water activity, mass fraction (salt & water), 
 %        mole fraction, activity coefficient, molecular weight, temperature
 
-% Add calculate_mf and util folders to path
+% Add calculate_mf, util, and data folders to path
 [filepath,~,~] = fileparts(mfilename('fullpath'));
 addpath(fullfile(filepath, '..', 'calculate_mf'));
 addpath(fullfile(filepath, '..', 'util'));
@@ -14,75 +14,17 @@ addpath(fullfile(filepath, '..', 'util'));
 T_default = 25; % Default temperature in Celsius
 MWw = 18.015; % Molecular weight of water (g/mol)
 
-% Define all salts with their molecular weights and valid RH ranges
-% Format: {salt_name, MW, RH_min, RH_max, function_name, function_args, salt_type, valence, temperature, nu, ionic_strength_factor}
-% function_args: 0 = no args, 1 = needs T, 2 = other
-% temperature: temperature in Celsius (if not specified, uses T_default)
-% nu: number of ions the salt dissociates into (e.g., NaCl->2, CaCl2->3, Na2SO4->3)
-% ionic_strength_factor: I = factor * molality (e.g., 1:1 salts->1, 2:1 or 1:2 salts->3)
-
-salt_data = {
-    % Endothermic salts (1:1 salts dissociate into 2 ions, I = m)
-    {'NaCl', 58.443, 0.765, 0.99, 'calculate_mf_NaCl', 0, 1, 1, 25, 2, 1};
-    {'KCl', 74.551, 0.855, 0.99, 'calculate_mf_KCl', 0, 1, 1, 25, 2, 1};
-    {'NH4Cl', 53.491, 0.815, 0.99, 'calculate_mf_NH4Cl', 0, 1, 1, 25, 2, 1};
-    {'CsCl', 168.363, 0.82, 0.99, 'calculate_mf_CsCl', 0, 1, 1, 25, 2, 1};
-    {'NaNO3', 85.00, 0.971, 0.995, 'calculate_mf_NaNO3', 0, 1, 1, 25, 2, 1};
-    {'AgNO3', 169.87, 0.865, 0.985, 'calculate_mf_AgNO3', 0, 1, 1, 25, 2, 1};
-    {'KI', 165.998, 0.97, 0.995, 'calculate_mf_KI', 0, 1, 1, 25, 2, 1};
-    {'LiNO3', 68.95, 0.736, 0.99, 'calculate_mf_LiNO3', 0, 1, 1, 25, 2, 1};
-    % {'NH4NO3', 80.043, 0.118, 0.732, 'calculate_mf_NH4NO3', 0, 1, 1, 25, 2, 1};
-    {'KNO3', 101.10, 0.932, 0.995, 'calculate_mf_KNO3', 0, 1, 1, 25, 2, 1};
-    {'NaClO4', 122.44, 0.778, 0.99, 'calculate_mf_NaClO4', 0, 1, 1, 25, 2, 1};
-    {'KClO3', 122.55, 0.981, 0.9926, 'calculate_mf_KClO3', 0, 1, 1, 25, 2, 1};
-    {'NaBr', 102.89, 0.614, 0.9280, 'calculate_mf_NaBr', 0, 1, 1, 30, 2, 1};
-    {'NaI', 149.89, 0.581, 0.9659, 'calculate_mf_NaI', 0, 1, 1, 30, 2, 1};
-    {'KBr', 119.00, 0.833, 0.9518, 'calculate_mf_KBr', 0, 1, 1, 30, 2, 1};
-    {'RbCl', 120.92, 0.743, 0.9517, 'calculate_mf_RbCl', 0, 1, 1, 30, 2, 1};
-    {'CsBr', 212.81, 0.848, 0.9472, 'calculate_mf_CsBr', 0, 1, 1, 30, 2, 1};
-    {'CsI', 259.81, 0.913, 0.9614, 'calculate_mf_CsI', 0, 1, 1, 30, 2, 1};
-    
-    % Exothermic salts (No source data provided to verify)
-    {'LiCl', 42.4, 0.12, 0.97, 'calculate_mf_LiCl', 1, 1, 1, 25, 2, 1};
-    {'LiOH', 24, 0.85, 0.97, 'calculate_mf_LiOH', 0, 1, 1, 25, 2, 1};
-    {'NaOH', 40, 0.23, 0.97, 'calculate_mf_NaOH', 0, 1, 1, 25, 2, 1};
-    {'HCl', 36.5, 0.17, 0.97, 'calculate_mf_HCl', 0, 1, 1, 25, 2, 1};
-    {'CaCl2', 111, 0.31, 0.97, 'calculate_mf_CaCl', 1, 1, 2, 25, 3, 3};  % Ca2+ + 2Cl-, I = 3m
-    {'MgCl2', 95.2, 0.33, 0.97, 'calculate_mf_MgCl', 0, 1, 2, 25, 3, 3};  % Mg2+ + 2Cl-, I = 3m
-    {'MgNO3', 148.3, 0.55, 0.9, 'calculate_mf_MgNO3', 0, 1, 2, 25, 3, 3};  % Mg2+ + 2NO3-, I = 3m
-    {'LiBr', 86.85, 0.07, 0.97, 'calculate_mf_LiBr', 0, 1, 1, 25, 2, 1};
-    {'ZnCl2', 136.3, 0.07, 0.97, 'calculate_mf_ZnCl', 0, 1, 2, 25, 3, 3};  % Zn2+ + 2Cl-, I = 3m
-    {'ZnI2', 319.18, 0.25, 0.97, 'calculate_mf_ZnI', 0, 1, 2, 25, 3, 3};  % Zn2+ + 2I-, I = 3m
-    {'ZnBr2', 225.2, 0.08, 0.85, 'calculate_mf_ZnBr', 0, 1, 2, 25, 3, 3};  % Zn2+ + 2Br-, I = 3m
-    {'LiI', 133.85, 0.18, 0.97, 'calculate_mf_LiI', 0, 1, 1, 25, 2, 1};
-    
-    % Sulfates
-    {'Na2SO4', 142.04, 0.9000, 0.9947, 'calculate_mf_Na2SO4', 0, 2, 1, 25, 3, 3};  % 2Na+ + SO4^2-, I = 3m
-    {'K2SO4', 174.26, 0.9730, 0.9948, 'calculate_mf_K2SO4', 0, 2, 1, 25, 3, 3};  % 2K+ + SO4^2-, I = 3m
-    {'NH42SO4', 132.14, 0.8320, 0.9949, 'calculate_mf_NH42SO4', 0, 2, 1, 25, 3, 3};  % 2NH4+ + SO4^2-, I = 3m
-    {'MgSO4', 120.37, 0.9060, 0.9950, 'calculate_mf_MgSO4', 0, 1, 1, 25, 2, 4};  % Mg2+ + SO4^2-, I = 4m
-    {'MnSO4', 151.00, 0.9200, 0.9951, 'calculate_mf_MnSO4', 0, 1, 1, 25, 2, 4};  % Mn2+ + SO4^2-, I = 4m
-    {'Li2SO4', 109.94, 0.8540, 0.9946, 'calculate_mf_Li2SO4', 0, 2, 1, 25, 3, 3};  % 2Li+ + SO4^2-, I = 3m
-    {'NiSO4', 154.75, 0.9720, 0.9952, 'calculate_mf_NiSO4', 0, 1, 1, 25, 2, 4};  % Ni2+ + SO4^2-, I = 4m
-    {'CuSO4', 159.61, 0.9760, 0.9953, 'calculate_mf_CuSO4', 0, 1, 1, 25, 2, 4};  % Cu2+ + SO4^2-, I = 4m
-    {'ZnSO4', 161.44, 0.9390, 0.9952, 'calculate_mf_ZnSO4', 0, 1, 1, 25, 2, 4};  % Zn2+ + SO4^2-, I = 4m
-    
-    % Nitrates (additional)
-    {'BaNO3', 261.34, 0.9869, 0.9948, 'calculate_mf_BaNO32', 0, 1, 2, 25, 3, 3};  % Ba2+ + 2NO3-, I = 3m
-    {'CaNO3', 164.09, 0.6474, 0.9945, 'calculate_mf_CaNO32', 0, 1, 2, 25, 3, 3};  % Ca2+ + 2NO3-, I = 3m
-    
-    % Halides (additional)
-    {'CaBr2', 199.89, 0.6405, 0.9530, 'calculate_mf_CaBr2', 0, 1, 2, 30, 3, 3}  % Ca2+ + 2Br-, I = 3m
-    {'CaI2', 293.89, 0.8331, 0.9514, 'calculate_mf_CaI2', 0, 1, 2, 30, 3, 3};  % Ca2+ + 2I-, I = 3m
-    {'SrCl2', 158.53, 0.8069, 0.9768, 'calculate_mf_SrCl2', 0, 1, 2, 30, 3, 3};  % Sr2+ + 2Cl-, I = 3m
-    {'SrBr2', 247.43, 0.7786, 0.9561, 'calculate_mf_SrBr2', 0, 1, 2, 30, 3, 3};  % Sr2+ + 2Br-, I = 3m
-    {'SrI2', 341.43, 0.6795, 0.9559, 'calculate_mf_SrI2', 0, 1, 2, 30, 3, 3};  % Sr2+ + 2I-, I = 3m
-    {'BaCl2', 208.23, 0.9385, 0.9721, 'calculate_mf_BaCl2', 0, 1, 2, 30, 3, 3};  % Ba2+ + 2Cl-, I = 3m
-    {'BaBr2', 297.14, 0.8231, 0.9577, 'calculate_mf_BaBr2', 0, 1, 2, 30, 3, 3};  % Ba2+ + 2Br-, I = 3m
-    
-    % Chlorates
-    {'LiClO4', 106.39, 0.7785, 0.9869, 'calculate_mf_LiClO4', 0, 1, 1, 25, 2, 1};
-};
+% Load canonical salt data (exclude NH4NO3 - comment back in load_salt_data if needed)
+salt_data = load_salt_data();
+% Optionally exclude specific salts from CSV output (e.g. NH4NO3 was previously commented)
+exclude_salts = {'NH4NO3', 'MgNO32'};  % MgNO32 is alias for MgNO3
+keep = true(size(salt_data));
+for s = 1:length(salt_data)
+    if any(strcmp(salt_data{s}{1}, exclude_salts))
+        keep(s) = false;
+    end
+end
+salt_data = salt_data(keep);
 
 % Process each salt
 num_points = 100;

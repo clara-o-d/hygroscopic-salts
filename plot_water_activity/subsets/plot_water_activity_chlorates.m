@@ -2,55 +2,44 @@ close all
 clear
 clc 
 
-% Add calculate_mf and util folders to path
+% Add calculate_mf, util, and data folders to path
 [filepath,~,~] = fileparts(mfilename('fullpath'));
-addpath(fullfile(filepath, '..', 'calculate_mf'));
-addpath(fullfile(filepath, '..', 'util'));
+addpath(fullfile(filepath, '..', '..', 'calculate_mf'));
+addpath(fullfile(filepath, '..', '..', 'util'));
+addpath(fullfile(filepath, '..', '..', 'data'));
 
 T = 25; 
 MWw = 18.015;
 
-%% 1. NaClO4
-MW_NaClO4 = 122.44;
-% Fit valid: [0.7775, 0.9869]
-RH_NaClO4 = linspace(0.778, 0.986, 100); 
+%% Load salt data and compute RH, mole fraction, gamma for each chlorate
+salt_data = load_salt_data();
+fit_salts = {'NaClO4', 'LiClO4', 'KClO3'};
+num_points = 100;
 
-for i = 1:length(RH_NaClO4)
-    mf_salt_NaClO4(i) = calculate_mf_NaClO4(RH_NaClO4(i));
-    mf_water_NaClO4(i) = 1 - mf_salt_NaClO4(i);
-    x_water_NaClO4(i) = (mf_water_NaClO4(i) / MWw) / ...
-        ((mf_water_NaClO4(i) / MWw) + (mf_salt_NaClO4(i) / MW_NaClO4));
+for k = 1:length(fit_salts)
+    salt_name = fit_salts{k};
+    idx = find(cellfun(@(r) strcmp(r{1}, salt_name), salt_data), 1);
+    if isempty(idx), error('Salt %s not found in load_salt_data', salt_name); end
+    r = salt_data{idx};
+    MW_salt = r{2}; RH_min = r{3}; RH_max = r{4}; func_name = r{5}; func_args = r{6}; T_salt = r{9};
+    
+    RH_vec = linspace(RH_min, RH_max, num_points);
+    for i = 1:num_points
+        if func_args == 1
+            mf_s = feval(func_name, RH_vec(i), T_salt);
+        else
+            mf_s = feval(func_name, RH_vec(i));
+        end
+        mf_w = 1 - mf_s;
+        x_w = (mf_w / MWw) / ((mf_w / MWw) + (mf_s / MW_salt));
+        if i == 1, mf_salt_vec = zeros(size(RH_vec)); mf_water_vec = mf_salt_vec; x_water_vec = mf_salt_vec; end
+        mf_salt_vec(i) = mf_s; mf_water_vec(i) = mf_w; x_water_vec(i) = x_w;
+    end
+    gamma_vec = RH_vec ./ x_water_vec;
+    eval(['RH_' salt_name ' = RH_vec;']);
+    eval(['x_water_' salt_name ' = x_water_vec;']);
+    eval(['gamma_' salt_name ' = gamma_vec;']);
 end
-
-%% 2. LiClO4
-MW_LiClO4 = 106.39;
-% Fit valid: [0.7775, 0.9931]
-RH_LiClO4 = linspace(0.778, 0.993, 100);
-
-for i = 1:length(RH_LiClO4)
-    mf_salt_LiClO4(i) = calculate_mf_LiClO4(RH_LiClO4(i));
-    mf_water_LiClO4(i) = 1 - mf_salt_LiClO4(i);
-    x_water_LiClO4(i) = (mf_water_LiClO4(i) / MWw) / ...
-        ((mf_water_LiClO4(i) / MWw) + (mf_salt_LiClO4(i) / MW_LiClO4));
-end
-
-%% 3. KClO3
-MW_KClO3 = 122.55;
-% Fit valid: [0.9800, 0.9936]
-RH_KClO3 = linspace(0.981, 0.993, 100);
-
-for i = 1:length(RH_KClO3)
-    mf_salt_KClO3(i) = calculate_mf_KClO3(RH_KClO3(i));
-    mf_water_KClO3(i) = 1 - mf_salt_KClO3(i);
-    x_water_KClO3(i) = (mf_water_KClO3(i) / MWw) / ...
-        ((mf_water_KClO3(i) / MWw) + (mf_salt_KClO3(i) / MW_KClO3));
-end
-
-
-%% Calculate Activity Coefficients (gamma_w = a_w / x_w)
-gamma_NaClO4 = RH_NaClO4 ./ x_water_NaClO4;
-gamma_LiClO4 = RH_LiClO4 ./ x_water_LiClO4;
-gamma_KClO3  = RH_KClO3  ./ x_water_KClO3;
 
 
 %% Calculate Average Chlorate Fit
