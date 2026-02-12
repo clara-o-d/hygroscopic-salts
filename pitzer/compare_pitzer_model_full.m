@@ -5,7 +5,8 @@ clc
 %% 1. CONFIGURATION & RUN LIST
 % -------------------------------------------------------------------------
 % Path setup
-addpath('../calculate_mf'); 
+addpath('../calculate_mf');
+addpath('../data');
 csv_path = '../data/baseline_with_ion_properties_legacy.csv';
 
 % Output Setup
@@ -16,69 +17,9 @@ T = 25;       % Temperature in Celsius
 MWw = 18.015; % Molecular weight of water
 
 % -------------------------------------------------------------------------
-% DATA INPUT
+% DATA INPUT (from canonical load_salt_data)
 % -------------------------------------------------------------------------
-raw_data = {
-    % Endothermic
-    {'NaCl', 58.443, 0.765, 0.99, 'calculate_mf_NaCl'};
-    {'KCl', 74.551, 0.855, 0.99, 'calculate_mf_KCl'};
-    {'NH4Cl', 53.491, 0.815, 0.99, 'calculate_mf_NH4Cl'};
-    {'CsCl', 168.363, 0.82, 0.99, 'calculate_mf_CsCl'};
-    {'NaNO3', 85.00, 0.971, 0.995, 'calculate_mf_NaNO3'};
-    {'AgNO3', 169.87, 0.865, 0.985, 'calculate_mf_AgNO3'};
-    {'KI', 165.998, 0.97, 0.995, 'calculate_mf_KI'};
-    {'LiNO3', 68.95, 0.736, 0.99, 'calculate_mf_LiNO3'};
-    {'KNO3', 101.10, 0.932, 0.995, 'calculate_mf_KNO3'};
-    {'NaClO4', 122.44, 0.778, 0.99, 'calculate_mf_NaClO4'};
-    {'KClO3', 122.55, 0.981, 0.9926, 'calculate_mf_KClO3'};
-    {'NaBr', 102.89, 0.614, 0.9280, 'calculate_mf_NaBr'};
-    {'NaI', 149.89, 0.581, 0.9659, 'calculate_mf_NaI'};
-    {'KBr', 119.00, 0.833, 0.9518, 'calculate_mf_KBr'};
-    {'RbCl', 120.92, 0.743, 0.9517, 'calculate_mf_RbCl'};
-    {'CsBr', 212.81, 0.848, 0.9472, 'calculate_mf_CsBr'};
-    {'CsI', 259.81, 0.913, 0.9614, 'calculate_mf_CsI'};
-    
-    % Exothermic
-    {'LiCl', 42.4, 0.12, 0.97, 'calculate_mf_LiCl'};
-    {'LiOH', 24, 0.85, 0.97, 'calculate_mf_LiOH'};
-    {'NaOH', 40, 0.23, 0.97, 'calculate_mf_NaOH'};
-    {'HCl', 36.5, 0.17, 0.97, 'calculate_mf_HCl'};
-    {'CaCl2', 111, 0.31, 0.97, 'calculate_mf_CaCl'};
-    {'MgCl2', 95.2, 0.33, 0.97, 'calculate_mf_MgCl'};
-    {'MgNO3', 148.3, 0.55, 0.9, 'calculate_mf_MgNO3'};
-    {'LiBr', 86.85, 0.07, 0.97, 'calculate_mf_LiBr'};
-    {'ZnCl2', 136.3, 0.07, 0.97, 'calculate_mf_ZnCl'};
-    {'ZnI2', 319.18, 0.25, 0.97, 'calculate_mf_ZnI'};
-    {'ZnBr2', 225.2, 0.08, 0.85, 'calculate_mf_ZnBr'};
-    {'LiI', 133.85, 0.18, 0.97, 'calculate_mf_LiI'};
-    
-    % Sulfates
-    {'Na2SO4', 142.04, 0.9000, 0.9947, 'calculate_mf_Na2SO4'};
-    {'K2SO4', 174.26, 0.9730, 0.9948, 'calculate_mf_K2SO4'};
-    {'NH42SO4', 132.14, 0.8320, 0.9949, 'calculate_mf_NH42SO4'};
-    {'MgSO4', 120.37, 0.9060, 0.9950, 'calculate_mf_MgSO4'};
-    {'MnSO4', 151.00, 0.9200, 0.9951, 'calculate_mf_MnSO4'};
-    {'Li2SO4', 109.94, 0.8540, 0.9946, 'calculate_mf_Li2SO4'};
-    {'NiSO4', 154.75, 0.9720, 0.9952, 'calculate_mf_NiSO4'};
-    {'CuSO4', 159.61, 0.9760, 0.9953, 'calculate_mf_CuSO4'};
-    {'ZnSO4', 161.44, 0.9390, 0.9952, 'calculate_mf_ZnSO4'};
-    
-    % Nitrates (additional)
-    {'BaNO3', 261.34, 0.9869, 0.9948, 'calculate_mf_BaNO32'};
-    {'CaNO3', 164.09, 0.6474, 0.9945, 'calculate_mf_CaNO32'};
-    
-    % Halides (additional)
-    {'CaBr2', 199.89, 0.6405, 0.9530, 'calculate_mf_CaBr2'};
-    {'CaI2', 293.89, 0.8331, 0.9514, 'calculate_mf_CaI2'};
-    {'SrCl2', 158.53, 0.8069, 0.9768, 'calculate_mf_SrCl2'};
-    {'SrBr2', 247.43, 0.7786, 0.9561, 'calculate_mf_SrBr2'};
-    {'SrI2', 341.43, 0.6795, 0.9559, 'calculate_mf_SrI2'};
-    {'BaCl2', 208.23, 0.9385, 0.9721, 'calculate_mf_BaCl2'};
-    {'BaBr2', 297.14, 0.8231, 0.9577, 'calculate_mf_BaBr2'};
-    
-    % Chlorates
-    {'LiClO4', 106.39, 0.7785, 0.9869, 'calculate_mf_LiClO4'};
-};
+raw_data = load_salt_data();
 
 %% 2. PARSE DATA & LOAD PITZER CSV
 % -------------------------------------------------------------------------
