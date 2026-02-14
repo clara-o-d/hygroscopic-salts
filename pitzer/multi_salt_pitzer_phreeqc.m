@@ -87,60 +87,88 @@ function plot_pitzer_critical_mixes()
 
 % --- 4. NEW SECTION: BINARY SALT ENTHALPY & ENTROPY OF MIXING ---
     fprintf('Calculating thermodynamic properties for binary salts...\n');
-    
+
     % Format: { 'Name', {Components}, Molality_Limit }
     binary_salts = {
         % --- Chlorides ---
-        'NaCl',   {'Na+', 1; 'Cl-', 1}, 6.2;
-        'KCl',    {'K+', 1; 'Cl-', 1}, 4.8;
-        'LiCl',   {'Li+', 1; 'Cl-', 1}, 20.0;
-        'CaCl2',  {'Ca+2', 1; 'Cl-', 2}, 7.5;
-        'MgCl2',  {'Mg+2', 1; 'Cl-', 2}, 6.0;
-        'SrCl2',  {'Sr+2', 1; 'Cl-', 2}, 3.6;
-        'BaCl2',  {'Ba+2', 1; 'Cl-', 2}, 1.8;
+        'NaCl',   {'Na+', 1; 'Cl-', 1}, 6.0;
+        'KCl',    {'K+', 1; 'Cl-', 1}, 4.5;
+        'LiCl',   {'Li+', 1; 'Cl-', 1}, 10.0;
+        'CaCl2',  {'Ca+2', 1; 'Cl-', 2}, 5.0;
+        'MgCl2',  {'Mg+2', 1; 'Cl-', 2}, 4.5;
+        'SrCl2',  {'Sr+2', 1; 'Cl-', 2}, 3.0;
+        'BaCl2',  {'Ba+2', 1; 'Cl-', 2}, 1.5;
 
         % --- Bromides ---
-        'NaBr',   {'Na+', 1; 'Br-', 1}, 9.3;
-        'KBr',    {'K+', 1; 'Br-', 1}, 5.8;
-        'LiBr',   {'Li+', 1; 'Br-', 1}, 20.0;
-        'MgBr2',  {'Mg+2', 1; 'Br-', 2}, 5.6;
-        'CaBr2',  {'Ca+2', 1; 'Br-', 2}, 7.6;
-        'SrBr2',  {'Sr+2', 1; 'Br-', 2}, 4.2;
+        'NaBr',   {'Na+', 1; 'Br-', 1}, 7.0;
+        'KBr',    {'K+', 1; 'Br-', 1}, 5.0;
+        'LiBr',   {'Li+', 1; 'Br-', 1}, 8.0;
+        'MgBr2',  {'Mg+2', 1; 'Br-', 2}, 4.5;
+        'CaBr2',  {'Ca+2', 1; 'Br-', 2}, 5.0;
+        'SrBr2',  {'Sr+2', 1; 'Br-', 2}, 3.5;
 
         % --- Sulfates ---
-        'Na2SO4', {'Na+', 2; 'SO4-2', 1}, 3.0;
-        'K2SO4',  {'K+', 2; 'SO4-2', 1}, 0.7;
-        'Li2SO4', {'Li+', 2; 'SO4-2', 1}, 3.2;
-        'MgSO4',  {'Mg+2', 1; 'SO4-2', 1}, 3.1;
+        'Na2SO4', {'Na+', 2; 'SO4-2', 1}, 2.5;
+        'K2SO4',  {'K+', 2; 'SO4-2', 1}, 0.6;
+        'Li2SO4', {'Li+', 2; 'SO4-2', 1}, 2.5;
+        'MgSO4',  {'Mg+2', 1; 'SO4-2', 1}, 2.0;
 
         % --- Carbonates & Bicarbonates ---
-        'Na2CO3', {'Na+', 2; 'CO3-2', 1}, 3.0;
-        'K2CO3',  {'K+', 2; 'CO3-2', 1}, 8.2;
-        'NaHCO3', {'Na+', 1; 'HCO3-', 1}, 1.2;
-        'KHCO3',  {'K+', 1; 'HCO3-', 1}, 3.7;
+        'Na2CO3', {'Na+', 2; 'CO3-2', 1}, 2.5;
+        'K2CO3',  {'K+', 2; 'CO3-2', 1}, 6.0;
+        'NaHCO3', {'Na+', 1; 'HCO3-', 1}, 1.0;
+        'KHCO3',  {'K+', 1; 'HCO3-', 1}, 3.0;
 
         % --- Hydroxides ---
-        'NaOH',   {'Na+', 1; 'OH-', 1}, 20.0;
-        'KOH',    {'K+', 1; 'OH-', 1}, 20.0;
-        'LiOH',   {'Li+', 1; 'OH-', 1}, 5.4
+        'NaOH',   {'Na+', 1; 'OH-', 1}, 15.0;
+        'KOH',    {'K+', 1; 'OH-', 1}, 15.0;
+        'LiOH',   {'Li+', 1; 'OH-', 1}, 4.0
     };
     
-    % Taller figure for vertical stacking
-    figure('Color', 'w', 'Name', 'Binary Salt Thermodynamics', 'Position', [100, 50, 700, 1000]);
+    % Three separate figures (one per plot)
+    figure('Color', 'w', 'Name', 'Excess Entropy', 'Position', [50, 50, 700, 450]);
+    ax1 = gca(); hold on; grid on; box on;
+    ylabel('$T \Delta \bar{S}_w^{excess}$ (J/mol)','Interpreter','latex');
+    title(['$T \Delta \bar{S}_w^{excess}$ (ideal $-RT\ln x_w$ subtracted) at T = ', sprintf('%.1f K', T)], 'Interpreter','latex');
+    xlabel('Relative Humidity (%)');
     
-    % Pre-assign axes handles
-    ax1 = subplot(3, 1, 1); hold on; grid on; box on;
-    ylabel('$T \Delta \bar{S}_w$ (J/mol)','Interpreter','latex');
-    title(['$T \Delta \bar{S}_w$ at T = ', sprintf('%.1f K', T)], 'Interpreter','latex');
-    
-    ax2 = subplot(3, 1, 2); hold on; grid on; box on;
+    figure('Color', 'w', 'Name', 'Enthalpy of Mixing', 'Position', [100, 100, 700, 450]);
+    ax2 = gca(); hold on; grid on; box on;
     ylabel('$\Delta \bar{H}_w$ (J/mol)', 'Interpreter','latex');
     title('Enthalpy of Mixing (\Delta\bar{H}_w)', Interpreter="tex");
+    xlabel('Relative Humidity (%)');
 
-    ax3 = subplot(3, 1, 3); hold on; grid on; box on;
+    figure('Color', 'w', 'Name', 'Activity Coefficient', 'Position', [150, 150, 700, 450]);
+    ax3 = gca(); hold on; grid on; box on;
     ylabel('$\gamma_w = a_w / x_w$', 'Interpreter','latex');
     xlabel('Relative Humidity (%)'); 
     title('Activity Coefficient (\gamma_w)', Interpreter="tex");
+
+    % Three additional figures with x_w as x-axis
+    figure('Color', 'w', 'Name', 'Excess Entropy vs x_w', 'Position', [200, 50, 700, 450]);
+    ax4 = gca(); hold on; grid on; box on;
+    ylabel('$T \Delta \bar{S}_w^{excess}$ (J/mol)','Interpreter','latex');
+    title(['$T \Delta \bar{S}_w^{excess}$ vs $x_w$ at T = ', sprintf('%.1f K', T)], 'Interpreter','latex');
+    xlabel('Water mole fraction ($x_w$)','Interpreter','latex');
+    
+    figure('Color', 'w', 'Name', 'Enthalpy of Mixing vs x_w', 'Position', [250, 100, 700, 450]);
+    ax5 = gca(); hold on; grid on; box on;
+    ylabel('$\Delta \bar{H}_w$ (J/mol)', 'Interpreter','latex');
+    title('Enthalpy of Mixing vs $x_w$', Interpreter="tex");
+    xlabel('Water mole fraction ($x_w$)','Interpreter','latex');
+
+    figure('Color', 'w', 'Name', 'Activity Coefficient vs x_w', 'Position', [300, 150, 700, 450]);
+    ax6 = gca(); hold on; grid on; box on;
+    ylabel('$\gamma_w = a_w / x_w$', 'Interpreter','latex');
+    xlabel('Water mole fraction ($x_w$)','Interpreter','latex');
+    title('Activity Coefficient vs $x_w$', Interpreter="tex");
+
+    % ln(activity) vs ln(x_w), ΔH̄_w/RT, ΔS̄_w^excess/R
+    figure('Color', 'w', 'Name', 'ln(a_w) vs thermodynamic quantities', 'Position', [350, 200, 700, 450]);
+    ax7 = gca(); hold on; grid on; box on;
+    xlabel('$\ln(a_w)$', 'Interpreter','latex');
+    ylabel('ln(x_w), $\Delta\bar{H}_w/RT$, $\Delta\bar{S}_w^{excess}/R$', 'Interpreter','latex');
+    title('$\ln(x_w)$, $\Delta\bar{H}_w/RT$, $\Delta\bar{S}_w^{excess}/R$ vs $\ln(a_w)$', 'Interpreter','latex');
     
     colors = lines(size(binary_salts, 1));
     
@@ -150,7 +178,7 @@ function plot_pitzer_critical_mixes()
         max_m     = binary_salts{s_idx, 3};
         
         m_range = 0.1:0.1:max_m;
-        rh_vals = []; T_dS_vals = []; dH_vals = []; xw_vals = [];
+        rh_vals = []; T_dS_vals = []; dH_vals = []; xw_vals = []; aw_vals = [];
         
         for m_i = 1:length(m_range)
             m = m_range(m_i);
@@ -167,14 +195,16 @@ function plot_pitzer_critical_mixes()
                 aw = exp(-phi * sum_m * Mw);
                 
                 % Thermodynamics
+                % T*ΔS̄_w (total) and ΔH̄_w from Pitzer; ideal partial entropy: -R ln(x_w)
                 T_S_mix = T * R * Mw * sum_m * (phi + T * dphi_dT);
                 H_mix   = R * T^2 * Mw * sum_m * dphi_dT; 
                 x_w = (1/Mw) / ( (1/Mw) + sum_m );
 
-                rh_vals(end+1) = aw * 100;    %#ok<AGROW>
-                T_dS_vals(end+1) = T_S_mix;   %#ok<AGROW>
-                dH_vals(end+1) = H_mix;       %#ok<AGROW>
-                xw_vals(end+1) = x_w;         %#ok<AGROW>
+                rh_vals(end+1) = aw * 100;
+                aw_vals(end+1) = aw;
+                T_dS_vals(end+1) = T_S_mix;   %#ok<AGROW>  % Total (for activity/gamma_w)
+                dH_vals(end+1) = H_mix;
+                xw_vals(end+1) = x_w;     
             catch
                 continue;
             end
@@ -182,17 +212,39 @@ function plot_pitzer_critical_mixes()
         
         if isempty(rh_vals), continue; end
 
-        % Plot Lines
-        plot(ax1, rh_vals, T_dS_vals-R*T*log(xw_vals), 'LineWidth', 2, 'Color', colors(s_idx,:));
+        % Plot Lines (ax1: excess entropy = total - ideal = T*ΔS̄_w + R*T*ln(x_w))
+        T_S_excess = T_dS_vals + R*T*log(xw_vals);
+        plot(ax1, rh_vals, T_S_excess, 'LineWidth', 2, 'Color', colors(s_idx,:));
         plot(ax2, rh_vals, dH_vals, 'LineWidth', 2, 'Color', colors(s_idx,:));
         
         activity_calc = exp((dH_vals - T_dS_vals) ./ (R*T));
         gamma_w = activity_calc ./ xw_vals;
         plot(ax3, rh_vals, gamma_w, 'LineWidth', 2, 'Color', colors(s_idx,:));
+
+        % Same plots with x_w as x-axis
+        plot(ax4, xw_vals, T_S_excess, 'LineWidth', 2, 'Color', colors(s_idx,:));
+        plot(ax5, xw_vals, dH_vals, 'LineWidth', 2, 'Color', colors(s_idx,:));
+        plot(ax6, xw_vals, gamma_w, 'LineWidth', 2, 'Color', colors(s_idx,:));
+
+        % ln(activity) vs ln(x_w), ΔH̄_w/RT, ΔS̄_w^excess/R
+        ln_aw = log(aw_vals);
+        ln_xw = log(xw_vals);
+        dH_dimless = dH_vals / (R*T);           % partial enthalpy / RT
+        S_excess = T_S_excess / T;              % partial excess entropy in J/(mol K)
+        dS_dimless = S_excess / R;              % partial excess entropy / R
+        if s_idx == 1
+            plot(ax7, ln_aw, ln_xw, 'LineWidth', 1.5, 'Color', [0 0.45 0.74], 'DisplayName', 'ln(x_w)');
+            plot(ax7, ln_aw, dH_dimless, 'LineWidth', 1.5, 'Color', [0.85 0.33 0.1], 'DisplayName', '\Delta\bar{H}_w/RT');
+            plot(ax7, ln_aw, dS_dimless, 'LineWidth', 1.5, 'Color', [0.0 0.0 0.0], 'DisplayName', '\Delta\bar{S}_w^{excess}/R');
+        else
+            plot(ax7, ln_aw, ln_xw, 'LineWidth', 1.5, 'Color', [0 0.45 0.74], 'HandleVisibility', 'off');
+            plot(ax7, ln_aw, dH_dimless, 'LineWidth', 1.5, 'Color', [0.85 0.33 0.1], 'HandleVisibility', 'off');
+            plot(ax7, ln_aw, dS_dimless, 'LineWidth', 1.5, 'Color', [0.0 0.0 0.0], 'HandleVisibility', 'off');
+        end
         
-        % --- LABELS (Leftmost limit = last point in array) ---
+        % --- LABELS (Rightmost limit = last point in array) ---
         % 'Right' alignment means the text ends at the point, sitting to the left of the line
-        text(ax1, rh_vals(end), T_dS_vals(end), [' ' salt_name ' '], ...
+        text(ax1, rh_vals(end), T_S_excess(end), [' ' salt_name ' '], ...
             'Color', 'k', 'FontSize', 8, 'HorizontalAlignment', 'right', ...
             'VerticalAlignment', 'middle', 'BackgroundColor', 'w', 'EdgeColor', 'none', 'Margin', 0.5);
             
@@ -203,12 +255,25 @@ function plot_pitzer_critical_mixes()
         text(ax3, rh_vals(end), gamma_w(end), [' ' salt_name ' '], ...
             'Color', 'k', 'FontSize', 8, 'HorizontalAlignment', 'right', ...
             'VerticalAlignment', 'middle', 'BackgroundColor', 'w', 'EdgeColor', 'none', 'Margin', 0.5);
+
+        text(ax4, xw_vals(end), T_S_excess(end), [' ' salt_name ' '], ...
+            'Color', 'k', 'FontSize', 8, 'HorizontalAlignment', 'right', ...
+            'VerticalAlignment', 'middle', 'BackgroundColor', 'w', 'EdgeColor', 'none', 'Margin', 0.5);
+            
+        text(ax5, xw_vals(end), dH_vals(end), [' ' salt_name ' '], ...
+            'Color', 'k', 'FontSize', 8, 'HorizontalAlignment', 'right', ...
+            'VerticalAlignment', 'middle', 'BackgroundColor', 'w', 'EdgeColor', 'none', 'Margin', 0.5);
+            
+        text(ax6, xw_vals(end), gamma_w(end), [' ' salt_name ' '], ...
+            'Color', 'k', 'FontSize', 8, 'HorizontalAlignment', 'right', ...
+            'VerticalAlignment', 'middle', 'BackgroundColor', 'w', 'EdgeColor', 'none', 'Margin', 0.5);
     end
     
-    % Set limits
-    linkaxes([ax1, ax2, ax3], 'x');
-    xlim(ax3, [30 100]); % Start from 0 to give space for labels on the left
-    ylim(ax1,[-500,500]);ylim(ax2,[-500,500]);
+    % Set limits (each figure independent)
+    xlim(ax1, [30 100]); xlim(ax2, [30 100]); xlim(ax3, [30 100]);
+    xlim(ax4, [0.8 1]); xlim(ax5, [0.8 1]); xlim(ax6, [0.8 1]);
+    ylim(ax1, [-500, 500]); ylim(ax2, [-500, 500]); ylim(ax7, [-2.5, 0.75]);
+    legend(ax7, 'Location', 'best');
     
     fprintf('Done.\n');
 end
