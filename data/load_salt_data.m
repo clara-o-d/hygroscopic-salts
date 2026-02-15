@@ -95,5 +95,21 @@ salt_data = {
     {'CaClO42', 238.98, 0.2211, 0.9952, 'calculate_mf_CaClO42', 0, 1, 2, 25, 3, 3, 1, 2};
     {'SrClO42', 286.52, 0.2393, 0.9953, 'calculate_mf_SrClO42', 0, 1, 2, 25, 3, 3, 1, 2};
     {'BaClO42', 336.23, 0.5609, 0.9954, 'calculate_mf_BaClO42', 0, 1, 2, 25, 3, 3, 1, 2};
+    
+    % Chromium salts (sources_list_.xlsx - Chromium salt data at 25°)
+    {'CrCl3', 158.36, 0.8890, 0.9956, 'calculate_mf_CrCl3', 0, 1, 3, 25, 4, 9, 1, 3};
+    {'Cr2SO43', 392.16, 0.9091, 0.9978, 'calculate_mf_Cr2SO43', 0, 2, 3, 25, 5, 15, 2, 3};
+    {'CrNO33', 238.011, 0.8838, 0.9957, 'calculate_mf_CrNO33', 0, 1, 3, 25, 4, 9, 1, 3};
+    {'KCrSO42', 283.22, 0.9746, 0.9972, 'calculate_mf_KCrSO42', 0, 1, 3, 25, 4, 9, 1, 3};
+    {'NH4CrSO42', 262.15, 0.9817, 0.9970, 'calculate_mf_NH4CrSO42', 0, 1, 3, 25, 4, 9, 1, 3};
+    
+    % Acids and strong electrolytes (Paper 25 in sources_list_.xlsx at 25°)
+    {'NaF', 41.99, 0.9540, 0.9950, 'calculate_mf_NaF', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'HNO3', 63.01, 0.8294, 0.9949, 'calculate_mf_HNO3', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'HBr', 80.91, 0.9437, 0.9949, 'calculate_mf_HBr', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'HClO4', 100.46, 0.5051, 0.9949, 'calculate_mf_HClO4', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'NaClO3', 106.44, 0.8457, 0.9950, 'calculate_mf_NaClO3', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'HI', 127.91, 0.7797, 0.9949, 'calculate_mf_HI', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'NaBrO3', 150.89, 0.8985, 0.9951, 'calculate_mf_NaBrO3', 0, 1, 1, 25, 2, 1, 1, 1};
 };
 end

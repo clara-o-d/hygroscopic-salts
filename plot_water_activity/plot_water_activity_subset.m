@@ -2,10 +2,10 @@
 % Parameterized script for activity coefficient plots by salt subset.
 % Usage: plot_water_activity_subset('sulfates')
 %        plot_water_activity_subset  % runs endothermic (default)
-%        plot_water_activity_subset('all')  % runs all 6 subsets
+%        plot_water_activity_subset('all')  % runs all 9 subsets
 %
 % SALT_FILTER: 'endothermic', 'exothermic', 'sulfates', 'halides',
-%              'nitrates', 'chlorates', or 'all'
+%              'nitrates', 'chlorates', 'chromium', 'acids', 'bromates', or 'all'
 
 function plot_water_activity_subset(SALT_FILTER)
 
@@ -14,7 +14,7 @@ if nargin < 1
 end
 
 if strcmpi(SALT_FILTER, 'all')
-    filters = {'endothermic', 'exothermic', 'sulfates', 'halides', 'nitrates', 'chlorates'};
+    filters = {'endothermic', 'exothermic', 'sulfates', 'halides', 'nitrates', 'chlorates', 'chromium', 'acids', 'bromates'};
     for i = 1:length(filters)
         plot_water_activity_subset(filters{i});
     end
@@ -37,7 +37,10 @@ SUBSETS.sulfates = {'Na2SO4', 'K2SO4', 'NH42SO4', 'MgSO4', 'MnSO4', ...
 SUBSETS.halides = {'NaBr', 'NaI', 'KBr', 'RbCl', 'CsBr', 'CsI', 'CaBr2', 'CaI2', ...
                    'SrCl2', 'SrBr2', 'SrI2', 'BaCl2', 'BaBr2'};
 SUBSETS.nitrates = {'NaNO3', 'AgNO3', 'LiNO3', 'NH4NO3', 'KNO3', 'BaNO3', 'CaNO3'};
-SUBSETS.chlorates = {'NaClO4', 'LiClO4', 'KClO3', 'CaClO42', 'SrClO42', 'BaClO42'};
+SUBSETS.chlorates = {'NaClO4', 'LiClO4', 'KClO3', 'NaClO3', 'CaClO42', 'SrClO42', 'BaClO42'};
+SUBSETS.chromium = {'CrCl3', 'Cr2SO43', 'CrNO33', 'KCrSO42', 'NH4CrSO42'};
+SUBSETS.acids = {'HCl', 'HBr', 'HI', 'HNO3', 'HClO4', 'NaF'};
+SUBSETS.bromates = {'NaBrO3'};
 
 % Plot settings per subset
 PLOT_OPTS = struct();
@@ -47,10 +50,13 @@ PLOT_OPTS.sulfates    = struct('xlim_mf', [0.9 1.0], 'ylim_mf', [0.7 1.1], 'xlim
 PLOT_OPTS.halides     = struct('xlim_mf', [0.6 1.0], 'ylim_mf', [0.6 1.1], 'xlim_rh', [55 100], 'show_fit', true, 'title_suffix', 'Halide Solutions: ');
 PLOT_OPTS.nitrates    = struct('xlim_mf', [0.7 1.0], 'ylim_mf', [0.7 1.1], 'xlim_rh', [60 100], 'show_fit', true, 'title_suffix', 'Nitrate Solutions: ');
 PLOT_OPTS.chlorates   = struct('xlim_mf', [0.7 1.0], 'ylim_mf', [0.8 1.1], 'xlim_rh', [75 100], 'show_fit', true, 'title_suffix', 'Chlorate Solutions: ');
+PLOT_OPTS.chromium    = struct('xlim_mf', [0.8 1.0], 'ylim_mf', [0.8 1.1], 'xlim_rh', [88 100], 'show_fit', true, 'title_suffix', 'Chromium Solutions: ');
+PLOT_OPTS.acids       = struct('xlim_mf', [0.8 1.0], 'ylim_mf', [0.5 1.1], 'xlim_rh', [50 100], 'show_fit', true, 'title_suffix', 'Acids and Fluoride: ');
+PLOT_OPTS.bromates    = struct('xlim_mf', [0.8 1.0], 'ylim_mf', [0.85 1.05], 'xlim_rh', [85 100], 'show_fit', true, 'title_suffix', 'Bromate Solutions: ');
 
 filter_lower = lower(SALT_FILTER);
 if ~isfield(SUBSETS, filter_lower)
-    error('Unknown SALT_FILTER: %s. Use: endothermic, exothermic, sulfates, halides, nitrates, chlorates', SALT_FILTER);
+    error('Unknown SALT_FILTER: %s. Use: endothermic, exothermic, sulfates, halides, nitrates, chlorates, chromium, acids, bromates', SALT_FILTER);
 end
 
 fit_salts = SUBSETS.(filter_lower);
@@ -212,13 +218,17 @@ map = containers.Map(...
     {'Na2SO4','K2SO4','NH42SO4','MgSO4','MnSO4','Li2SO4','NiSO4','CuSO4','ZnSO4', ...
      'CaBr2','CaI2','SrCl2','SrBr2','SrI2','BaCl2','BaBr2', ...
      'NaNO3','AgNO3','LiNO3','NH4NO3','KNO3','BaNO3','CaNO3', ...
-     'NaClO4','LiClO4','KClO3','CaClO42','SrClO42','BaClO42', ...
-     'NH4Cl','CaCl2','MgCl2','ZnCl2','ZnBr2','ZnI2','MgNO32'}, ...
+     'NaClO4','LiClO4','KClO3','NaClO3','CaClO42','SrClO42','BaClO42', ...
+     'NH4Cl','CaCl2','MgCl2','ZnCl2','ZnBr2','ZnI2','MgNO32', ...
+     'CrCl3','Cr2SO43','CrNO33','KCrSO42','NH4CrSO42', ...
+     'NaF','HNO3','HBr','HClO4','HI','NaBrO3'}, ...
     {'Na_2SO_4','K_2SO_4','(NH_4)_2SO_4','MgSO_4','MnSO_4','Li_2SO_4','NiSO_4','CuSO_4','ZnSO_4', ...
      'CaBr_2','CaI_2','SrCl_2','SrBr_2','SrI_2','BaCl_2','BaBr_2', ...
      'NaNO_3','AgNO_3','LiNO_3','NH_4NO_3','KNO_3','Ba(NO_3)_2','Ca(NO_3)_2', ...
-     'NaClO_4','LiClO_4','KClO_3','Ca(ClO_4)_2','Sr(ClO_4)_2','Ba(ClO_4)_2', ...
-     'NH_4Cl','CaCl_2','MgCl_2','ZnCl_2','ZnBr_2','ZnI_2','Mg(NO_3)_2'});
+     'NaClO_4','LiClO_4','KClO_3','NaClO_3','Ca(ClO_4)_2','Sr(ClO_4)_2','Ba(ClO_4)_2', ...
+     'NH_4Cl','CaCl_2','MgCl_2','ZnCl_2','ZnBr_2','ZnI_2','Mg(NO_3)_2', ...
+     'CrCl_3','Cr_2(SO_4)_3','Cr(NO_3)_3','KCr(SO_4)_2','NH_4Cr(SO_4)_2', ...
+     'NaF','HNO_3','HBr','HClO_4','HI','NaBrO_3'});
 for i = 1:length(salts)
     if isKey(map, salts{i})
         disp_names{i} = map(salts{i});

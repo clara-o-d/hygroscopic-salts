@@ -20,16 +20,16 @@ if RH < 0.5609 || RH > 0.9954
 end
 
 % Coefficients from polynomial fit: RH = A0 + A1*x + A2*x^2 + A3*x^3 + A4*x^4
-A_4 = -0.727270897569920;
-A_3 = -0.898692906209528;
-A_2 = -0.047262306291610;
-A_1 = -0.187077511662843;
-A_0 = 1.001052271056975;
+A_4 = -1.431823735284023;
+A_3 = 0.004410303301651;
+A_2 = -0.226988200552912;
+A_1 = -0.139541626336994;
+A_0 = 1.000387606157413;
 
 % Polynomial function
 f = @(xi) RH - A_0 - A_1.*xi - A_2.*xi.^2 - A_3.*xi.^3 - A_4.*xi.^4;
 
 % Solve for mass fraction using robust_fzero
-mf = robust_fzero(f, 0.0279, 0.6118, 0.3199);
+mf = robust_fzero(f, 0.0325, 0.6490, 0.3408);
 
 end
