@@ -90,5 +90,10 @@ salt_data = {
     {'Na2WO4', 293.819, 0.8779, 1.0000, 'calculate_mf_Na2WO4', 0, 1, 2, 25, 3, 3, 2, 1};
     {'K2CrO4', 194.19, 0.8609, 1.0000, 'calculate_mf_K2CrO4', 0, 1, 2, 25, 3, 3, 2, 1};
     {'NH4Br', 97.942, 0.8080, 0.9967, 'calculate_mf_NH4Br', 0, 1, 1, 25, 2, 1, 1, 1};
+    
+    % Alkaline earth perchlorates (Paper 23: Osmotic and Activity Coefficients at 25°)
+    {'CaClO42', 238.98, 0.2211, 0.9952, 'calculate_mf_CaClO42', 0, 1, 2, 25, 3, 3, 1, 2};
+    {'SrClO42', 286.52, 0.2393, 0.9953, 'calculate_mf_SrClO42', 0, 1, 2, 25, 3, 3, 1, 2};
+    {'BaClO42', 336.23, 0.5609, 0.9954, 'calculate_mf_BaClO42', 0, 1, 2, 25, 3, 3, 1, 2};
 };
 end
