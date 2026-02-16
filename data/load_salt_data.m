@@ -97,19 +97,19 @@ salt_data = {
     {'BaClO42', 336.23, 0.5609, 0.9954, 'calculate_mf_BaClO42', 0, 1, 2, 25, 3, 3, 1, 2};
     
     % Chromium salts (sources_list_.xlsx - Chromium salt data at 25°)
-    {'CrCl3', 158.36, 0.8890, 0.9956, 'calculate_mf_CrCl3', 0, 1, 3, 25, 4, 9, 1, 3};
-    {'Cr2SO43', 392.16, 0.9091, 0.9978, 'calculate_mf_Cr2SO43', 0, 2, 3, 25, 5, 15, 2, 3};
-    {'CrNO33', 238.011, 0.8838, 0.9957, 'calculate_mf_CrNO33', 0, 1, 3, 25, 4, 9, 1, 3};
-    {'KCrSO42', 283.22, 0.9746, 0.9972, 'calculate_mf_KCrSO42', 0, 1, 3, 25, 4, 9, 1, 3};
-    {'NH4CrSO42', 262.15, 0.9817, 0.9970, 'calculate_mf_NH4CrSO42', 0, 1, 3, 25, 4, 9, 1, 3};
+    {'CrCl3', 158.36, 0.8548, 0.9941, 'calculate_mf_CrCl3', 0, 1, 3, 25, 4, 9, 1, 3};
+    {'Cr2SO43', 392.16, 0.8531, 0.9963, 'calculate_mf_Cr2SO43', 0, 2, 3, 25, 5, 15, 2, 3};
+    {'CrNO33', 238.011, 0.8481, 0.9943, 'calculate_mf_CrNO33', 0, 1, 3, 25, 4, 9, 1, 3};
+    {'KCrSO42', 283.22, 0.9663, 0.9962, 'calculate_mf_KCrSO42', 0, 1, 3, 25, 4, 9, 1, 3};
+    {'NH4CrSO42', 262.15, 0.9757, 0.9961, 'calculate_mf_NH4CrSO42', 0, 1, 3, 25, 4, 9, 1, 3};
     
     % Acids and strong electrolytes (Paper 25 in sources_list_.xlsx at 25°)
-    {'NaF', 41.99, 0.9540, 0.9950, 'calculate_mf_NaF', 0, 1, 1, 25, 2, 1, 1, 1};
-    {'HNO3', 63.01, 0.8294, 0.9949, 'calculate_mf_HNO3', 0, 1, 1, 25, 2, 1, 1, 1};
-    {'HBr', 80.91, 0.9437, 0.9949, 'calculate_mf_HBr', 0, 1, 1, 25, 2, 1, 1, 1};
-    {'HClO4', 100.46, 0.5051, 0.9949, 'calculate_mf_HClO4', 0, 1, 1, 25, 2, 1, 1, 1};
-    {'NaClO3', 106.44, 0.8457, 0.9950, 'calculate_mf_NaClO3', 0, 1, 1, 25, 2, 1, 1, 1};
-    {'HI', 127.91, 0.7797, 0.9949, 'calculate_mf_HI', 0, 1, 1, 25, 2, 1, 1, 1};
-    {'NaBrO3', 150.89, 0.8985, 0.9951, 'calculate_mf_NaBrO3', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'NaF', 41.99, 0.9691, 0.9967, 'calculate_mf_NaF', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'HNO3', 63.01, 0.8827, 0.9966, 'calculate_mf_HNO3', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'HBr', 80.91, 0.9621, 0.9966, 'calculate_mf_HBr', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'HClO4', 100.46, 0.6343, 0.9966, 'calculate_mf_HClO4', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'NaClO3', 106.44, 0.8943, 0.9967, 'calculate_mf_NaClO3', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'HI', 127.91, 0.8471, 0.9966, 'calculate_mf_HI', 0, 1, 1, 25, 2, 1, 1, 1};
+    {'NaBrO3', 150.89, 0.9311, 0.9967, 'calculate_mf_NaBrO3', 0, 1, 1, 25, 2, 1, 1, 1};
 };
 end
