@@ -470,6 +470,20 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     title('ln(Water Activity Coefficient (Ionic)) and ln(Water Mole Fraction (Ionic))  vs ln(RH)', 'FontSize', 16);
     % xlim([0 100]);
     print(fullfile(fig_out_dir, 'ln_Activity_Coefficient_and_ln_Mol_Ionic_vs_ln_aw'), '-dpng', '-r300');
+
+
+    % 2e. Gamma vs x_w ln
+    figure('Position', [150, 150, 1200, 800]); hold on; grid on; box on;
+    for s = 1:num_salts
+        data = all_salts_data.(salt_names{s});
+        plot(log(data.x_water_ion), log(data.gamma_w_ion), 'LineWidth', 2.5, 'color', colors(s,:), 'DisplayName', data.display_name);
+        text(log(data.x_water_ion(1)), log(data.gamma_w_ion(1)), ['  ' data.display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
+    end
+    plot([-2.5 0], [0 0], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal');
+    xlabel('ln (Water Mole Fraction (Ionic))', 'FontSize', 14); ylabel('ln(Activity Coefficient $\gamma_w$)','FontSize', 14, 'Interpreter', 'latex');
+    title('ln(Water Activity Coefficient (Ionic)) vs ln(Water Mole Fraction (Ionic))', 'FontSize', 16);
+    % xlim([0 100]);
+    print(fullfile(fig_out_dir, 'ln_Activity_Coefficient_vs_ln_Mol_Ionic'), '-dpng', '-r300');
     
     % 3. Scatter at 90% RH
     figure('Position', [200, 200, 900, 700]); hold on; grid on; box on;
