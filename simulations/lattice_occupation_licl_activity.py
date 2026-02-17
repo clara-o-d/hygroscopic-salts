@@ -27,6 +27,8 @@ SALT_CONFIG = [
     ("NH4Cl", 53.491, 0.82, 0.99, 25), ("CsCl", 168.363, 0.83, 0.99, 25), ("Na2SO4", 142.04, 0.90, 0.99, 25),
 ]
 N_RH = 120  # Dense sampling for low x_w
+# LiCl supports temperature (func_args=1); temperatures for LiCl-only figure
+LICL_TEMPS_C = [5, 15, 25, 35, 45]
 
 
 def load_ion_data(salt_name):
@@ -86,8 +88,11 @@ def main():
             continue
         mw_by_salt[name] = mw
         rh = np.linspace(rh_lo, rh_hi, N_RH)
-        for rv in rh:
-            all_rows.append({"salt": name, "RH": rv, "T": t})
+        # LiCl: add rows for multiple temperatures (supports T)
+        temps = LICL_TEMPS_C if name == "LiCl" else [t]
+        for temp in temps:
+            for rv in rh:
+                all_rows.append({"salt": name, "RH": rv, "T": temp})
     all_data = []
     try:
         out = call_matlab_batch(all_rows)
@@ -125,23 +130,42 @@ def main():
             all_data.append(sub[["salt", "T_C", "x_w", "gamma_w_actual"]])
     combined = pd.concat(all_data, ignore_index=True)
 
-    # Fit alpha per salt
+    # Fit alpha per salt: EXACT ANALYTICAL LEAST SQUARES
     alpha_by_salt = {}
     for name, _, _, _, t in SALT_CONFIG:
         try:
             ion_data = load_ion_data(name)
         except (ValueError, FileNotFoundError):
             continue
+            
         ref = combined[(combined["salt"] == name) & (combined["T_C"] == t)].dropna()
         if len(ref) < 5:
             ref = combined[combined["salt"] == name].dropna()
         if len(ref) < 5:
             alpha_by_salt[name] = -15000.0
             continue
-        x_ref, g_ref = ref["x_w"].values, ref["gamma_w_actual"].values
-        from scipy.optimize import minimize_scalar
-        err = lambda a: np.mean((np.log(np.array([gamma_w_lattice(x, ion_data, t + 273.15, a) for x in x_ref]) + 1e-10) - np.log(g_ref + 1e-10))**2)
-        alpha_by_salt[name] = minimize_scalar(err, bounds=(-5e4, -5e2), method="bounded").x
+            
+        x_ref = ref["x_w"].values
+        g_ref = ref["gamma_w_actual"].values
+        T_K = t + 273.15
+        
+        # Calculate the heuristic charge factor
+        r_cat, r_an = ion_data["r_cat"], ion_data["r_an"]
+        rho = 0.5 * (ion_data["z_cat"] / r_cat**3 + ion_data["z_an"] / r_an**3)
+        charge_factor = rho / 1.6
+        
+        # Transform data to linear space: y = alpha * X
+        Y = np.log(g_ref)
+        X = (charge_factor / (R_GAS * T_K)) * (1 - x_ref)**2
+        
+        # Analytical solution for line through origin: alpha = sum(X*Y) / sum(X^2)
+        # Add a tiny epsilon to the denominator to prevent division by zero in edge cases
+        alpha_analytical = np.sum(X * Y) / (np.sum(X**2) + 1e-12)
+        
+        alpha_by_salt[name] = alpha_analytical
+
+    # LiCl multi-temp figure uses single alpha (fitted at reference T=25°C), not per-temp
+    LICL_ALPHA = alpha_by_salt.get("LiCl", -15000.0)
 
     # Separate subplot per salt (4x4 grid)
     n_salts = len(SALT_CONFIG)
@@ -157,7 +181,7 @@ def main():
         except (ValueError, FileNotFoundError):
             ax.text(0.5, 0.5, f"{name}\n(no data)", ha="center", va="center"); ax.set_xlim(0, 1); ax.set_ylim(0, 1)
             continue
-        sub = combined[combined["salt"] == name].sort_values("x_w")
+        sub = combined[(combined["salt"] == name) & (combined["T_C"] == t)].sort_values("x_w")
         if sub.empty:
             ax.text(0.5, 0.5, f"{name}\n(no data)", ha="center", va="center"); ax.set_xlim(0, 1); ax.set_ylim(0, 1)
             continue
@@ -165,14 +189,45 @@ def main():
         alpha = alpha_by_salt.get(name, -15000.0)
         g_lat = np.array([gamma_w_lattice(x, ion_data, t + 273.15, alpha) for x in xw])
         c = colors[idx % 10]
-        ax.plot(xw, g_act, "o", color=c, ms=3, label="Actual"); ax.plot(xw, g_lat, "-", color=c, lw=2, label="Lattice")
+        ax.plot(xw, g_act, "o", color=c, ms=3, label="Actual"); ax.plot(xw, g_lat, "-", color='black', lw=2, label="Lattice")
         ax.set_xlabel(r"$x_w$"); ax.set_ylabel(r"$\gamma_w$"); ax.set_title(f"{name} (T={int(t)}°C)")
-        ax.legend(loc="best", fontsize=8); ax.grid(True, alpha=0.3); ax.set_xlim(0.15, 1.0)
+        ax.legend(loc="best", fontsize=8); ax.grid(True, alpha=0.3); ax.set_xlim(0.7, 1.0)
     for j in range(n_salts, len(axes)):
         axes[j].set_visible(False)
     plt.suptitle("Regular Solution Model vs Actual (full calculate_mf range, low $x_w$)", fontsize=12)
     plt.tight_layout(); plt.savefig(FIG_DIR / "lattice_occupation_multi_salt_activity.png", dpi=150, bbox_inches="tight"); plt.close()
     print(f"Saved: {FIG_DIR / 'lattice_occupation_multi_salt_activity.png'}")
+
+    # LiCl-only figure: multiple temperatures
+    licl_sub = combined[combined["salt"] == "LiCl"].dropna().sort_values(["T_C", "x_w"])
+    if not licl_sub.empty:
+        try:
+            ion_data = load_ion_data("LiCl")
+            fig_licl, ax_licl = plt.subplots(1, 1, figsize=(8, 6))
+            cmap = plt.cm.viridis
+            for i, t_licl in enumerate(LICL_TEMPS_C):
+                sub_t = licl_sub[licl_sub["T_C"] == t_licl]
+                if sub_t.empty:
+                    continue
+                xw = sub_t["x_w"].values
+                g_act = sub_t["gamma_w_actual"].values
+                alpha = LICL_ALPHA
+                g_lat = np.array([gamma_w_lattice(x, ion_data, t_licl + 273.15, alpha) for x in xw])
+                c = cmap(i / max(len(LICL_TEMPS_C) - 1, 1))
+                ax_licl.plot(xw, g_act, "o", color=c, ms=4)
+                ax_licl.plot(xw, g_lat, "-", color=c, lw=2, label=f"T={int(t_licl)}°C")
+            ax_licl.set_xlabel(r"$x_w$")
+            ax_licl.set_ylabel(r"$\gamma_w$")
+            ax_licl.set_title(r"LiCl: Regular Solution Model vs Actual ($\alpha$ from T=25°C fit)")
+            ax_licl.legend(loc="best", fontsize=8, ncol=2)
+            ax_licl.grid(True, alpha=0.3)
+            ax_licl.set_xlim(0.7, 1.0)
+            plt.tight_layout()
+            plt.savefig(FIG_DIR / "lattice_occupation_licl_multi_temp.png", dpi=150, bbox_inches="tight")
+            plt.close()
+            print(f"Saved: {FIG_DIR / 'lattice_occupation_licl_multi_temp.png'}")
+        except (ValueError, FileNotFoundError):
+            print("LiCl ion data not found, skipping LiCl-only figure")
 
     # Parity plot
     fig2, ax2 = plt.subplots(1, 1, figsize=(7, 6))
@@ -194,6 +249,22 @@ def main():
     ax2.grid(True, alpha=0.3); ax2.set_xlim(0.05, 1.05); ax2.set_ylim(0.05, 1.05); ax2.set_aspect("equal")
     plt.tight_layout(); plt.savefig(FIG_DIR / "lattice_occupation_multi_salt_parity.png", dpi=150, bbox_inches="tight"); plt.close()
     print(f"Saved: {FIG_DIR / 'lattice_occupation_multi_salt_parity.png'}")
+
+    # Regular solution: ln(x_w * gamma_w) vs ln(gamma_w). a_w = x_w * gamma_w, so ln(a_w) = ln(x_w) + ln(gamma_w)
+    # For regular solution: ln(gamma_w) = (omega/RT) * (1-x_w)^2. Parametric in x_w.
+    fig3, ax3 = plt.subplots(1, 1, figsize=(7, 5))
+    T_K = 298.15
+    xw_vec = np.linspace(0.7, 0.999, 200)
+    for omega_RT in [-1, -2, -3, -4, -5]:
+        ln_gw = (omega_RT) * (1 - xw_vec)**2
+        ln_aw = np.log(xw_vec) + ln_gw
+        ax3.plot(ln_aw, ln_gw, lw=2, label=rf"$\omega/RT$ = {omega_RT}")
+    ax3.set_xlabel(r"$\ln(x_w \gamma_w)$ = $\ln(a_w)$")
+    ax3.set_ylabel(r"$\ln(\gamma_w)$")
+    ax3.set_title(r"Regular solution: $\ln(\gamma_w) = (\omega/RT)(1-x_w)^2$")
+    ax3.legend(loc="best"); ax3.grid(True, alpha=0.3)
+    plt.tight_layout(); plt.savefig(FIG_DIR / "lattice_ln_aw_vs_ln_gammaw_regular_solution.png", dpi=150, bbox_inches="tight"); plt.close()
+    print(f"Saved: {FIG_DIR / 'lattice_ln_aw_vs_ln_gammaw_regular_solution.png'}")
 
     for name, _, _, _, t in SALT_CONFIG:
         sub = combined[combined["salt"] == name].dropna()
