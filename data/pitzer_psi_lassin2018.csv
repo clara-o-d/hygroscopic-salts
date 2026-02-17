@@ -1,0 +1,10 @@
+species1,species2,species3,psi_a1,source
+Ca++,H+,Cl-,-0.007111,Lassin2018_Table3
+Li+,Ca++,Cl-,-0.0099196,Lassin2018_Table3
+Ca++,Mg++,Cl-,0.005,Lassin2018_Table3
+H+,Mg++,Cl-,-0.008,Lassin2018_Table3
+Li+,Mg++,Cl-,0.00161,Lassin2018_Table3
+Na+,Ca++,Cl-,-0.008,Lassin2018_Table3
+Na+,Mg++,Cl-,-0.012,Lassin2018_Table3
+K+,Ca++,Cl-,-0.039,Lassin2018_Table3
+K+,Mg++,Cl-,-0.017,Lassin2018_Table3

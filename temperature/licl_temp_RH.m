@@ -85,7 +85,8 @@ fprintf('Temperature range: %.1f°C to %.1f°C\n', min(T_C_vec), max(T_C_vec));
 fprintf('RH range: %.1f%% to %.1f%%\n', min(RH_vec)*100, max(RH_vec)*100);
 
 % Initialize arrays
-water_uptake = zeros(length(T_C_vec), length(RH_vec));  % kg water / kg salt
+water_uptake = zeros(length(T_C_vec), length(RH_vec));  % kg water / (kg water + kg salt)
+water_uptake_ratio = zeros(length(T_C_vec), length(RH_vec));  % kg water / kg salt
 mole_fraction_water = zeros(length(T_C_vec), length(RH_vec));
 molality = zeros(length(T_C_vec), length(RH_vec));
 
@@ -187,10 +188,15 @@ for i = 1:length(T_C_vec)
             x_water = n_water / (n_water + n_ions);
             mole_fraction_water(i, j) = x_water;
             
-            % Water uptake = kg_water / kg_salt
-            water_uptake(i, j) = (mf_water / mf_salt);  % dimensionless (kg water / kg salt)
+            % Water uptake = kg_water / (kg_water + kg_salt) = mass fraction of water
+            water_uptake(i, j) = mf_water;  % dimensionless
+            
+            % Water uptake ratio = kg_water / kg_salt
+            % For 1 kg water: mass_salt = m_solution * MW_LiCl / 1000 (kg)
+            water_uptake_ratio(i, j) = 1.0 / (m_solution * MW_LiCl / 1000);  % kg H2O / kg LiCl
         else
             water_uptake(i, j) = NaN;
+            water_uptake_ratio(i, j) = NaN;
             mole_fraction_water(i, j) = NaN;
         end
     end
@@ -239,6 +245,7 @@ if exist(atacama_rh_file, 'file') && exist(atacama_temp_file, 'file')
     
     % Interpolate water uptake for Atacama conditions
     atacama_water_uptake = zeros(size(atacama_RH));
+    atacama_water_uptake_ratio = zeros(size(atacama_RH));
     atacama_molality = zeros(size(atacama_RH));
     atacama_mole_fraction = zeros(size(atacama_RH));
     
@@ -250,6 +257,8 @@ if exist(atacama_rh_file, 'file') && exist(atacama_temp_file, 'file')
         % Interpolate from our calculated grid
         % Use interp2 for 2D interpolation
         atacama_water_uptake(i) = interp2(RH_vec, T_C_vec, water_uptake, ...
+            atacama_RH(i), atacama_T(i), 'linear', NaN);
+        atacama_water_uptake_ratio(i) = interp2(RH_vec, T_C_vec, water_uptake_ratio, ...
             atacama_RH(i), atacama_T(i), 'linear', NaN);
         atacama_molality(i) = interp2(RH_vec, T_C_vec, molality, ...
             atacama_RH(i), atacama_T(i), 'linear', NaN);
@@ -281,6 +290,7 @@ if exist(atacama_rh_file, 'file') && exist(atacama_temp_file, 'file')
     atacama_RH = atacama_RH(valid_atacama);
     atacama_T = atacama_T(valid_atacama);
     atacama_water_uptake = atacama_water_uptake(valid_atacama);
+    atacama_water_uptake_ratio = atacama_water_uptake_ratio(valid_atacama);
     atacama_molality = atacama_molality(valid_atacama);
     atacama_mole_fraction = atacama_mole_fraction(valid_atacama);
     
@@ -316,7 +326,7 @@ colormap(jet);
 colorbar;
 xlabel('Relative Humidity (%)', 'FontSize', 12, 'FontWeight', 'bold');
 ylabel('Temperature (°C)', 'FontSize', 12, 'FontWeight', 'bold');
-zlabel('Water Uptake (kg H_2O / kg LiCl)', 'FontSize', 12, 'FontWeight', 'bold');
+zlabel('Water Uptake: kg H_2O / (kg H_2O + kg LiCl)', 'FontSize', 12, 'FontWeight', 'bold');
 title('LiCl Water Uptake vs RH and Temperature (Pitzer Model)', 'FontSize', 14, 'FontWeight', 'bold');
 grid on;
 view(-30, 30);
@@ -350,12 +360,68 @@ end
 
 xlabel('Relative Humidity (%)', 'FontSize', 12, 'FontWeight', 'bold');
 ylabel('Temperature (°C)', 'FontSize', 12, 'FontWeight', 'bold');
-title('LiCl Water Uptake (kg H_2O / kg LiCl) - Contour Plot', 'FontSize', 14, 'FontWeight', 'bold');
+title('LiCl Water Uptake: kg H_2O / (kg H_2O + kg LiCl) - Contour Plot', 'FontSize', 14, 'FontWeight', 'bold');
 set(gca, 'FontSize', 11);
 print(fullfile(fig_out_dir, 'LiCl_WaterUptake_Contour'), '-dpng', '-r300');
 
-% Figure 3: Mole Fraction of Water
-figure('Position', [200, 200, 1000, 700]);
+% Figure 3: Water Uptake Ratio (kg H2O / kg LiCl)
+figure('Position', [175, 175, 1000, 700]);
+surf(RH_grid, T_grid, water_uptake_ratio, 'EdgeColor', 'none', 'FaceAlpha', 0.9);
+hold on;
+
+% Add Atacama desert data line
+if atacama_data_available
+    plot3(atacama_RH * 100, atacama_T, atacama_water_uptake_ratio, ...
+        'r-', 'LineWidth', 3, 'DisplayName', 'Atacama Desert Daily Cycle');
+    plot3(atacama_RH * 100, atacama_T, atacama_water_uptake_ratio, ...
+        'ro', 'MarkerSize', 6, 'MarkerFaceColor', 'r', 'HandleVisibility', 'off');
+    legend('Location', 'best', 'FontSize', 10);
+end
+
+colormap(jet);
+colorbar;
+xlabel('Relative Humidity (%)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Temperature (°C)', 'FontSize', 12, 'FontWeight', 'bold');
+zlabel('Water Uptake: kg H_2O / kg LiCl', 'FontSize', 12, 'FontWeight', 'bold');
+title('LiCl Water Uptake Ratio vs RH and Temperature (Pitzer Model)', 'FontSize', 14, 'FontWeight', 'bold');
+grid on;
+view(-30, 30);
+set(gca, 'FontSize', 11);
+print(fullfile(fig_out_dir, 'LiCl_WaterUptakeRatio_3D'), '-dpng', '-r300');
+
+% Figure 4: Contour Plot of Water Uptake Ratio
+figure('Position', [225, 225, 900, 700]);
+contourf(RH_grid, T_grid, water_uptake_ratio, 20, 'LineColor', 'none');
+hold on;
+colormap(jet);
+colorbar;
+% Add contour lines
+contour(RH_grid, T_grid, water_uptake_ratio, 10, 'LineColor', 'k', 'LineWidth', 0.5);
+
+% Add Atacama desert data line
+if atacama_data_available
+    plot(atacama_RH * 100, atacama_T, 'r-', 'LineWidth', 3, 'DisplayName', 'Atacama Desert Daily Cycle');
+    plot(atacama_RH * 100, atacama_T, 'ro', 'MarkerSize', 6, 'MarkerFaceColor', 'r', 'HandleVisibility', 'off');
+    % Add arrow to show direction of daily cycle
+    n_pts = length(atacama_RH);
+    if n_pts > 10
+        arrow_idx = round(n_pts/4);  % Arrow at 1/4 of the cycle
+        quiver(atacama_RH(arrow_idx)*100, atacama_T(arrow_idx), ...
+            (atacama_RH(arrow_idx+1) - atacama_RH(arrow_idx))*100, ...
+            (atacama_T(arrow_idx+1) - atacama_T(arrow_idx)), ...
+            0.5, 'r', 'LineWidth', 2, 'MaxHeadSize', 1.5, 'HandleVisibility', 'off');
+    end
+    legend('Location', 'best', 'FontSize', 10);
+end
+
+xlabel('Relative Humidity (%)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Temperature (°C)', 'FontSize', 12, 'FontWeight', 'bold');
+title('LiCl Water Uptake Ratio: kg H_2O / kg LiCl - Contour Plot', 'FontSize', 14, 'FontWeight', 'bold');
+set(gca, 'FontSize', 11);
+print(fullfile(fig_out_dir, 'LiCl_WaterUptakeRatio_Contour'), '-dpng', '-r300');
+
+% Figure 5: Mole Fraction of Water
+figure('Position', [275, 275, 1000, 700]);
 surf(RH_grid, T_grid, mole_fraction_water, 'EdgeColor', 'none', 'FaceAlpha', 0.9);
 hold on;
 
@@ -379,8 +445,8 @@ view(-30, 30);
 set(gca, 'FontSize', 11);
 print(fullfile(fig_out_dir, 'LiCl_MoleFraction_3D'), '-dpng', '-r300');
 
-% Figure 4: Molality
-figure('Position', [250, 250, 1000, 700]);
+% Figure 6: Molality
+figure('Position', [325, 325, 1000, 700]);
 surf(RH_grid, T_grid, molality, 'EdgeColor', 'none', 'FaceAlpha', 0.9);
 hold on;
 

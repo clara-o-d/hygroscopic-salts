@@ -20,15 +20,30 @@ end
 
 %% Load Pitzer parameters
 pitzer_dir = fullfile(filepath, '..', 'data', 'parsed_thermodb');
+data_dir = fullfile(filepath, '..', 'data');
+
 binary_data = readtable(fullfile(pitzer_dir, 'pitzer_binary.csv'), 'TextType', 'string');
 theta_data = readtable(fullfile(pitzer_dir, 'pitzer_theta.csv'), 'TextType', 'string');
 psi_data = readtable(fullfile(pitzer_dir, 'pitzer_psi.csv'), 'TextType', 'string');
 
-% Convert to maps for easier lookup
+% Load additional parameters from Lassin 2018 to fill gaps
+theta_lassin = readtable(fullfile(data_dir, 'pitzer_theta_lassin2018.csv'), 'TextType', 'string');
+psi_lassin = readtable(fullfile(data_dir, 'pitzer_psi_lassin2018.csv'), 'TextType', 'string');
+
+fprintf('Loaded Pitzer parameters:\n');
+fprintf('  Binary: %d parameters\n', height(binary_data));
+fprintf('  Theta (original): %d parameters\n', height(theta_data));
+fprintf('  Theta (Lassin 2018): %d parameters\n', height(theta_lassin));
+fprintf('  Psi (original): %d parameters\n', height(psi_data));
+fprintf('  Psi (Lassin 2018): %d parameters\n\n', height(psi_lassin));
+
+% Convert to maps for easier lookup (Lassin data supplements existing)
 params = struct();
 params.binary = create_binary_map(binary_data);
-params.theta = create_theta_map(theta_data);
-params.psi = create_psi_map(psi_data);
+params.theta = merge_parameter_maps(create_theta_map(theta_data), create_theta_map(theta_lassin));
+params.psi = merge_parameter_maps(create_psi_map(psi_data), create_psi_map(psi_lassin));
+
+fprintf('Merged parameters (Lassin 2018 supplements existing data)\n\n');
 
 %% Constants
 T = 25; % Temperature in Celsius
@@ -200,12 +215,146 @@ salt_systems{end+1} = struct(...
     'line_width', 2.5, ...
     'is_pure', false);
 
+% 7. NaCl + KCl
+salt_systems{end+1} = struct(...
+    'name', 'NaCl_KCl', ...
+    'display_name', 'NaCl + KCl (mass)', ...
+    'salts', {{'NaCl', 'KCl'}}, ...
+    'mass_fractions', [0.5, 0.5], ...
+    'salt_MWs', [58.443, 74.551], ...
+    'salt_ions', {{containers.Map({'Na+', 'Cl-'}, {1, 1}), ...
+                   containers.Map({'K+', 'Cl-'}, {1, 1})}}, ...
+    'color', [0.8, 0.2, 0.6], ...
+    'line_style', '-', ...
+    'line_width', 2.5, ...
+    'is_pure', false);
+
+% 8. NaCl + CaCl2
+salt_systems{end+1} = struct(...
+    'name', 'NaCl_CaCl2', ...
+    'display_name', 'NaCl + CaCl_2 (mass)', ...
+    'salts', {{'NaCl', 'CaCl2'}}, ...
+    'mass_fractions', [0.5, 0.5], ...
+    'salt_MWs', [58.443, 110.984], ...
+    'salt_ions', {{containers.Map({'Na+', 'Cl-'}, {1, 1}), ...
+                   containers.Map({'Ca++', 'Cl-'}, {1, 2})}}, ...
+    'color', [0.8, 0.4, 0.8], ...
+    'line_style', '-', ...
+    'line_width', 2.5, ...
+    'is_pure', false);
+
+% 9. KCl + CaCl2
+salt_systems{end+1} = struct(...
+    'name', 'KCl_CaCl2', ...
+    'display_name', 'KCl + CaCl_2 (mass)', ...
+    'salts', {{'KCl', 'CaCl2'}}, ...
+    'mass_fractions', [0.5, 0.5], ...
+    'salt_MWs', [74.551, 110.984], ...
+    'salt_ions', {{containers.Map({'K+', 'Cl-'}, {1, 1}), ...
+                   containers.Map({'Ca++', 'Cl-'}, {1, 2})}}, ...
+    'color', [0.4, 0.8, 0.8], ...
+    'line_style', '-', ...
+    'line_width', 2.5, ...
+    'is_pure', false);
+
+% 10. NaCl + MgCl2
+salt_systems{end+1} = struct(...
+    'name', 'NaCl_MgCl2', ...
+    'display_name', 'NaCl + MgCl_2 (mass)', ...
+    'salts', {{'NaCl', 'MgCl2'}}, ...
+    'mass_fractions', [0.5, 0.5], ...
+    'salt_MWs', [58.443, 95.211], ...
+    'salt_ions', {{containers.Map({'Na+', 'Cl-'}, {1, 1}), ...
+                   containers.Map({'Mg++', 'Cl-'}, {1, 2})}}, ...
+    'color', [0.6, 0.4, 0.2], ...
+    'line_style', '-', ...
+    'line_width', 2.5, ...
+    'is_pure', false);
+
+% 11. KCl + MgCl2
+salt_systems{end+1} = struct(...
+    'name', 'KCl_MgCl2', ...
+    'display_name', 'KCl + MgCl_2 (mass)', ...
+    'salts', {{'KCl', 'MgCl2'}}, ...
+    'mass_fractions', [0.5, 0.5], ...
+    'salt_MWs', [74.551, 95.211], ...
+    'salt_ions', {{containers.Map({'K+', 'Cl-'}, {1, 1}), ...
+                   containers.Map({'Mg++', 'Cl-'}, {1, 2})}}, ...
+    'color', [0.2, 0.4, 0.6], ...
+    'line_style', '-', ...
+    'line_width', 2.5, ...
+    'is_pure', false);
+
+% 12. CaCl2 + MgCl2
+salt_systems{end+1} = struct(...
+    'name', 'CaCl2_MgCl2', ...
+    'display_name', 'CaCl_2 + MgCl_2 (mass)', ...
+    'salts', {{'CaCl2', 'MgCl2'}}, ...
+    'mass_fractions', [0.5, 0.5], ...
+    'salt_MWs', [110.984, 95.211], ...
+    'salt_ions', {{containers.Map({'Ca++', 'Cl-'}, {1, 2}), ...
+                   containers.Map({'Mg++', 'Cl-'}, {1, 2})}}, ...
+    'color', [0.7, 0.3, 0.5], ...
+    'line_style', '-', ...
+    'line_width', 2.5, ...
+    'is_pure', false);
+
+%% Validate salt systems have complete Pitzer parameters
+fprintf('Validating Pitzer parameters for salt systems...\n');
+fprintf('%s\n', repmat('=', 1, 80));
+
+valid_systems = {};
+skipped_systems = {};
+
+for sys_idx = 1:length(salt_systems)
+    system = salt_systems{sys_idx};
+    
+    % Pure salts don't need mixing parameters
+    if system.is_pure
+        valid_systems{end+1} = system;
+        fprintf('  ✓ %s: Pure salt (no mixing parameters needed)\n', system.display_name);
+        continue;
+    end
+    
+    % Check if mixture has all required parameters
+    [has_params, missing] = check_mixture_parameters(system, params);
+    
+    if has_params
+        valid_systems{end+1} = system;
+        fprintf('  ✓ %s: Complete parameters\n', system.display_name);
+    else
+        skipped_systems{end+1} = struct('system', system, 'missing', missing);
+        fprintf('  ✗ %s: MISSING %s\n', system.display_name, missing);
+    end
+end
+
+fprintf('\n');
+fprintf('Summary: %d valid systems, %d skipped due to missing parameters\n', ...
+    length(valid_systems), length(skipped_systems));
+
+if ~isempty(skipped_systems)
+    fprintf('\nSkipped mixtures (missing parameters):\n');
+    for i = 1:length(skipped_systems)
+        fprintf('  - %s: %s\n', skipped_systems{i}.system.display_name, ...
+            skipped_systems{i}.missing);
+    end
+end
+
+fprintf('%s\n\n', repmat('=', 1, 80));
+
+% Update salt_systems to only include valid ones
+salt_systems = valid_systems;
+
+if isempty(salt_systems)
+    error('No valid salt systems to calculate!');
+end
+
 %% Calculate water uptake for each system
 RH_vec = linspace(0.15, 0.95, 100);
 
 results = struct();
 
-fprintf('Calculating water uptake for salt systems (MASS BASIS)...\n');
+fprintf('Calculating water uptake for validated salt systems (MASS BASIS)...\n');
 
 for sys_idx = 1:length(salt_systems)
     system = salt_systems{sys_idx};
@@ -538,6 +687,19 @@ function params_map = create_binary_map(table_data)
     end
 end
 
+function merged_map = merge_parameter_maps(base_map, supplement_map)
+    % Merge two parameter maps, with supplement_map taking priority
+    merged_map = base_map;
+    
+    if ~isempty(supplement_map)
+        supp_keys = keys(supplement_map);
+        for i = 1:length(supp_keys)
+            key = supp_keys{i};
+            merged_map(key) = supplement_map(key);
+        end
+    end
+end
+
 function theta_map = create_theta_map(table_data)
     theta_map = containers.Map('KeyType', 'char', 'ValueType', 'any');
     
@@ -553,10 +715,11 @@ function theta_map = create_theta_map(table_data)
         key2 = [sp2 '_' sp1];
         
         theta = table_data.theta_a1(i);
-        if isnan(theta), theta = 0; end
-        
-        theta_map(key1) = theta;
-        theta_map(key2) = theta;
+        % Only store if parameter exists (no zero-approximation)
+        if ~isnan(theta)
+            theta_map(key1) = theta;
+            theta_map(key2) = theta;
+        end
     end
 end
 
@@ -577,10 +740,11 @@ function psi_map = create_psi_map(table_data)
                 [sp3 '_' sp1 '_' sp2], [sp3 '_' sp2 '_' sp1]};
         
         psi = table_data.psi_a1(i);
-        if isnan(psi), psi = 0; end
-        
-        for k = 1:length(keys)
-            psi_map(keys{k}) = psi;
+        % Only store if parameter exists (no zero-approximation)
+        if ~isnan(psi)
+            for k = 1:length(keys)
+                psi_map(keys{k}) = psi;
+            end
         end
     end
 end
@@ -796,4 +960,118 @@ function charges = get_ion_charges()
     charges('HPO4--') = -2;
     
     charges('PO4---') = -3;
+end
+
+function [has_all_params, missing_str] = check_mixture_parameters(system, params)
+    % Check if a mixture has all required Pitzer parameters
+    % Returns: has_all_params (boolean), missing_str (description of what's missing)
+    
+    % Get list of all unique ions from salt_ions array
+    % (mass basis version uses salt_ions, not ions)
+    all_ions = containers.Map();
+    charges = get_ion_charges();
+    
+    for s = 1:length(system.salt_ions)
+        ion_map = system.salt_ions{s};
+        ion_names_in_salt = keys(ion_map);
+        for i = 1:length(ion_names_in_salt)
+            ion = ion_names_in_salt{i};
+            if ~isKey(all_ions, ion)
+                all_ions(ion) = true;
+            end
+        end
+    end
+    
+    ion_names = keys(all_ions);
+    
+    cations = {};
+    anions = {};
+    for i = 1:length(ion_names)
+        ion = ion_names{i};
+        if charges(ion) > 0
+            cations{end+1} = ion;
+        else
+            anions{end+1} = ion;
+        end
+    end
+    
+    missing_params = {};
+    
+    % Check binary parameters (all cation-anion pairs)
+    for i = 1:length(cations)
+        for j = 1:length(anions)
+            key = [cations{i} '_' anions{j}];
+            if ~isKey(params.binary, key)
+                missing_params{end+1} = sprintf('binary(%s-%s)', cations{i}, anions{j});
+            end
+        end
+    end
+    
+    % Check theta parameters (like-ion interactions)
+    % Cation-cation pairs
+    if length(cations) > 1
+        for i = 1:(length(cations)-1)
+            for j = (i+1):length(cations)
+                key = [cations{i} '_' cations{j}];
+                if ~isKey(params.theta, key)
+                    missing_params{end+1} = sprintf('theta(%s-%s)', cations{i}, cations{j});
+                end
+            end
+        end
+    end
+    
+    % Anion-anion pairs
+    if length(anions) > 1
+        for i = 1:(length(anions)-1)
+            for j = (i+1):length(anions)
+                key = [anions{i} '_' anions{j}];
+                if ~isKey(params.theta, key)
+                    missing_params{end+1} = sprintf('theta(%s-%s)', anions{i}, anions{j});
+                end
+            end
+        end
+    end
+    
+    % Check psi parameters (ternary interactions)
+    % Cation-cation-anion
+    if length(cations) > 1
+        for i = 1:(length(cations)-1)
+            for j = (i+1):length(cations)
+                for k = 1:length(anions)
+                    key = [cations{i} '_' cations{j} '_' anions{k}];
+                    if ~isKey(params.psi, key)
+                        missing_params{end+1} = sprintf('psi(%s-%s-%s)', cations{i}, cations{j}, anions{k});
+                    end
+                end
+            end
+        end
+    end
+    
+    % Cation-anion-anion
+    if length(anions) > 1
+        for i = 1:length(cations)
+            for j = 1:(length(anions)-1)
+                for k = (j+1):length(anions)
+                    key = [cations{i} '_' anions{j} '_' anions{k}];
+                    if ~isKey(params.psi, key)
+                        missing_params{end+1} = sprintf('psi(%s-%s-%s)', cations{i}, anions{j}, anions{k});
+                    end
+                end
+            end
+        end
+    end
+    
+    % Summarize results
+    if isempty(missing_params)
+        has_all_params = true;
+        missing_str = '';
+    else
+        has_all_params = false;
+        if length(missing_params) <= 3
+            missing_str = strjoin(missing_params, ', ');
+        else
+            missing_str = sprintf('%s, and %d more', strjoin(missing_params(1:2), ', '), ...
+                length(missing_params) - 2);
+        end
+    end
 end

@@ -1,0 +1,30 @@
+Chemical_System,Parameter_Type,Species,Value,Source_Note,Deviation_Value,Deviation_Type,N_Data_Points,Comment
+Ca-Cl,β(0),"Ca2+,Cl-",0.33809,,0.0214,σϕ,113,Aqueous complexation reaction: Ca2+ + 2 Cl- = CaCl2(0)
+Ca-Cl,β(1),"Ca2+,Cl-",1.26051,,,,,Aqueous complexation reaction: Ca2+ + 2 Cl- = CaCl2(0)
+Ca-Cl,Cϕ,"Ca2+,Cl-",-0.0039794,,,,,Aqueous complexation reaction: Ca2+ + 2 Cl- = CaCl2(0)
+Ca-Cl,μ,"CaCl2(0),CaCl2(0),CaCl2(0)",0.11926,,,,,Aqueous complexation reaction: Ca2+ + 2 Cl- = CaCl2(0)
+Ca-Cl,log K,,-7.7444,,,,,Aqueous complexation reaction: Ca2+ + 2 Cl- = CaCl2(0)
+H-Ca-Cl,θ,"Ca2+,H+",0.096863,from [14],0.0368,σs,42,
+H-Ca-Cl,ψ,"Ca2+,H+,Cl-",-0.007111,,,,,
+H-Ca-Cl,ζ,"CaCl2(0),H+,Cl-",0.0078272,,,,,
+Li-Ca-Cl,θ,"Li+,Ca2+",0.11907,,0.0362,σϕ,97,
+Li-Ca-Cl,ψ,"Li+,Ca2+,Cl-",-0.0099196,,0.0938,σs,68,
+Li-Ca-Cl,ζ,"CaCl2(0),Li+,Cl-",0.012701,,,,,
+Li-Ca-Cl,ζ,"LiCl(0),Ca2+,Cl-",0.0014594,,,,,
+Li-Ca-Cl,μ,"LiCl(0),CaCl2(0),Cl-",-0.0021343,,,,,
+Li-Ca-Cl,μ,"LiCl(0),CaCl2(0),Li+",0.006842,,,,,
+Ca-Mg-Cl,θ,"Ca2+,Mg2+",0.057757,,0.0498,σϕ,179,
+Ca-Mg-Cl,ψ,"Ca2+,Mg2+,Cl-",0.005,,0.0382,σs,22,
+H-Mg-Cl,θ,"H+,Mg2+",0.10045,from [41],0.0049,σγ,88,
+H-Mg-Cl,ψ,"H+,Mg2+,Cl-",-0.008,,0.0982,σs,31,
+Li-Mg-Cl,θ,"Li+,Mg2+",0.027558,,0.0527,σϕ,33,
+Li-Mg-Cl,ζ,"LiCl(0),Mg2+,Cl-",0.009864,,0.0507,σs,18,
+Li-Mg-Cl,ψ,"Li+,Mg2+,Cl-",0.00161,,,,,
+Na-Ca-Cl,θ,"Na+,Ca2+",0.05,from [28],0.0896,σs,10,
+Na-Ca-Cl,ψ,"Na+,Ca2+,Cl-",-0.008,,,,,
+Na-Mg-Cl,θ,"Na+,Mg2+",0.07,"from [18,42]",0.0642,σs,10,
+Na-Mg-Cl,ψ,"Na+,Mg2+,Cl-",-0.012,,,,,
+K-Ca-Cl,θ,"K+,Ca2+",0.1156,from [29],0.0291,σs,64,
+K-Ca-Cl,ψ,"K+,Ca2+,Cl-",-0.039,,,,,
+K-Mg-Cl,θ,"K+,Mg2+",0.0,from [43],0.0071,σϕ,65,
+K-Mg-Cl,ψ,"K+,Mg2+,Cl-",-0.017,,0.0396,σs,13,

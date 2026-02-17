@@ -1,0 +1,10 @@
+species1,species2,theta_a1,source
+Ca++,H+,0.096863,Lassin2018_Table3
+Li+,Ca++,0.11907,Lassin2018_Table3
+Ca++,Mg++,0.057757,Lassin2018_Table3
+H+,Mg++,0.10045,Lassin2018_Table3
+Li+,Mg++,0.027558,Lassin2018_Table3
+Na+,Ca++,0.05,Lassin2018_Table3
+Na+,Mg++,0.07,Lassin2018_Table3
+K+,Ca++,0.1156,Lassin2018_Table3
+K+,Mg++,0.0,Lassin2018_Table3

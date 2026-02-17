@@ -1,0 +1,132 @@
+species1,species2,species3,psi_a1,psi_a2,psi_a3,psi_a4,source
+Al+++,Cl-,K+,-.06,,,,"01Chr.2, Table 4"
+Al+++,Cl-,Mg++,-.024,,,,"01Chr.2, Table 4"
+AlO2-,Na+,NO3-,.0066,,,,94Fel/Rus
+AlO2-,Na+,OH-,-.0048,,,,94Fel/Rus
+B(OH)4-,Cl-,Na+,-.0073,,,,86Fel/Wea (Table 4)
+B3O3(OH)4-,Cl-,Na+,-.024,,,,86Fel/Wea (Table 4)
+B4O5(OH)4--,Cl-,Na+,.026,,,,86Fel/Wea (Table 4)
+Ba++,Cl-,H+,-.0081,,,,88Kim/Fre(2) Table IV
+Br-,Cr2O7--,K+,-.7,,,,"98Chr, Table 3"
+Br-,H+,Ni++,-.06,,,,"00Roy/Cof, Table 2"
+Br-,K+,O2(aq),-.00541,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Br-,Na+,O2(aq),-.00909,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+CO2(aq),Na+,SO4--,-.0105,,,,93Rum/Mau
+CO3--,Na+,O2(aq),-.0181,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Ca++,Cl-,Co++,-.0332,,,,88Kim/Fre(2) Table IV
+Ca++,Cl-,K+,-.043188975,3.5527137e-15,-27.077051,-3.6379788e-12,refit of 89Gre/Mol [FitPitzerNC_MMX_K_Ca_Cl.xls]
+Ca++,Cl-,NO3-,-0.017,,,,"91Pit (Table 16, p. 116)"
+Ca++,Cl-,Na+,-.003,-6.6613382e-16,0.0,1.1368684e-13,refit of 89Gre/Mol [FitPitzerNC_MMX_K_Ca_Cl.xls]
+Ca++,Cl-,O2(aq),-.0169,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Ca++,Cl-,SO4--,-.018,1.7763568e-15,-6.9849193e-10,-2.7284841e-12,refit of 89Gre/Mol [FitPitzerNC_MXX_Ca_Cl_SO4.xls]
+Ca++,Cl-,TcO4-,-.033,,,,98Nec/Kon(1) (Table IV)
+Ca++,ClO4-,Na+,-.02,,,,99Kon/Kon (Table 4)
+Ca++,Na+,SO4--,-.012,-2.6645353e-15,0.0,4.5474735e-13,refit of 89Gre/Mol [FitPitzerNC_MMX_Na_Ca_SO4.xls]
+Cl-,CO2(aq),Na+,-.0075693833,6.0528634e-6,,,90Cor/dePab
+Cl-,CO3--,Na+,.016,,,,99kon/kon
+Cl-,ClO4-,Cs+,.0023,,,,97Kon/Nec (p. 571)
+Cl-,ClO4-,Na+,-.0057,,,,98Nec/Kon(1) (Table IV)
+Cl-,Co++,H+,.0075,,,,88Kim/Fre(2) Table IV
+Cl-,Co++,K+,-.0315,,,,"91Sar/Ana, Table II"
+Cl-,Co++,Na+,-.0056,,,,88Kim/Fre(2) Table IV
+Cl-,Cr+++,K+,-.01,,,,"03Chr, p. 916."
+Cl-,Cr+++,Na+,.01,,,,"03Chr, p. 916."
+Cl-,Cr2O7--,K+,-.7,,,,"98Chr, Table 3"
+Cl-,CrO4--,K+,.035,,,,"02Chr/Iva, p. 993"
+Cl-,CrO4--,Na+,-.004,,,,"02Chr/Iva, p. 992"
+Cl-,Cs+,K+,-.0013,,,,98Nec/Kon(2) (Table 2)
+Cl-,Cs+,Mg++,-.044,,,,98Nec/Kon(2) (Table 2)
+Cl-,Cs+,Na+,-.00135,,,,98Nec/Kon(2) (Table 2)
+Cl-,Cs+,TcO4-,-.0011,,,,97Kon/Nec (p. 567)
+Cl-,Cu++,K+,-.001,,,,"99Chr, Table 4"
+Cl-,Cu++,Na+,-.0129,,,,"88Kim/Fre(2), Table IV"
+Cl-,Cu++,SO4--,.01,,,,"00Chr, Table 4"
+Cl-,Gd+++,H+,.14,,,,00Roy/Gre (Table III)
+Cl-,H+,Mg++,-.011,,,,"84Har/Mol/Wea as quoted in 03Alt/Met, Table 1"
+Cl-,H+,Ni++,.0044,,,,88Kim/Fre(2) Table IV
+Cl-,H+,O2(aq),-.0077,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Cl-,H+,Th++++,.37,,,,92Roy/Vog (Table II)
+Cl-,HCO3-,Na+,-.0143,,,,82pei/pit
+Cl-,K+,Mg++,-.022,0.0,-14.27,,conversion of 87Pab/Pit data to 25C-centric form
+Cl-,K+,Na+,-.0036914943,6.6613382e-16,-5.1021292,-3.4106051e-13,refit of 89Gre/Mol [FitPitzerNC_MMX_Na_K_Cl.xls]
+Cl-,K+,Ni++,-.031,,,,"99Christov, Table 4"
+Cl-,K+,O2(aq),-.0211,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Cl-,K+,SO4--,-.0016152312,.00028469833,37.561961,2.8990144e-12,refit of 89Gre/Mol [FitPitzerNC_MXX_K_Cl_SO4.xls]
+Cl-,K+,TcO4-,-.011,,,,98Nec/Kon(1) (Table IV)
+Cl-,Mg++,MgOH+,.028,,,,"84Har/Mol/Wea as quoted in 03Alt/Met, Table 1"
+Cl-,Mg++,Na+,-.012,0.0,-9.51,,conversion of 87Pab/Pit data to 25C-centric form
+Cl-,Mg++,SO4--,-.00796,0.0,32.63,,conversion of 87Pab/Pit data to 25C-centric form
+Cl-,Mg++,SiO2(aq),-.051469246,.000594133,1.49594e-8,8.98686e-11,94Fel/Sch [Pitzer_NMX_SiO2.xls]
+Cl-,Mg++,TcO4-,-.0115,,,,98Nec/Kon(1) (Table IV)
+Cl-,Mg++,Th++++,.21,,,,97Rai/Fel (Table 3)
+Cl-,Mn++,Na+,-.019,,,,88Kim/Fre(2) Table IV
+Cl-,MoO4--,Na+,.0032,,,,"92Gra/Mul, p.75"
+Cl-,Na+,NO3-,-.006,,,,"91Pit (Table 16, p. 116)"
+Cl-,Na+,O2(aq),-.009186651,-4.879586e-14,-2.739,3.2599209e-11,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Cl-,Na+,OH-,-.00601,0.0,-9.93,,conversion of 87Pab/Pit data to 25C-centric form
+Cl-,Na+,SO4--,-.0090885495,.00094610605,-78.614152,-.55199914,refit of 89Gre/Mol [FitPitzerNC_MXX_Na_Cl_SO4.xls]
+Cl-,Na+,SiO2(aq),-8.47766e-15,-2e-4,-1.84314e-8,-1.10633e-10,94Fel/Sch [Pitzer_NMX_SiO2.xls]
+Cl-,Na+,TcO4-,-.0085,,,,97Kon/Nec (Table I)
+Cl-,Na+,Th++++,.21,,,,97Rai/Fel(1) (Table 3)
+ClO4-,Cs+,Na+,.0026,,,,97Kon/Nec Table I
+ClO4-,H+,Na+,-.016,,,,01Rai/Moo (Table 1)
+ClO4-,H+,UO2++,-.0319,,,,88Kim/Fre(2) Table IV
+ClO4-,HCO3-,Na+,-.019,,,,99Kon/Kon (Table 4)
+ClO4-,Na+,PuO2++,-.0437,,,,97Pas/Cze (Table 6)
+ClO4-,Na+,SO4--,.0014,,,,95Rai/Fel (Table IV)
+ClO4-,Na+,UO2++,-.0437,,,,
+Cr(OH)4-,Na+,OH-,-.0048,,,,"02Rai/Hes, Table IV"
+Cr2O7--,K+,SO4--,-.7,,,,"98Chr, Table 3"
+Cs+,K+,SO4--,-.0042,,,,98Nec/Kon(2) (Table 2)
+Cs+,Mg++,SO4--,-.08,,,,98Nec/Kon(2) (Table 2)
+Cs+,Na+,SO4--,.0023,,,,98Nec/Kon(2) (Table 2)
+Cs+,SO4--,TcO4-,.024,,,,98Nec/Kon(2) (Table 3)
+Cu++,H+,HSO4-,-.019,,,,"93Bae/Rea, Table V, parameter set 11"
+Cu++,K+,SO4--,.06,,,,"99Chr, Table 4"
+Cu++,Na+,SO4--,-.0235,,,,"00Chr, Table 4"
+H+,Br-,K+,-0.021,,,,"91Pit (Table 16, p. 116)"
+H+,Br-,Li+,0.0,,,,"91Pit (Table 16, p. 116)"
+H+,Br-,NH4+,0.0,,,,"91Pit (Table 16, p. 116)"
+H+,Br-,Na+,-0.012,,,,"91Pit (Table 16, p. 116)"
+H+,Br-,Pr4N+,-0.15,,,,"91Pit (Table 16, p. 116)"
+H+,Cl-,Cs+,-0.019,,,,"91Pit (Table 16, p. 116)"
+H+,Cl-,K+,-0.007,,,,"91Pit (Table 16, p. 116)"
+H+,Cl-,Li+,0.0,,,,"91Pit (Table 16, p. 116)"
+H+,Cl-,NH4+,0.0,,,,"91Pit (Table 16, p. 116)"
+H+,Cl-,Na+,-0.004,,,,"91Pit (Table 16, p. 116)"
+H+,ClO4-,Li+,-0.001,,,,"91Pit (Table 16, p. 116)"
+H+,HSO4-,Na+,-.0129,,,,95Rai/Fel (Table IV)
+H+,HSO4-,SO4--,.02781,,,,"93Bae/Rea, Table I. (same as 93Hov/Pit)."
+H+,NO3-,SiO2(aq),-.0033,,,,94Fel/Sch [Pitzer_NMX_SiO2.xls]
+H3PO4(aq),H3PO4(aq),H3PO4(aq),.0109,,,,95Rai/Fel (Table IV)
+HSO4-,Na+,SO4--,.014365266,-.0012552355,258.08401,1.1644371,refit of 94Hol/Mes [FitPitzerNC_MXX_Na_HSO4_SO4.xls]
+K+,Br-,OH-,-0.014,,,,"91Pit (Table 16, p. 116)"
+K+,Cl-,Br-,0.0,,,,"91Pit (Table 16, p. 116)"
+K+,Cl-,NO3-,-0.006,,,,"91Pit (Table 16, p. 116)"
+K+,Cl-,OH-,-0.008,,,,"91Pit (Table 16, p. 116)"
+K+,NO3-,O2(aq),-.0281,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+K+,Na+,SO4--,.0073210107,.00060667864,-71.609081,-.39415632,refit of 89Gre/Mol [FitPitzerNC_MMX_Na_K_SO4.xls]
+K+,Ni++,SO4--,-.069,,,,"99Christov, Table 4"
+K+,O2(aq),OH-,-.007064119,4.509846e-5,-15.075043,-.045207198,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+K+,SO4--,TcO4-,.002,,,,98Nec/Kon(1) (Table IV)
+Li+,Cl-,Cs+,0.009,,,,"91Pit (Table 16, p. 116)"
+Li+,Cl-,K+,-0.01,,,,"91Pit (Table 16, p. 116)"
+Li+,Cl-,NO3-,-0.003,,,,"91Pit (Table 16, p. 116)"
+Li+,Cl-,Na+,-0.003,,,,"91Pit (Table 16, p. 116)"
+Li+,ClO4-,Na+,-0.008,,,,"91Pit (Table 16, p. 116)"
+Li+,NO3-,Na+,-0.007,,,,"91Pit (Table 16, p. 116)"
+Li+,OAc-,Na+,-0.004,,,,"91Pit (Table 16, p. 116)"
+Mg++,Cl-,NO3-,0.0,,,,"91Pit (Table 16, p. 116)"
+Mg++,Na+,TcO4-,-.02,,,,98Nec/Kon(1) (Table IV)
+Mg++,SO4--,TcO4-,-.03,,,,98Nec/Kon(1) (Table IV)
+Na+,Br-,K+,-0.002,,,,"91Pit (Table 16, p. 116)"
+Na+,Br-,OH-,-0.018,,,,"91Pit (Table 16, p. 116)"
+Na+,Cl-,Br-,0.0,,,,"91Pit (Table 16, p. 116)"
+Na+,Cl-,F-,0.0,,,,"91Pit (Table 16, p. 116)"
+Na+,NO3-,K+,-0.001,,,,"91Pit (Table 16, p. 116)"
+Na+,NO3-,O2(aq),-.012,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Na+,Ni++,SO4--,-.015,,,,"02Chr(2), Table 4"
+Na+,O2(aq),OH-,-.0125,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Na+,O2(aq),SO4--,-.046,,,,90Clegg/Brimb [FitPitzerNC_lambdas_zetas_O2_CFJC.xls]
+Na+,OH-,SO4--,-.0091,0.0,-11.69,,conversion of 87Pab/Pit data to 25C-centric form
+Na+,SO4--,TcO4-,-.003,,,,98Nec/Kon(1) (Table IV)

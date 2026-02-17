@@ -17,11 +17,12 @@ if ~exist(fig_out_dir, 'dir')
     mkdir(fig_out_dir);
 end
 
-%% Load Pitzer parameters
+%% Load Pitzer parameters - UPDATED VERSIONS
 pitzer_dir = fullfile(filepath, '..', 'data', 'parsed_thermodb');
+data_dir = fullfile(filepath, '..', 'data');
 binary_data = readtable(fullfile(pitzer_dir, 'pitzer_binary.csv'), 'TextType', 'string');
-theta_data = readtable(fullfile(pitzer_dir, 'pitzer_theta.csv'), 'TextType', 'string');
-psi_data = readtable(fullfile(pitzer_dir, 'pitzer_psi.csv'), 'TextType', 'string');
+theta_data = readtable(fullfile(data_dir, 'pitzer_theta_updated.csv'), 'TextType', 'string');
+psi_data = readtable(fullfile(data_dir, 'pitzer_psi_updated.csv'), 'TextType', 'string');
 
 % Convert to maps for easier lookup
 params = struct();
@@ -55,7 +56,9 @@ available_salts = {
 fprintf('=== SCREENING SALT COMBINATIONS FOR MAXIMUM WATER UPTAKE ===\n');
 fprintf('Target RH: %.0f%%\n', RH_target*100);
 fprintf('Total salt mass: %.0f g\n', total_salt_mass);
-fprintf('Temperature: %.0f°C\n\n', T);
+fprintf('Temperature: %.0f°C\n', T);
+fprintf('\nUsing UPDATED Pitzer parameters (psi_updated.csv, theta_updated.csv)\n');
+fprintf('NO ZERO-APPROXIMATION: Requires complete parameter sets (binary + theta + psi)\n\n');
 
 %% 1. Screen Pure Salts
 fprintf('Screening pure salts...\n');
@@ -110,6 +113,7 @@ fprintf('\nScreening binary combinations (50:50 mass)...\n');
 binary_results = [];
 n_attempted = 0;
 n_success = 0;
+n_missing_params = 0;
 
 for i = 1:length(available_salts)
     for j = (i+1):length(available_salts)
@@ -117,8 +121,9 @@ for i = 1:length(available_salts)
         salt2 = available_salts{j};
         n_attempted = n_attempted + 1;
         
-        % Check if we have Pitzer parameters for this combination
+        % Check if we have ALL Pitzer parameters for this combination
         if ~check_pitzer_available(salt1, salt2, params)
+            n_missing_params = n_missing_params + 1;
             continue;
         end
         
@@ -169,6 +174,7 @@ for i = 1:length(available_salts)
 end
 
 fprintf('  Successfully evaluated %d out of %d binary combinations\n', n_success, n_attempted);
+fprintf('  Skipped %d combinations due to missing parameters (theta or psi)\n', n_missing_params);
 
 %% 3. Combine and Rank Results
 all_results = [pure_results; binary_results];
@@ -293,29 +299,103 @@ fprintf('\nScreening complete!\n');
 %% Helper Functions
 
 function available = check_pitzer_available(salt1, salt2, params)
-    % Check if Pitzer parameters are available for this salt combination
-    % Need to check all ion-ion interactions
+    % Check if ALL Pitzer parameters are available for this salt combination
+    % Requires: binary (beta), theta (like-ion), and psi (triplet) parameters
+    % NO ZERO-APPROXIMATION - all parameters must exist
     
     ion_names1 = keys(salt1.ions);
     ion_names2 = keys(salt2.ions);
     
     charges = get_ion_charges();
     
-    % Check all cation-anion pairs
+    % Separate ions into cations and anions
+    cations1 = {};
+    anions1 = {};
     for i = 1:length(ion_names1)
-        ion1 = ion_names1{i};
-        z1 = charges(ion1);
-        
-        for j = 1:length(ion_names2)
-            ion2 = ion_names2{j};
-            z2 = charges(ion2);
-            
-            % Only check cation-anion pairs
-            if sign(z1) ~= sign(z2)
-                key = [ion1 '_' ion2];
-                if ~isKey(params.binary, key)
+        if charges(ion_names1{i}) > 0
+            cations1{end+1} = ion_names1{i};
+        else
+            anions1{end+1} = ion_names1{i};
+        end
+    end
+    
+    cations2 = {};
+    anions2 = {};
+    for i = 1:length(ion_names2)
+        if charges(ion_names2{i}) > 0
+            cations2{end+1} = ion_names2{i};
+        else
+            anions2{end+1} = ion_names2{i};
+        end
+    end
+    
+    all_cations = unique([cations1, cations2]);
+    all_anions = unique([anions1, anions2]);
+    
+    % 1. Check binary parameters for all cation-anion pairs
+    for i = 1:length(all_cations)
+        for j = 1:length(all_anions)
+            key = [all_cations{i} '_' all_anions{j}];
+            if ~isKey(params.binary, key)
+                available = false;
+                return;
+            end
+        end
+    end
+    
+    % 2. Check theta parameters for like-ion interactions
+    % Cation-cation theta
+    if length(all_cations) > 1
+        for i = 1:(length(all_cations)-1)
+            for j = (i+1):length(all_cations)
+                key = [all_cations{i} '_' all_cations{j}];
+                if ~isKey(params.theta, key)
                     available = false;
                     return;
+                end
+            end
+        end
+    end
+    
+    % Anion-anion theta
+    if length(all_anions) > 1
+        for i = 1:(length(all_anions)-1)
+            for j = (i+1):length(all_anions)
+                key = [all_anions{i} '_' all_anions{j}];
+                if ~isKey(params.theta, key)
+                    available = false;
+                    return;
+                end
+            end
+        end
+    end
+    
+    % 3. Check psi parameters for triplet interactions
+    % Cation-cation-anion psi
+    if length(all_cations) > 1
+        for i = 1:(length(all_cations)-1)
+            for j = (i+1):length(all_cations)
+                for k = 1:length(all_anions)
+                    key = [all_cations{i} '_' all_cations{j} '_' all_anions{k}];
+                    if ~isKey(params.psi, key)
+                        available = false;
+                        return;
+                    end
+                end
+            end
+        end
+    end
+    
+    % Cation-anion-anion psi
+    if length(all_anions) > 1
+        for i = 1:length(all_cations)
+            for j = 1:(length(all_anions)-1)
+                for k = (j+1):length(all_anions)
+                    key = [all_cations{i} '_' all_anions{j} '_' all_anions{k}];
+                    if ~isKey(params.psi, key)
+                        available = false;
+                        return;
+                    end
                 end
             end
         end
@@ -410,10 +490,11 @@ function theta_map = create_theta_map(table_data)
         key2 = [sp2 '_' sp1];
         
         theta = table_data.theta_a1(i);
-        if isnan(theta), theta = 0; end
-        
-        theta_map(key1) = theta;
-        theta_map(key2) = theta;
+        % DO NOT default to zero - only store if value exists
+        if ~isnan(theta)
+            theta_map(key1) = theta;
+            theta_map(key2) = theta;
+        end
     end
 end
 
@@ -434,10 +515,11 @@ function psi_map = create_psi_map(table_data)
                 [sp3 '_' sp1 '_' sp2], [sp3 '_' sp2 '_' sp1]};
         
         psi = table_data.psi_a1(i);
-        if isnan(psi), psi = 0; end
-        
-        for k = 1:length(keys)
-            psi_map(keys{k}) = psi;
+        % DO NOT default to zero - only store if value exists
+        if ~isnan(psi)
+            for k = 1:length(keys)
+                psi_map(keys{k}) = psi;
+            end
         end
     end
 end
