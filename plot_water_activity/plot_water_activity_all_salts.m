@@ -501,6 +501,51 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     xlabel('Lower Bound RH (%)'); ylabel(['\gamma_w at ' num2str(target_RH*100) '% RH']);
     title('Screening: Non-Ideality vs Deliquescence', 'FontSize', 14);
     print(fullfile(fig_out_dir, 'Gamma90_vs_LowerBoundRH'), '-dpng', '-r300');
+
+    % 4. Crossing point: (left) gamma at 95% vs crossing RH; (right) crossing RH vs crossing x_w
+    figure('Position', [100, 100, 1200, 550]);
+    target_RH_95 = 0.95;
+    tiledlayout(1, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
+    nexttile(1); hold on; grid on; box on;
+    nexttile(2); hold on; grid on; box on;
+    for s = 1:num_salts
+        data = all_salts_data.(salt_names{s});
+        % Gamma at RH nearest to 95%
+        gamma_at_95 = interp1(data.RH, data.gamma_w_ion, target_RH_95, 'linear', NaN);
+        if isnan(gamma_at_95)
+            [~, idx_nearest] = min(abs(data.RH - target_RH_95));
+            gamma_at_95 = data.gamma_w_ion(idx_nearest);
+        end
+        % Find RH where gamma_w_ion crosses x_water_ion (gamma == x)
+        diff_cross = data.gamma_w_ion - data.x_water_ion;
+        RH_cross = NaN;
+        x_w_cross = NaN;
+        for i = 1:(length(diff_cross)-1)
+            if diff_cross(i) * diff_cross(i+1) <= 0
+                RH_cross = interp1(diff_cross([i i+1]), data.RH([i i+1]), 0, 'linear');
+                x_w_cross = interp1(data.RH([i i+1]), data.x_water_ion([i i+1]), RH_cross, 'linear');
+                break;
+            end
+        end
+        if ~isnan(gamma_at_95) && ~isnan(RH_cross)
+            nexttile(1);
+            scatter(gamma_at_95, RH_cross * 100, 80, colors(s,:), 'filled', 'MarkerEdgeColor', 'k');
+            text(gamma_at_95, RH_cross*100 + 0.5, [' ' data.display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
+            nexttile(2);
+            scatter(RH_cross * 100, x_w_cross, 80, colors(s,:), 'filled', 'MarkerEdgeColor', 'k');
+            text(RH_cross*100 + 0.5, x_w_cross, [' ' data.display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
+        end
+    end
+    nexttile(1);
+    xlabel('\gamma_w at 95% RH (nearest point)', 'FontSize', 12);
+    ylabel('RH (%) at \gamma_w = x_w crossing', 'FontSize', 12);
+    title('\gamma_w at 95% vs Crossing RH', 'FontSize', 14);
+    nexttile(2);
+    xlabel('RH (%) at \gamma_w = x_w crossing', 'FontSize', 12);
+    ylabel('x_w at crossing', 'FontSize', 12);
+    title('Crossing RH vs Crossing x_w', 'FontSize', 14);
+    sgtitle('Activity Coefficient Crossing Point Analysis (All Salts)', 'FontSize', 16, 'FontWeight', 'bold');
+    print(fullfile(fig_out_dir, 'Gamma95_vs_Crossing_RH'), '-dpng', '-r300');
 end
 
 function colors = generate_colors(num_salts)

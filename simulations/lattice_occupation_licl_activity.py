@@ -8,6 +8,7 @@ RH range (low x_w regime). Ion data from baseline_numeric_only.csv.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import subprocess
 import tempfile
 from pathlib import Path
@@ -48,6 +49,38 @@ def gamma_w_lattice(x_w, ion_data, T_K, alpha=-5000.0):
     rho = 0.5 * (ion_data["z_cat"] / r_cat**3 + ion_data["z_an"] / r_an**3)
     omega = alpha * (rho / 1.6)
     return np.exp((omega / (R_GAS * T_K)) * (1 - x_w)**2)
+
+
+def calc_gamma_w_custom(xw, T_K):
+    """
+    NEW MODEL: Perturbed Regular Solution (First-Principles Energetics)
+    Includes a Debye-Huckel positive limit at high water, and a 
+    diminishing-returns hydration boost at low water.
+    """
+    xw = np.clip(xw, 0.0001, 0.9999)
+    xs = 1.0 - xw
+    ratio_w_s = xw / xs
+    
+    # 1. Debye-Huckel Term (Positive correction at high water limit)
+    # DH limit for solvent scales roughly with m^(3/2), or xs^(1.5)
+    C_DH = 0.5 
+    ln_gamma_dh = C_DH * (xs**1.5)
+    
+    # 2. Effective Alpha (Gets more negative as water gets scarce)
+    # Constant energy parameters (J/mol). Dividing by RT natively handles Temp!
+    ALPHA_BASE = -55_000  # Baseline regular solution energy (fully hydrated)
+    ALPHA_HYD = -25_000   # Extra energy gained from direct inner-shell binding
+    K_DECAY = 0.15        # Decay rate of the inner-shell benefit
+    
+    alpha_eff = ALPHA_BASE + ALPHA_HYD * np.exp(-K_DECAY * ratio_w_s)
+    
+    # 3. Core Regular Solution Term
+    ln_gamma_rs = (alpha_eff / (R_GAS * T_K)) * (xs**2)
+    
+    # Total combined activity coefficient
+    ln_gamma_total = ln_gamma_dh + ln_gamma_rs
+    
+    return np.exp(ln_gamma_total)
 
 
 def call_matlab_batch(all_rows):
@@ -149,25 +182,21 @@ def main():
         g_ref = ref["gamma_w_actual"].values
         T_K = t + 273.15
         
-        # Calculate the heuristic charge factor
         r_cat, r_an = ion_data["r_cat"], ion_data["r_an"]
         rho = 0.5 * (ion_data["z_cat"] / r_cat**3 + ion_data["z_an"] / r_an**3)
         charge_factor = rho / 1.6
         
-        # Transform data to linear space: y = alpha * X
         Y = np.log(g_ref)
         X = (charge_factor / (R_GAS * T_K)) * (1 - x_ref)**2
         
-        # Analytical solution for line through origin: alpha = sum(X*Y) / sum(X^2)
-        # Add a tiny epsilon to the denominator to prevent division by zero in edge cases
         alpha_analytical = np.sum(X * Y) / (np.sum(X**2) + 1e-12)
-        
         alpha_by_salt[name] = alpha_analytical
 
-    # LiCl multi-temp figure uses single alpha (fitted at reference T=25°C), not per-temp
     LICL_ALPHA = alpha_by_salt.get("LiCl", -15000.0)
 
-    # Separate subplot per salt (4x4 grid)
+    # ---------------------------------------------------------
+    # 1. Multi-Salt Subplots (Original Model)
+    # ---------------------------------------------------------
     n_salts = len(SALT_CONFIG)
     n_cols = 4
     n_rows = (n_salts + n_cols - 1) // n_cols
@@ -196,9 +225,10 @@ def main():
         axes[j].set_visible(False)
     plt.suptitle("Regular Solution Model vs Actual (full calculate_mf range, low $x_w$)", fontsize=12)
     plt.tight_layout(); plt.savefig(FIG_DIR / "lattice_occupation_multi_salt_activity.png", dpi=150, bbox_inches="tight"); plt.close()
-    print(f"Saved: {FIG_DIR / 'lattice_occupation_multi_salt_activity.png'}")
 
-    # LiCl-only figure: multiple temperatures
+    # ---------------------------------------------------------
+    # 2. LiCl-only Figure (Original Model)
+    # ---------------------------------------------------------
     licl_sub = combined[combined["salt"] == "LiCl"].dropna().sort_values(["T_C", "x_w"])
     if not licl_sub.empty:
         try:
@@ -227,9 +257,59 @@ def main():
             plt.close()
             print(f"Saved: {FIG_DIR / 'lattice_occupation_licl_multi_temp.png'}")
         except (ValueError, FileNotFoundError):
-            print("LiCl ion data not found, skipping LiCl-only figure")
+            pass
 
-    # Parity plot
+        # ---------------------------------------------------------
+        # 3. NEW: LiCl-only Figure (Perturbed Custom Energetic Model)
+        # ---------------------------------------------------------
+        fig_cust, ax_cust = plt.subplots(1, 1, figsize=(8, 6))
+        for i, t_licl in enumerate(LICL_TEMPS_C):
+            sub_t = licl_sub[licl_sub["T_C"] == t_licl]
+            if sub_t.empty:
+                continue
+            xw_data = sub_t["x_w"].values
+            g_act = sub_t["gamma_w_actual"].values
+            
+            # Smooth curve for the analytical model
+            xw_smooth = np.linspace(0.7, 0.999, 150)
+            g_cust = np.array([calc_gamma_w_custom(x, t_licl + 273.15) for x in xw_smooth])
+            
+            c = cmap(i / max(len(LICL_TEMPS_C) - 1, 1))
+            ax_cust.plot(xw_data, g_act, "o", color=c, ms=4, alpha=0.6)
+            ax_cust.plot(xw_smooth, g_cust, "-", color=c, lw=2.5, label=f"T={int(t_licl)}°C")
+            
+        ax_cust.set_xlabel(r"Water Mole Fraction ($x_w$)", fontsize=12)
+        ax_cust.set_ylabel(r"Activity Coefficient ($\gamma_w$)", fontsize=12)
+        ax_cust.set_title("LiCl: Perturbed Energetic Model vs Actual Data\n(Includes Hydration Bias & DH Limit)", pad=15)
+        ax_cust.legend(loc="upper left", fontsize=10, ncol=1)
+        ax_cust.grid(True, alpha=0.3)
+        ax_cust.set_xlim(0.7, 1.0)
+        ax_cust.set_ylim(0.1, 1.05)
+        
+        # INSET AXIS: Zoom in on the extreme dilute limit (DH Behavior)
+        axins = inset_axes(ax_cust, width="35%", height="35%", loc="lower right", borderpad=2)
+        for i, t_licl in enumerate(LICL_TEMPS_C):
+            c = cmap(i / max(len(LICL_TEMPS_C) - 1, 1))
+            xw_smooth = np.linspace(0.98, 0.999, 100)
+            g_cust = np.array([calc_gamma_w_custom(x, t_licl + 273.15) for x in xw_smooth])
+            axins.plot(xw_smooth, g_cust, "-", color=c, lw=2)
+            
+        axins.plot([0.98, 1.0], [1.0, 1.0], 'k--', lw=1)
+        axins.set_xlim(0.98, 1.0)
+        axins.set_ylim(0.998, 1.006)
+        axins.set_title("Debye-Hückel Limit ($x_w \\to 1$)", fontsize=9)
+        axins.tick_params(axis='both', which='major', labelsize=8)
+        axins.grid(True, alpha=0.3)
+
+        out_path = FIG_DIR / "custom_energetic_model_licl_multi_temp.png"
+        # Don't use tight_layout with inset_axes sometimes, but here it's usually safe if borderpad is set
+        plt.savefig(out_path, dpi=150, bbox_inches="tight")
+        plt.close()
+        print(f"Saved: {out_path}")
+
+    # ---------------------------------------------------------
+    # 4. Miscellaneous Legacy Plots (Parity & Theory)
+    # ---------------------------------------------------------
     fig2, ax2 = plt.subplots(1, 1, figsize=(7, 6))
     for idx, (name, _, _, _, t) in enumerate(SALT_CONFIG):
         try:
@@ -248,10 +328,7 @@ def main():
     ax2.legend(loc="center left", bbox_to_anchor=(1, 0.5), ncol=1, fontsize=8)
     ax2.grid(True, alpha=0.3); ax2.set_xlim(0.05, 1.05); ax2.set_ylim(0.05, 1.05); ax2.set_aspect("equal")
     plt.tight_layout(); plt.savefig(FIG_DIR / "lattice_occupation_multi_salt_parity.png", dpi=150, bbox_inches="tight"); plt.close()
-    print(f"Saved: {FIG_DIR / 'lattice_occupation_multi_salt_parity.png'}")
 
-    # Regular solution: ln(x_w * gamma_w) vs ln(gamma_w). a_w = x_w * gamma_w, so ln(a_w) = ln(x_w) + ln(gamma_w)
-    # For regular solution: ln(gamma_w) = (omega/RT) * (1-x_w)^2. Parametric in x_w.
     fig3, ax3 = plt.subplots(1, 1, figsize=(7, 5))
     T_K = 298.15
     xw_vec = np.linspace(0.7, 0.999, 200)
@@ -264,21 +341,6 @@ def main():
     ax3.set_title(r"Regular solution: $\ln(\gamma_w) = (\omega/RT)(1-x_w)^2$")
     ax3.legend(loc="best"); ax3.grid(True, alpha=0.3)
     plt.tight_layout(); plt.savefig(FIG_DIR / "lattice_ln_aw_vs_ln_gammaw_regular_solution.png", dpi=150, bbox_inches="tight"); plt.close()
-    print(f"Saved: {FIG_DIR / 'lattice_ln_aw_vs_ln_gammaw_regular_solution.png'}")
-
-    for name, _, _, _, t in SALT_CONFIG:
-        sub = combined[combined["salt"] == name].dropna()
-        if sub.empty:
-            continue
-        try:
-            ion_data = load_ion_data(name)
-        except (ValueError, FileNotFoundError):
-            continue
-        alpha = alpha_by_salt.get(name, -15000.0)
-        act = sub["gamma_w_actual"].values
-        lat = np.array([gamma_w_lattice(r["x_w"], ion_data, r["T_C"] + 273.15, alpha) for _, r in sub.iterrows()])
-        print(f"  {name} RMSE: {np.sqrt(np.mean((lat - act)**2)):.4f}")
-
 
 if __name__ == "__main__":
     main()
