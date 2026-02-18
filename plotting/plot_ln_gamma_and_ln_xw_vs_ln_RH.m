@@ -1,3 +1,4 @@
+% Written with claude 4.5 sonnet
 close all 
 clear
 clc 
@@ -11,6 +12,9 @@ addpath(filepath); % For PlotDefaults_Slides
 
 % Apply plot defaults
 PlotDefaults_Slides();
+
+% Override font size defaults for text objects
+set(0,'defaultTextFontSize',35);
 
 % Define output directory for figures
 fig_out_dir = fullfile(filepath, '..', 'figures', 'activity_coefficient');
@@ -114,7 +118,7 @@ colors = generate_colors(num_salts);
 % So we expect: ln(gamma_w) + ln(x_w) = ln(RH)
 
 figure('Position', [100, 100, 1200, 800]);
-hold on; grid on; box on;
+hold on; grid off; box on;
 
 for s = 1:num_salts
     salt_name = salt_names{s};
@@ -130,25 +134,32 @@ for s = 1:num_salts
     
     % Label at first point of gamma curve
     text(data.ln_RH(1), data.ln_gamma_w_ion(1), ['  ' data.display_name], ...
-         'Color', colors(s,:), 'FontSize', 12, 'FontWeight', 'bold');
+         'Color', colors(s,:), 'FontSize', 16, 'FontWeight', 'bold');
 end
-
-% Add ideal reference line (ln(gamma) = 0, ln(x_w) = 0)
-xlim_vals = xlim;
-plot(xlim_vals, [0 0], 'k-', 'LineWidth', 2, 'DisplayName', 'Ideal (ln(\gamma_w) = 0 or ln(x_w) = 0)');
-
-% Add identity line ln(x_w) = ln(RH) for ideal solution
-plot(xlim_vals, xlim_vals, 'k:', 'LineWidth', 1.5, 'DisplayName', 'Ideal (ln(x_w) = ln(RH))');
 
 % Add legend entries for line styles
 plot(NaN, NaN, 'k-', 'LineWidth', 2, 'DisplayName', 'ln(\gamma_w)');
 plot(NaN, NaN, 'k--', 'LineWidth', 2, 'DisplayName', 'ln(x_w)');
 
-xlabel('ln(RH) = ln(a_w)', 'FontSize', 20, 'FontWeight', 'bold');
-ylabel('ln(\gamma_w) or ln(x_w) (Ionic Basis)', 'FontSize', 20, 'FontWeight', 'bold');
-title('ln(\gamma_w) and ln(x_w) vs ln(RH): Chemical Potential Components', 'FontSize', 22, 'FontWeight', 'bold');
+ax = gca;
+ax.FontSize = 20;
+
+h_xlabel = xlabel('ln(RH) = ln(a_w)');
+h_ylabel = ylabel('ln(\gamma_w) or ln(x_w) (Ionic Basis)');
+h_title = title('ln(\gamma_w) and ln(x_w) vs ln(RH): Chemical Potential Components');
+
+h_xlabel.FontSize = 26;
+h_xlabel.FontWeight = 'bold';
+h_ylabel.FontSize = 26;
+h_ylabel.FontWeight = 'bold';
+h_title.FontSize = 28;
+h_title.FontWeight = 'bold';
+
+% Add ideal reference line (ln(gamma) = 0)
+xlim_vals = xlim;
+plot(xlim_vals, [0 0], 'k-', 'LineWidth', 2, 'DisplayName', 'Ideal (ln(\gamma_w) = 0)');
+
 legend('Location', 'best', 'FontSize', 14);
-set(gca, 'FontSize', 16);
 set(gcf, 'color', 'w');
 
 % Set scaling factor for print
@@ -160,16 +171,6 @@ fig.PaperPosition = [0 0 5*alpha 4*alpha];
 % Save figure
 print(fullfile(fig_out_dir, 'ln_gamma_and_ln_xw_vs_ln_RH'), '-dtiff', '-r600');
 fprintf('Saved: %s\n', fullfile(fig_out_dir, 'ln_gamma_and_ln_xw_vs_ln_RH.tif'));
-
-% Additional annotation explaining the physics
-annotation('textbox', [0.15, 0.75, 0.3, 0.15], ...
-    'String', {'\mu_w - \mu_w^0 = RT ln(a_w)', ...
-               '             = RT [ln(\gamma_w) + ln(x_w)]', ...
-               '', ...
-               'Solid: ln(\gamma_w) [non-ideality]', ...
-               'Dashed: ln(x_w) [composition]'}, ...
-    'FontSize', 14, 'BackgroundColor', 'w', 'EdgeColor', 'k', ...
-    'FitBoxToText', 'on');
 
 %% Helper function for color generation
 function colors = generate_colors(num_salts)

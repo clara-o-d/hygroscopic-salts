@@ -1,3 +1,4 @@
+% Written with claude 4.5 sonnet
 close all 
 clear
 clc 
@@ -11,6 +12,9 @@ addpath(filepath); % For PlotDefaults_Slides
 
 % Apply plot defaults
 PlotDefaults_Slides();
+
+% Override font size defaults for text objects
+set(0,'defaultTextFontSize',35);
 
 % Define output directory for figures
 fig_out_dir = fullfile(filepath, '..', 'figures', 'activity_coefficient');
@@ -120,7 +124,7 @@ colors = generate_colors(num_salts);
 
 %% --- PLOT: Activity Coefficient vs Molarity (Conventional) ---
 figure('Position', [100, 100, 1200, 800]);
-hold on; grid on; box on;
+hold on; grid off; box on;
 
 for s = 1:num_salts
     salt_name = salt_names{s};
@@ -132,17 +136,27 @@ for s = 1:num_salts
     
     % Label at first point (lowest molarity)
     text(data.molarity(1), data.gamma_w_ion(1), ['  ' data.display_name], ...
-         'Color', colors(s,:), 'FontSize', 12, 'FontWeight', 'bold');
+         'Color', colors(s,:), 'FontSize', 16, 'FontWeight', 'bold');
 end
 
 % Add ideal reference line
 plot([0 max(cellfun(@(x) max(all_salts_data.(x).molarity), salt_names))], [1 1], ...
      'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (\gamma_w = 1)');
 
-xlabel('Molarity (M)', 'FontSize', 20, 'FontWeight', 'bold');
-ylabel('\gamma_w (Water Activity Coefficient, Ionic Basis)', 'FontSize', 20, 'FontWeight', 'bold');
-title('Water Activity Coefficient vs Molarity', 'FontSize', 22, 'FontWeight', 'bold');
-set(gca, 'FontSize', 16);
+ax = gca;
+ax.FontSize = 20;
+
+h_xlabel = xlabel('Molarity (M)');
+h_ylabel = ylabel('\gamma_w (Water Activity Coefficient, Ionic Basis)');
+h_title = title('Water Activity Coefficient vs Molarity');
+
+h_xlabel.FontSize = 26;
+h_xlabel.FontWeight = 'bold';
+h_ylabel.FontSize = 26;
+h_ylabel.FontWeight = 'bold';
+h_title.FontSize = 28;
+h_title.FontWeight = 'bold';
+
 set(gcf, 'color', 'w');
 
 % Set scaling factor for print

@@ -1,3 +1,4 @@
+% Written with claude 4.5 sonnet
 close all 
 clear
 clc 
@@ -11,6 +12,9 @@ addpath(filepath); % For PlotDefaults_Slides
 
 % Apply plot defaults
 PlotDefaults_Slides();
+
+% Override font size defaults for text objects
+set(0,'defaultTextFontSize',35);
 
 % Define output directory for figures
 fig_out_dir = fullfile(filepath, '..', 'figures', 'activity_coefficient');
@@ -108,7 +112,7 @@ colors = generate_colors(num_salts);
 
 %% --- PLOT: ln(Activity Coefficient) vs ln(RH) ---
 figure('Position', [100, 100, 1200, 800]);
-hold on; grid on; box on;
+hold on; grid off; box on;
 
 for s = 1:num_salts
     salt_name = salt_names{s};
@@ -120,17 +124,27 @@ for s = 1:num_salts
     
     % Label at first point (lowest RH, most negative ln(RH))
     text(data.ln_RH(1), data.ln_gamma_w_ion(1), ['  ' data.display_name], ...
-         'Color', colors(s,:), 'FontSize', 12, 'FontWeight', 'bold');
+         'Color', colors(s,:), 'FontSize', 16, 'FontWeight', 'bold');
 end
 
 % Add ideal reference line (ln(gamma) = 0)
 xlim_vals = xlim;
 plot(xlim_vals, [0 0], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal (ln(\gamma_w) = 0)');
 
-xlabel('ln(RH) = ln(a_w)', 'FontSize', 20, 'FontWeight', 'bold');
-ylabel('ln(\gamma_w) (Ionic Basis)', 'FontSize', 20, 'FontWeight', 'bold');
-title('ln(Water Activity Coefficient) vs ln(Relative Humidity)', 'FontSize', 22, 'FontWeight', 'bold');
-set(gca, 'FontSize', 16);
+ax = gca;
+ax.FontSize = 20;
+
+h_xlabel = xlabel('ln(RH) = ln(a_w)');
+h_ylabel = ylabel('ln(\gamma_w) (Ionic Basis)');
+h_title = title('ln(Water Activity Coefficient) vs ln(Relative Humidity)');
+
+h_xlabel.FontSize = 26;
+h_xlabel.FontWeight = 'bold';
+h_ylabel.FontSize = 26;
+h_ylabel.FontWeight = 'bold';
+h_title.FontSize = 28;
+h_title.FontWeight = 'bold';
+
 set(gcf, 'color', 'w');
 
 % Set scaling factor for print
