@@ -102,9 +102,20 @@ def call_matlab_batch(all_rows):
         Path(in_path).unlink(missing_ok=True)
         Path(out_path).unlink(missing_ok=True)
 
+def mf_to_xwREAL(mf, mw, nu):
+    """
+    Convert mass fraction of salt to mole fraction of water, 
+    accounting for dissociation into `nu` ions.
+    """
+    nw = (1 - mf) / MW_WATER
+    ns = mf / mw
+    return nw / (nw + nu * ns)
 
+    
 def mf_to_xw(mf, mw):
+
     nw, ns = (1 - mf) / MW_WATER, mf / mw
+
     return nw / (nw + ns)
 
 
@@ -133,18 +144,28 @@ def main():
         print(f"MATLAB failed: {e}. Fallback to CSV.")
         out = None
     if out is not None:
-        for name in mw_by_salt:
-            sub = out[out["salt"] == name]
-            mw = mw_by_salt[name]
-            rows = []
-            for _, r in sub.iterrows():
-                mf = r["mf"]
-                if np.isnan(mf) or mf <= 0 or mf >= 1:
-                    continue
-                xw = mf_to_xw(mf, mw)
-                rows.append({"salt": name, "T_C": r["T"], "x_w": xw, "gamma_w_actual": r["RH"] / xw})
-            if rows:
-                all_data.append(pd.DataFrame(rows))
+            for name in mw_by_salt:
+                sub = out[out["salt"] == name]
+                mw = mw_by_salt[name]
+                
+                # Fetch ion data to determine total dissociated ions (nu)
+                try:
+                    ion_data = load_ion_data(name)
+                    nu = ion_data["z_cat"] + ion_data["z_an"]
+                except (ValueError, FileNotFoundError):
+                    nu = 2  # Safe fallback for standard 1:1 salts
+                    
+                rows = []
+                for _, r in sub.iterrows():
+                    mf = r["mf"]
+                    if np.isnan(mf) or mf <= 0 or mf >= 1:
+                        continue
+                    
+                    # Pass nu to correctly calculate the molar fraction of water
+                    xw = mf_to_xw(mf, mw)
+                    rows.append({"salt": name, "T_C": r["T"], "x_w": xw, "gamma_w_actual": r["RH"] / xw})
+                if rows:
+                    all_data.append(pd.DataFrame(rows))
     if not all_data:
         print("No data. Fallback: use water_activity CSV.")
         df = pd.read_csv(DATA_DIR / "water_activity_all_salts_combined.csv")

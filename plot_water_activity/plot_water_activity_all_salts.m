@@ -403,8 +403,10 @@ end
 function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     num_salts = length(salt_names);
     
-    % 1. Gamma vs Mol Fraction (Ionic)
-    figure('Position', [100, 100, 1200, 800]); hold on; grid on; box on;
+    % 1 & 2. Gamma vs Mol Fraction and Gamma vs RH (side by side)
+    figure('Position', [100, 100, 1400, 600]);
+    tiledlayout(1, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
+    nexttile(1); hold on; grid on; box on;
     for s = 1:num_salts
         data = all_salts_data.(salt_names{s});
         plot(data.x_water_ion, data.gamma_w_ion, 'LineWidth', 2.5, 'color', colors(s,:), 'DisplayName', data.display_name);
@@ -414,10 +416,7 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     xlabel('Mole Fraction of Water (Ionic)', 'FontSize', 14); ylabel('Activity Coefficient \gamma_w', 'FontSize', 14);
     title('Water Activity Coefficient (Ionic) vs Mole Fraction', 'FontSize', 16);
     xlim([0.0 1.0]);
-    print(fullfile(fig_out_dir, 'Activity_Coefficient_Ionic_vs_MoleFraction'), '-dpng', '-r300');
-    
-    % 2. Gamma vs RH
-    figure('Position', [150, 150, 1200, 800]); hold on; grid on; box on;
+    nexttile(2); hold on; grid on; box on;
     for s = 1:num_salts
         data = all_salts_data.(salt_names{s});
         plot(data.RH*100, data.gamma_w_ion, 'LineWidth', 2.5, 'color', colors(s,:), 'DisplayName', data.display_name);
@@ -427,10 +426,12 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     xlabel('Relative Humidity (%)', 'FontSize', 14); ylabel('Activity Coefficient \gamma_w', 'FontSize', 14);
     title('Water Activity Coefficient (Ionic) vs RH', 'FontSize', 16);
     xlim([0 100]);
-    print(fullfile(fig_out_dir, 'Activity_Coefficient_Ionic_vs_RH'), '-dpng', '-r300');
+    print(fullfile(fig_out_dir, 'Activity_Coefficient_Ionic_vs_MoleFraction_and_RH'), '-dpng', '-r300');
 
-    % 2b. Gamma vs RH and x_w vs RH
-    figure('Position', [150, 150, 1200, 800]); hold on; grid on; box on;
+    % 2b & 2c. Combo plots: Gamma/x_w vs RH and ln(Gamma)/ln(x_w) vs RH (side by side)
+    figure('Position', [150, 150, 1400, 600]);
+    tiledlayout(1, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
+    nexttile(1); hold on; grid on; box on;
     for s = 1:num_salts
         data = all_salts_data.(salt_names{s});
         plot(data.RH*100, data.gamma_w_ion, 'LineWidth', 2.5, 'color', colors(s,:), 'DisplayName', data.display_name);
@@ -441,10 +442,7 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     xlabel('Relative Humidity (%)', 'FontSize', 14); ylabel('Activity Coefficient $\gamma_w$ or Mole Fraction $x_w$','FontSize', 14, 'Interpreter', 'latex');
     title('Water Activity Coefficient (Ionic) and Mole Fraction vs RH', 'FontSize', 16);
     xlim([0 100]);
-    print(fullfile(fig_out_dir, 'Activity_Coefficient_and_Mol_Ionic_vs_RH'), '-dpng', '-r300');
-
-    % 2c. Gamma vs RH and x_w vs RH ln
-    figure('Position', [150, 150, 1200, 800]); hold on; grid on; box on;
+    nexttile(2); hold on; grid on; box on;
     for s = 1:num_salts
         data = all_salts_data.(salt_names{s});
         plot(data.RH*100, log(data.gamma_w_ion), 'LineWidth', 2.5, 'color', colors(s,:), 'DisplayName', data.display_name);
@@ -453,9 +451,8 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     end
     plot([0 100], [0 0], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal');
     xlabel('Relative Humidity (%)', 'FontSize', 14); ylabel('ln(Activity Coefficient $\gamma_w$) or ln(Mole Fraction $x_w$)','FontSize', 14, 'Interpreter', 'latex');
-    title('ln(Water Activity Coefficient (Ionic)) and ln(Water Mole Fraction (Ionic))  vs RH', 'FontSize', 16);
-    % xlim([0 100]);
-    print(fullfile(fig_out_dir, 'ln_Activity_Coefficient_and_ln_Mol_Ionic_vs_RH'), '-dpng', '-r300');
+    title('ln(Water Activity Coefficient (Ionic)) and ln(Water Mole Fraction (Ionic)) vs RH', 'FontSize', 16);
+    print(fullfile(fig_out_dir, 'Activity_Coefficient_and_ln_Combo_vs_RH'), '-dpng', '-r300');
 
     % 2d. Gamma vs RH and x_w vs RH ln
     figure('Position', [150, 150, 1200, 800]); hold on; grid on; box on;
@@ -472,8 +469,10 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     print(fullfile(fig_out_dir, 'ln_Activity_Coefficient_and_ln_Mol_Ionic_vs_ln_aw'), '-dpng', '-r300');
 
 
-    % 2e. Gamma vs x_w ln
-    figure('Position', [150, 150, 1200, 800]); hold on; grid on; box on;
+    % 2e. Two-plot figure: (left) ln(gamma) vs ln(x_w); (right) x_w vs ln(gamma_w) with guiding parabola & cubic
+    figure('Position', [150, 150, 1400, 600]);
+    tiledlayout(1, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
+    nexttile(1); hold on; grid on; box on;
     for s = 1:num_salts
         data = all_salts_data.(salt_names{s});
         plot(log(data.x_water_ion), log(data.gamma_w_ion), 'LineWidth', 2.5, 'color', colors(s,:), 'DisplayName', data.display_name);
@@ -481,71 +480,111 @@ function plot_original_curves(all_salts_data, salt_names, colors, fig_out_dir)
     end
     plot([-2.5 0], [0 0], 'k--', 'LineWidth', 2, 'DisplayName', 'Ideal');
     xlabel('ln (Water Mole Fraction (Ionic))', 'FontSize', 14); ylabel('ln(Activity Coefficient $\gamma_w$)','FontSize', 14, 'Interpreter', 'latex');
-    title('ln(Water Activity Coefficient (Ionic)) vs ln(Water Mole Fraction (Ionic))', 'FontSize', 16);
-    % xlim([0 100]);
-    print(fullfile(fig_out_dir, 'ln_Activity_Coefficient_vs_ln_Mol_Ionic'), '-dpng', '-r300');
-    
-    % 3. Scatter at 90% RH
-    figure('Position', [200, 200, 900, 700]); hold on; grid on; box on;
-    target_RH = 0.90;
+    title('ln(\gamma_w) vs ln(x_w)', 'FontSize', 16);
+    nexttile(2); hold on; grid on; box on;
     for s = 1:num_salts
         data = all_salts_data.(salt_names{s});
-        rh_lower = min(data.RH);
-        gamma_at_90 = interp1(data.RH, data.gamma_w_ion, target_RH, 'linear', NaN);
-        if ~isnan(gamma_at_90)
-            scatter(rh_lower * 100, gamma_at_90, 80, colors(s,:), 'filled', 'MarkerEdgeColor', 'k');
-            text(rh_lower * 100, gamma_at_90+0.002, [' ' data.display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
+        plot(data.x_water_ion, log(data.gamma_w_ion), 'LineWidth', 2.5, 'color', colors(s,:), 'DisplayName', data.display_name);
+        text(data.x_water_ion(1), log(data.gamma_w_ion(1)), ['  ' data.display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
+    end
+    % Guiding curves: fit prefactors to HCl data, x_w < 0.80 (only on right plot)
+    if isfield(all_salts_data, 'HCl')
+        d = all_salts_data.HCl;
+        mask = d.x_water_ion < 0.80;
+        x_fit = d.x_water_ion(mask);
+        y_fit = log(d.gamma_w_ion(mask));
+        x1 = x_fit - 1;
+        % Parabola: y = p*(x-1)^2
+        p_parab = sum(y_fit .* x1.^2) / (sum(x1.^4) + 1e-12);
+        % Cubic: y = c*(x-1)^3
+        p_cubic = sum(y_fit .* x1.^3) / (sum(x1.^6) + 1e-12);
+        % Alpha formula: y = -alpha * (term1 + term2)
+        phi1 = (2*x_fit./(1+x_fit)) .* (1 - (2*x_fit./(1+x_fit)));
+        phi2 = (1-x_fit) .* (-2*(3*x_fit-1)./(x_fit+1).^3);
+        phi = phi1 + phi2;
+        p_alpha = -sum(y_fit .* phi) / (sum(phi.^2) + 1e-12);
+    else
+        p_parab = -9; p_cubic = 20; p_alpha = 70;  % fallback
+    end
+    x_guide = linspace(0.5, 1.0, 100);
+    y_parabola = p_parab * (x_guide - 1).^2;
+    y_cubic = p_cubic * (x_guide - 1).^3;
+    term1 = (2*x_guide./(1+x_guide)) .* (1 - (2*x_guide./(1+x_guide)));
+    term2 = (1-x_guide) .* (-2*(3*x_guide-1)./(x_guide+1).^3);
+    y_alpha = -p_alpha * (term1 + term2);
+    plot(x_guide, y_parabola, 'k--', 'LineWidth', 2, 'DisplayName', sprintf('Parabola (fit p=%.2f)', p_parab));
+    plot(x_guide, y_cubic, 'k:', 'LineWidth', 2, 'DisplayName', sprintf('Cubic (fit c=%.2f)', p_cubic));
+    plot(x_guide, y_alpha, 'Color', [0 0 0], 'LineStyle', '-', 'LineWidth', 3, 'DisplayName', sprintf('Alpha (fit \\alpha=%.1f)', p_alpha));
+    plot([0.7 1.0], [0 0], 'k--', 'LineWidth', 1, 'HandleVisibility', 'off');
+    xlabel('Water Mole Fraction $x_w$ (Ionic)', 'FontSize', 14, 'Interpreter', 'latex');
+    ylabel('ln(Activity Coefficient $\gamma_w$)','FontSize', 14, 'Interpreter', 'latex');
+    title('$x_w$ vs ln($\gamma_w$) with guiding curves', 'FontSize', 16, 'Interpreter', 'latex');
+    print(fullfile(fig_out_dir, 'ln_Activity_Coefficient_vs_ln_Mol_Ionic'), '-dpng', '-r300');
+    
+    % 3 & 4. Three scatter plots side by side: Gamma90 vs LowerBoundRH; gamma at 95% vs crossing RH; crossing RH vs crossing x_w
+    figure('Position', [100, 100, 1500, 500]);
+    tiledlayout(1, 3, 'Padding', 'compact', 'TileSpacing', 'compact');
+    target_RH = 0.90;
+    target_RH_95 = 0.95;
+    % Precompute crossing data for all salts
+    gamma_at_95_all = NaN(num_salts, 1);
+    RH_cross_all = NaN(num_salts, 1);
+    x_w_cross_all = NaN(num_salts, 1);
+    rh_lower_all = NaN(num_salts, 1);
+    gamma_at_90_all = NaN(num_salts, 1);
+    for s = 1:num_salts
+        data = all_salts_data.(salt_names{s});
+        rh_lower_all(s) = min(data.RH) * 100;
+        gamma_at_90_all(s) = interp1(data.RH, data.gamma_w_ion, target_RH, 'linear', NaN);
+        gamma_at_95_all(s) = interp1(data.RH, data.gamma_w_ion, target_RH_95, 'linear', NaN);
+        if isnan(gamma_at_95_all(s))
+            [~, idx_nearest] = min(abs(data.RH - target_RH_95));
+            gamma_at_95_all(s) = data.gamma_w_ion(idx_nearest);
+        end
+        diff_cross = data.gamma_w_ion - data.x_water_ion;
+        for i = 1:(length(diff_cross)-1)
+            if diff_cross(i) * diff_cross(i+1) <= 0
+                RH_cross_all(s) = interp1(diff_cross([i i+1]), data.RH([i i+1]), 0, 'linear');
+                x_w_cross_all(s) = interp1(data.RH([i i+1]), data.x_water_ion([i i+1]), RH_cross_all(s), 'linear');
+                break;
+            end
+        end
+    end
+    % Plot 1: Gamma90 vs LowerBoundRH
+    nexttile(1); hold on; grid on; box on;
+    for s = 1:num_salts
+        if ~isnan(gamma_at_90_all(s))
+            scatter(rh_lower_all(s), gamma_at_90_all(s), 80, colors(s,:), 'filled', 'MarkerEdgeColor', 'k');
+            text(rh_lower_all(s), gamma_at_90_all(s)+0.002, [' ' all_salts_data.(salt_names{s}).display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
         end
     end
     yline(1.0, 'k--', 'Ideal');
     xlabel('Lower Bound RH (%)'); ylabel(['\gamma_w at ' num2str(target_RH*100) '% RH']);
     title('Screening: Non-Ideality vs Deliquescence', 'FontSize', 14);
-    print(fullfile(fig_out_dir, 'Gamma90_vs_LowerBoundRH'), '-dpng', '-r300');
-
-    % 4. Crossing point: (left) gamma at 95% vs crossing RH; (right) crossing RH vs crossing x_w
-    figure('Position', [100, 100, 1200, 550]);
-    target_RH_95 = 0.95;
-    tiledlayout(1, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
-    nexttile(1); hold on; grid on; box on;
+    % Plot 2: gamma at 95% vs crossing RH
     nexttile(2); hold on; grid on; box on;
     for s = 1:num_salts
-        data = all_salts_data.(salt_names{s});
-        % Gamma at RH nearest to 95%
-        gamma_at_95 = interp1(data.RH, data.gamma_w_ion, target_RH_95, 'linear', NaN);
-        if isnan(gamma_at_95)
-            [~, idx_nearest] = min(abs(data.RH - target_RH_95));
-            gamma_at_95 = data.gamma_w_ion(idx_nearest);
-        end
-        % Find RH where gamma_w_ion crosses x_water_ion (gamma == x)
-        diff_cross = data.gamma_w_ion - data.x_water_ion;
-        RH_cross = NaN;
-        x_w_cross = NaN;
-        for i = 1:(length(diff_cross)-1)
-            if diff_cross(i) * diff_cross(i+1) <= 0
-                RH_cross = interp1(diff_cross([i i+1]), data.RH([i i+1]), 0, 'linear');
-                x_w_cross = interp1(data.RH([i i+1]), data.x_water_ion([i i+1]), RH_cross, 'linear');
-                break;
-            end
-        end
-        if ~isnan(gamma_at_95) && ~isnan(RH_cross)
-            nexttile(1);
-            scatter(gamma_at_95, RH_cross * 100, 80, colors(s,:), 'filled', 'MarkerEdgeColor', 'k');
-            text(gamma_at_95, RH_cross*100 + 0.5, [' ' data.display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
-            nexttile(2);
-            scatter(RH_cross * 100, x_w_cross, 80, colors(s,:), 'filled', 'MarkerEdgeColor', 'k');
-            text(RH_cross*100 + 0.5, x_w_cross, [' ' data.display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
+        if ~isnan(gamma_at_95_all(s)) && ~isnan(RH_cross_all(s))
+            scatter(gamma_at_95_all(s), RH_cross_all(s) * 100, 80, colors(s,:), 'filled', 'MarkerEdgeColor', 'k');
+            text(gamma_at_95_all(s), RH_cross_all(s)*100 + 0.5, [' ' all_salts_data.(salt_names{s}).display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
         end
     end
-    nexttile(1);
     xlabel('\gamma_w at 95% RH (nearest point)', 'FontSize', 12);
     ylabel('RH (%) at \gamma_w = x_w crossing', 'FontSize', 12);
     title('\gamma_w at 95% vs Crossing RH', 'FontSize', 14);
-    nexttile(2);
+    % Plot 3: crossing RH vs crossing x_w
+    nexttile(3); hold on; grid on; box on;
+    for s = 1:num_salts
+        if ~isnan(RH_cross_all(s)) && ~isnan(x_w_cross_all(s))
+            scatter(RH_cross_all(s) * 100, x_w_cross_all(s), 80, colors(s,:), 'filled', 'MarkerEdgeColor', 'k');
+            text(RH_cross_all(s)*100 + 0.5, x_w_cross_all(s), [' ' all_salts_data.(salt_names{s}).display_name], 'Color', colors(s,:), 'FontSize', 9, 'FontWeight', 'bold');
+        end
+    end
     xlabel('RH (%) at \gamma_w = x_w crossing', 'FontSize', 12);
     ylabel('x_w at crossing', 'FontSize', 12);
     title('Crossing RH vs Crossing x_w', 'FontSize', 14);
-    sgtitle('Activity Coefficient Crossing Point Analysis (All Salts)', 'FontSize', 16, 'FontWeight', 'bold');
-    print(fullfile(fig_out_dir, 'Gamma95_vs_Crossing_RH'), '-dpng', '-r300');
+    sgtitle('Activity Coefficient Scatter Analysis (All Salts)', 'FontSize', 16, 'FontWeight', 'bold');
+    print(fullfile(fig_out_dir, 'Scatter_Plots_Combined'), '-dpng', '-r300');
 end
 
 function colors = generate_colors(num_salts)
