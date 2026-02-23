@@ -181,16 +181,41 @@ hold on; grid on; box on;
 
 % Select several NaCl molality values
 m_NaCl_fixed = [0.5, 1.0, 2.0, 3.0, 4.0, 5.0];
-colors = lines(length(m_NaCl_fixed));
+n_NaCl = length(m_NaCl_fixed);
 
-for i = 1:length(m_NaCl_fixed)
+% Sequential colormap: light orange (dilute) -> dark red (concentrated) for NaCl
+colors_NaCl = interp1([1; n_NaCl], [0.98 0.78 0.50; 0.60 0.05 0.05], (1:n_NaCl)');
+
+% Distinct markers for each line
+markers = {'o', 's', '^', 'd', 'v', 'p'};
+
+for i = 1:n_NaCl
     % Find closest index
     [~, idx] = min(abs(m_NaCl_vec - m_NaCl_fixed(i)));
     
+    n_pts = length(m_LiCl_vec);
+    mk_idx = round(linspace(1, n_pts, 8));
+    
     % Plot water activity vs LiCl molality at this NaCl molality
-    plot(m_LiCl_vec, aw_grid(:, idx), 'LineWidth', 2.5, 'Color', colors(i, :), ...
+    plot(m_LiCl_vec, aw_grid(:, idx), 'LineWidth', 2.5, ...
+        'Color', colors_NaCl(i, :), ...
         'DisplayName', sprintf('NaCl = %.1f mol/kg', m_NaCl_vec(idx)));
+    plot(m_LiCl_vec(mk_idx), aw_grid(mk_idx, idx), ...
+        markers{i}, 'MarkerSize', 7, ...
+        'Color', colors_NaCl(i, :), ...
+        'MarkerFaceColor', colors_NaCl(i, :), ...
+        'HandleVisibility', 'off');
 end
+
+% Add colorbar to indicate NaCl concentration gradient
+colormap(gca, interp1([1; n_NaCl], [0.98 0.78 0.50; 0.60 0.05 0.05], linspace(1,n_NaCl,256)'));
+cb = colorbar;
+cb.Ticks = linspace(0,1,n_NaCl);
+cb.TickLabels = arrayfun(@(x) sprintf('%.1f mol/kg', x), m_NaCl_fixed, 'UniformOutput', false);
+cb.Label.String = 'NaCl Molality';
+cb.Label.FontSize = 13;
+cb.Label.FontWeight = 'bold';
+clim([0 1]);
 
 xlabel('LiCl Molality (mol/kg H_2O)', 'FontSize', 16, 'FontWeight', 'bold');
 ylabel('Water Activity (a_w)', 'FontSize', 16, 'FontWeight', 'bold');
@@ -212,16 +237,41 @@ hold on; grid on; box on;
 
 % Select several LiCl molality values
 m_LiCl_fixed = [0.5, 1.0, 2.0, 3.0, 4.0, 5.0];
-colors = lines(length(m_LiCl_fixed));
+n_LiCl = length(m_LiCl_fixed);
 
-for i = 1:length(m_LiCl_fixed)
+% Sequential colormap: light blue (dilute) -> dark navy (concentrated) for LiCl
+colors_LiCl = interp1([1; n_LiCl], [0.50 0.80 0.97; 0.03 0.15 0.55], (1:n_LiCl)');
+
+% Distinct markers for each line
+markers = {'o', 's', '^', 'd', 'v', 'p'};
+
+for i = 1:n_LiCl
     % Find closest index
     [~, idx] = min(abs(m_LiCl_vec - m_LiCl_fixed(i)));
     
+    n_pts = length(m_NaCl_vec);
+    mk_idx = round(linspace(1, n_pts, 8));
+    
     % Plot water activity vs NaCl molality at this LiCl molality
-    plot(m_NaCl_vec, aw_grid(idx, :), 'LineWidth', 2.5, 'Color', colors(i, :), ...
+    plot(m_NaCl_vec, aw_grid(idx, :), 'LineWidth', 2.5, ...
+        'Color', colors_LiCl(i, :), ...
         'DisplayName', sprintf('LiCl = %.1f mol/kg', m_LiCl_vec(idx)));
+    plot(m_NaCl_vec(mk_idx), aw_grid(idx, mk_idx), ...
+        markers{i}, 'MarkerSize', 7, ...
+        'Color', colors_LiCl(i, :), ...
+        'MarkerFaceColor', colors_LiCl(i, :), ...
+        'HandleVisibility', 'off');
 end
+
+% Add colorbar to indicate LiCl concentration gradient
+colormap(gca, interp1([1; n_LiCl], [0.50 0.80 0.97; 0.03 0.15 0.55], linspace(1,n_LiCl,256)'));
+cb = colorbar;
+cb.Ticks = linspace(0,1,n_LiCl);
+cb.TickLabels = arrayfun(@(x) sprintf('%.1f mol/kg', x), m_LiCl_fixed, 'UniformOutput', false);
+cb.Label.String = 'LiCl Molality';
+cb.Label.FontSize = 13;
+cb.Label.FontWeight = 'bold';
+clim([0 1]);
 
 xlabel('NaCl Molality (mol/kg H_2O)', 'FontSize', 16, 'FontWeight', 'bold');
 ylabel('Water Activity (a_w)', 'FontSize', 16, 'FontWeight', 'bold');
