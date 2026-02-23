@@ -78,6 +78,8 @@ MWw = 18.015;
 num_points = 100;
 
 %% Load salt data and compute RH, mole fraction, gamma
+% Note: Includes 10 new endothermic solutes added Feb 2026
+
 salt_data = load_salt_data();
 data = struct();
 

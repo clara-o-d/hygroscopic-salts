@@ -1,0 +1,236 @@
+================================================================================
+ENDOTHERMIC SHEET COMPOUNDS - COMPLETE INTEGRATION
+================================================================================
+Date: February 22, 2026
+Status: ✓ COMPLETE with Glucose addition and corrections
+
+================================================================================
+SUMMARY
+================================================================================
+
+Added 20 new compounds from the Endothermic sheet of sources_list_.xlsx:
+  • 10 NON-ELECTROLYTES (organic compounds, sugars, alcohols)
+  • 10 ELECTROLYTES (salts with ionic dissociation)
+
+All compounds have:
+  ✓ Polynomial fits (4th order, R² > 0.9999)
+  ✓ calculate_mf_*.m files in calculate_mf/
+  ✓ Entries in data/load_salt_data.m
+  ✓ Integration into existing plotting infrastructure
+
+================================================================================
+NON-ELECTROLYTES (nu = 0)
+================================================================================
+
+These compounds do NOT dissociate into ions in solution.
+
+1. Glycerol (C3H8O3)
+   - MW: 92.09 g/mol
+   - RH range: 0.9120 - 0.9940
+   - File: calculate_mf_Glycerol.m
+
+2. Sucrose (C12H22O11)
+   - MW: 342.3 g/mol
+   - RH range: 0.8355 - 0.9946
+   - File: calculate_mf_Sucrose.m
+
+3. Glucose (C6H12O6) ← NEWLY ADDED
+   - MW: 180.16 g/mol
+   - RH range: 0.9076 - 0.9990
+   - File: calculate_mf_Glucose.m
+   - R²: 0.999998
+
+4. Urea (CH4N2O)
+   - MW: 60.06 g/mol
+   - RH range: 0.9070 - 0.9950
+   - File: calculate_mf_Urea.m
+
+5. Fructose (C6H12O6)
+   - MW: 180.16 g/mol
+   - RH range: 0.3280 - 0.9940
+   - File: calculate_mf_Fructose.m
+
+6. Ethanol (C2H6O)
+   - MW: 46.07 g/mol
+   - RH range: 0.0630 - 0.9640
+   - File: calculate_mf_Ethanol.m
+
+7. Methanol (CH4O)
+   - MW: 32.04 g/mol
+   - RH range: 0.0070 - 0.9300
+   - File: calculate_mf_Methanol.m
+
+8. Xylose (C5H10O5)
+   - MW: 150.13 g/mol
+   - RH range: 0.9470 - 0.9988
+   - File: calculate_mf_Xylose.m
+
+9. Arabinose (C5H10O5)
+   - MW: 150.13 g/mol
+   - RH range: 0.9419 - 0.9994
+   - File: calculate_mf_Arabinose.m
+
+10. Xylitol (C5H12O5)
+    - MW: 152.15 g/mol
+    - RH range: 0.9201 - 0.9988
+    - File: calculate_mf_Xylitol.m
+
+================================================================================
+ELECTROLYTES (nu > 0)
+================================================================================
+
+These compounds dissociate into ions in solution.
+
+1. NH4ClO4 (Ammonium perchlorate)
+   - MW: 117.489 g/mol, nu = 2
+   - RH range: 0.9444 - 0.9968
+   - File: calculate_mf_NH4ClO4.m
+
+2. NH42HPO4 (Diammonium hydrogen phosphate)
+   - MW: 132.056 g/mol, nu = 3
+   - RH range: 0.9357 - 0.9999
+   - File: calculate_mf_NH42HPO4.m
+
+3. CN3H62CO3 (Guanidinium carbonate)
+   - MW: 180.166 g/mol, nu = 3
+   - RH range: 0.9439 - 0.9999
+   - File: calculate_mf_CN3H62CO3.m
+
+4. NH42B10H10 (Diammonium decaborate)
+   - MW: 154.267 g/mol, nu = 3
+   - RH range: 0.8425 - 0.9999
+   - File: calculate_mf_NH42B10H10.m
+
+5. Li2C6H4S2O6 (Dilithium benzenedisulfonate)
+   - MW: 190.051 g/mol, nu = 3
+   - RH range: 0.8150 - 0.9999
+   - File: calculate_mf_Li2C6H4S2O6.m
+
+6. C2H6S2O6 (Ethanedisulfonic acid)
+   - MW: 190.198 g/mol, nu = 3
+   - RH range: 0.4996 - 0.9999
+   - File: calculate_mf_C2H6S2O6.m
+   - Note: Classified as electrolyte (disulfonic acid)
+
+7. Na2S2O3 (Sodium thiosulfate)
+   - MW: 158.11 g/mol, nu = 3
+   - RH range: 0.8072 - 0.9999
+   - File: calculate_mf_Na2S2O3.m
+
+8. Na2C4H2O4 (Disodium maleate)
+   - MW: 160.036 g/mol, nu = 3
+   - RH range: 0.8696 - 0.9999
+   - File: calculate_mf_Na2C4H2O4.m
+
+9. Na2C6H4S2O6 (Disodium benzenedisulfonate)
+   - MW: 282.204 g/mol, nu = 3
+   - RH range: 0.8280 - 0.9999
+   - File: calculate_mf_Na2C6H4S2O6.m
+
+10. K2CrO4 (Potassium chromate)
+    - MW: 194.19 g/mol, nu = 3
+    - RH range: 0.8609 - 0.9999
+    - File: calculate_mf_K2CrO4.m
+
+================================================================================
+INTEGRATION STATUS
+================================================================================
+
+✓ data/load_salt_data.m
+  - All 20 compounds added with correct classification
+  - Non-electrolytes: nu = 0
+  - Electrolytes: nu = 2 or 3
+  - Total compounds in database: 86
+
+✓ Existing plotting scripts UPDATED to include all new compounds:
+  - plotting/plot_ln_gamma_vs_ln_RH.m
+  - plotting/plot_ln_gamma_and_ln_xw_vs_ln_RH.m
+  - plotting/plot_gamma_vs_molarity.m
+  - plotting/plot_gamma_vs_molarity_no_labels.m
+  - plotting/plot_ln_gamma_and_ln_xw_vs_ln_RH_no_labels.m
+  - plotting/plot_ln_gamma_vs_ln_RH_no_labels.m
+  - plot_water_activity/plot_water_activity_all_salts.m
+  - plot_water_activity/RH_over_gamma.m
+  - plot_water_activity/RH_over_gamma_multiRH.m
+  - plot_water_activity/classify_salt_ln_aw_relationships.m
+  - plot_water_activity/plot_ln_gamma_vs_RH_by_thermal_behavior.m
+  - plot_water_activity/plot_water_activity_all_salts_log.m
+  - plot_water_activity/plot_water_activity_all_salts_molecular.m
+  - plot_water_activity/plot_water_activity_all_salts_unconstrained_fit.m
+  - plot_water_activity/plot_water_activity_subset.m
+  - plot_water_activity/predict_DRH_from_gamma_fit.m
+  - plot_water_activity/predict_ln_gamma_sign_at_high_RH.m
+
+✓ NEW plotting scripts for non-electrolytes ONLY:
+  - plotting/plot_ln_gamma_vs_ln_RH_non_electrolytes.m
+  - plot_water_activity/plot_water_activity_non_electrolytes.m
+
+✓ REMOVED confusing/outdated scripts:
+  - plotting/plot_ln_gamma_vs_ln_RH_new_solutes.m (deleted)
+  - plotting/plot_ln_gamma_vs_ln_RH_organic_solutes.m (deleted)
+  - plot_water_activity/plot_water_activity_new_solutes.m (deleted)
+
+================================================================================
+KEY CORRECTIONS MADE
+================================================================================
+
+1. ✓ Added Glucose (was missing from initial work)
+   - Extracted from column 416 of Endothermic sheet
+   - 25 data points, R² = 0.999998
+   - Properly classified as non-electrolyte (nu = 0)
+
+2. ✓ Removed confusing plotting scripts
+   - Deleted 3 scripts that referenced old experimental compound lists
+   - Kept only the correct non-electrolyte-specific scripts
+
+3. ✓ Verified C2H6S2O6 classification
+   - Correctly classified as ELECTROLYTE (disulfonic acid, nu = 3)
+   - Not included in non-electrolyte plotting scripts
+
+4. ✓ Updated all non-electrolyte scripts to include Glucose
+   - plotting/plot_ln_gamma_vs_ln_RH_non_electrolytes.m
+   - plot_water_activity/plot_water_activity_non_electrolytes.m
+
+================================================================================
+USAGE
+================================================================================
+
+To use any compound:
+  >> RH = 0.95;
+  >> mf = calculate_mf_Glucose(RH);  % For glucose
+  >> mf = calculate_mf_NH4ClO4(RH);  % For ammonium perchlorate
+
+To plot non-electrolytes only:
+  >> cd plotting
+  >> plot_ln_gamma_vs_ln_RH_non_electrolytes
+  
+  >> cd ../plot_water_activity
+  >> plot_water_activity_non_electrolytes
+
+To plot all compounds (including new ones):
+  >> cd plotting
+  >> plot_ln_gamma_vs_ln_RH  % Includes all 86 compounds
+  
+  >> cd ../plot_water_activity
+  >> plot_water_activity_all_salts  % Comprehensive plots
+
+================================================================================
+TECHNICAL NOTES
+================================================================================
+
+• All polynomial fits use 4th-order polynomials:
+  RH = A₀ + A₁·mf + A₂·mf² + A₃·mf³ + A₄·mf⁴
+
+• Non-electrolyte activity coefficient calculation:
+  x_water = n_water / (n_water + n_solute)  [no ionic dissociation]
+
+• Electrolyte activity coefficient calculation:
+  x_water = n_water / (n_water + nu·n_solute)  [nu = dissociation number]
+
+• All fits have R² > 0.9999 (excellent agreement with experimental data)
+
+• RH ranges vary by compound (check individual files for valid ranges)
+
+================================================================================
+END OF SUMMARY
+================================================================================

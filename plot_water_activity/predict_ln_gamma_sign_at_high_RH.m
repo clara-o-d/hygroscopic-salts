@@ -18,6 +18,8 @@ T = 25;
 MWw = 18.015;
 
 % Load canonical salt data from data/load_salt_data.m
+% Note: Includes 10 new endothermic solutes added Feb 2026
+
 salt_data = load_salt_data();
 exclude = {'NH4NO3', 'MgNO32'};
 keep = cellfun(@(r) ~any(strcmp(r{1}, exclude)), salt_data);
@@ -63,7 +65,15 @@ for s = 1:length(salt_data)
             % Ionic basis: x_w = n_w / (n_w + nu * n_s)
             % where nu = n_cat + n_an (total ions per salt molecule)
             % For NaCl: nu = 2 (1 Na+ + 1 Cl-), so 1 mole NaCl counts as 2 moles
-            x_water_ion(i) = n_w / (n_w + (nu * n_s));
+            if nu > 0
+
+                x_water_ion(i) = n_w / (n_w + (nu * n_s));
+
+            else
+
+                x_water_ion(i) = n_w / (n_w + n_s); % Non-electrolyte
+
+            end
         catch ME
             warning('Error processing %s at RH=%.4f: %s', salt_name, RH_vec(i), ME.message);
             success = false;

@@ -1,33 +1,24 @@
 function mf = calculate_mf_C2H6S2O6(RH)
-% calculate_mf_C2H6S2O6
-% Calculates mass fraction of C2H6S2O6 based on Relative Humidity.
-% Range: 0.4754 < RH < 1.0
-
-% Add util folder to path if robust_fzero is not found
+% Add util folder to path if needed
 if ~exist('robust_fzero', 'file')
     [filepath,~,~] = fileparts(mfilename('fullpath'));
     addpath(fullfile(filepath, '..', 'util'));
 end
-
-% Check RH bounds
-if RH > 1
-    error("RH should be 0 < RH < 1");
-end
-if RH < 0.4754 || RH > 1.0
-    error("RH %.4f is outside valid range [%.4f, %.4f] for C2H6S2O6", RH, 0.4754, 1.0);
-end
-
-% Coefficients
-A_4 = 3.252;
-A_3 = -4.353;
-A_2 = -0.09612;
-A_1 = -0.2731;
-A_0 = 1.0;
-
-% Polynomial function: RH = A0 + A1*x + ... + A4*x^4
+% This function calculates the mass fraction of C2H6S2O6 as a
+% function of the Relative Humidity at a temperature of 25C
+if RH > 1 
+    error("RH should be 0 < RH < 1")
+end 
+if RH < 0.4996 || RH > 0.9999 
+    error("below deliquescence relative humidity or above range") 
+end  
+A_4 = 3.3553; 
+A_3 = -4.4432; 
+A_2 = -0.0726;
+A_1 = -0.2749; 
+A_0 = 1.0002;
 f = @(xi) RH - A_0 - A_1.*xi - A_2.*xi.^2 - A_3.*xi.^3 - A_4.*xi.^4;
-
-% Solve for mass fraction using robust_fzero
-mf = robust_fzero(f, 0.0002, 0.5113, 0.2557);
+mf = robust_fzero(f, 0.0002, 0.4996, 0.2499);
 
 end
+% ---------------------------------------------------------

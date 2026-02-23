@@ -23,6 +23,7 @@ function plot_water_activity_all_salts()
     MWw_kg = 0.018015; % kg/mol for Pitzer calculations
     
     % --- 2. SALT DEFINITIONS --- (from canonical data/load_salt_data.m)
+    % Note: Includes 10 new endothermic solutes added Feb 2026
     salt_data = load_salt_data();
     % Exclude aliases (MgNO32 duplicates MgNO3)
     exclude = {'MgNO32'};
@@ -73,7 +74,11 @@ function plot_water_activity_all_salts()
                 n_s = mf_salt(i) / MW;
                 
                 x_water_mol(i) = n_w / (n_w + n_s);
-                x_water_ion(i) = n_w / (n_w + (nu * n_s));
+                if nu > 0
+                    x_water_ion(i) = n_w / (n_w + (nu * n_s));
+                else
+                    x_water_ion(i) = n_w / (n_w + n_s); % Non-electrolyte
+                end
                 
             catch
                 success = false;

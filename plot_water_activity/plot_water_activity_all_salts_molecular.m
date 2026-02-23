@@ -18,6 +18,8 @@ T = 25;
 MWw = 18.015;
 
 % Load canonical salt data from data/load_salt_data.m
+% Note: Includes 10 new endothermic solutes added Feb 2026
+
 salt_data = load_salt_data();
 exclude = {'NH4NO3', 'MgNO32'};
 keep = cellfun(@(r) ~any(strcmp(r{1}, exclude)), salt_data);

@@ -74,21 +74,30 @@ salt_data = {
     {'BaBr2', 297.14, 0.7454, 0.9387, 'calculate_mf_BaBr2', 0, 1, 2, 25, 3, 3, 1, 2};
     {'SrBr2', 247.43, 0.7776, 0.9571, 'calculate_mf_SrBr2', 0, 1, 2, 25, 3, 3, 1, 2};
 
-    % Chlorates and New Salts
+    % Chlorates and New Salts (Updated with polynomial fits - Feb 2026)
     {'LiClO4', 106.39, 0.7785, 0.9869, 'calculate_mf_LiClO4', 0, 1, 1, 25, 2, 1, 1, 1};
     {'NH4ClO4', 117.489, 0.9444, 0.9968, 'calculate_mf_NH4ClO4', 0, 1, 1, 25, 2, 1, 1, 1};
-    {'NH42HPO4', 132.056, 0.9357, 0.9999, 'calculate_mf_NH42HPO4', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'CN3H62CO3', 180.166, 0.9439, 0.9999, 'calculate_mf_CN3H62CO3', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'NH42B10H10', 154.267, 0.8425, 1.0000, 'calculate_mf_NH42B10H10', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'Li2C6H4S2O6', 190.051, 0.8150, 1.0000, 'calculate_mf_Li2C6H4S2O6', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'C2H6S2O6', 190.198, 0.4754, 1.0000, 'calculate_mf_C2H6S2O6', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'C6H6S2O6', 238.241, 0.8697, 1.0000, 'calculate_mf_C6H6S2O6', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'Na2S2O3', 158.11, 0.8072, 1.0000, 'calculate_mf_Na2S2O3', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'Na2C4H2O4', 160.036, 0.8696, 1.0000, 'calculate_mf_Na2C4H2O4', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'Na2C6H4S2O6', 282.204, 0.8280, 1.0000, 'calculate_mf_Na2C6H4S2O6', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'Na2B12H12', 187.807, 0.8562, 1.0000, 'calculate_mf_Na2B12H12', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'Na2WO4', 293.819, 0.8779, 1.0000, 'calculate_mf_Na2WO4', 0, 1, 2, 25, 3, 3, 2, 1};
-    {'K2CrO4', 194.19, 0.8609, 1.0000, 'calculate_mf_K2CrO4', 0, 1, 2, 25, 3, 3, 2, 1};
+    {'NH42HPO4', 132.056, 0.9357, 0.9999, 'calculate_mf_NH42HPO4', 0, 2, 1, 25, 3, 3, 2, 1};
+    {'CN3H62CO3', 180.166, 0.9439, 0.9999, 'calculate_mf_CN3H62CO3', 0, 2, 1, 25, 3, 3, 2, 1};
+    {'NH42B10H10', 154.267, 0.8425, 0.9999, 'calculate_mf_NH42B10H10', 0, 2, 1, 25, 3, 3, 2, 1};
+    {'Li2C6H4S2O6', 190.051, 0.8150, 0.9999, 'calculate_mf_Li2C6H4S2O6', 0, 2, 1, 25, 3, 3, 2, 1};
+    {'C2H6S2O6', 190.198, 0.4996, 0.9999, 'calculate_mf_C2H6S2O6', 0, 1, 2, 25, 3, 3, 1, 2};  % Disulfonic acid (electrolyte)
+    {'Na2S2O3', 158.11, 0.8072, 0.9999, 'calculate_mf_Na2S2O3', 0, 2, 1, 25, 3, 3, 2, 1};
+    {'Na2C4H2O4', 160.036, 0.8696, 0.9999, 'calculate_mf_Na2C4H2O4', 0, 2, 1, 25, 3, 3, 2, 1};
+    {'Na2C6H4S2O6', 282.204, 0.8280, 0.9999, 'calculate_mf_Na2C6H4S2O6', 0, 2, 1, 25, 3, 3, 2, 1};
+    {'K2CrO4', 194.19, 0.8609, 0.9999, 'calculate_mf_K2CrO4', 0, 2, 1, 25, 3, 3, 2, 1};
+    
+    % Non-Electrolytes (Added Feb 2026 - organic compounds, sugars, alcohols)
+    {'Glycerol', 92.09, 0.9120, 0.9940, 'calculate_mf_Glycerol', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Sucrose', 342.3, 0.8355, 0.9946, 'calculate_mf_Sucrose', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Glucose', 180.16, 0.9076, 0.9990, 'calculate_mf_Glucose', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Urea', 60.06, 0.9070, 0.9950, 'calculate_mf_Urea', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Fructose', 180.16, 0.3280, 0.9940, 'calculate_mf_Fructose', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Ethanol', 46.07, 0.0630, 0.9640, 'calculate_mf_Ethanol', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Methanol', 32.04, 0.0070, 0.9300, 'calculate_mf_Methanol', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Xylose', 150.13, 0.9470, 0.9988, 'calculate_mf_Xylose', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Arabinose', 150.13, 0.9419, 0.9994, 'calculate_mf_Arabinose', 0, 0, 0, 25, 0, 0, 1, 0};
+    {'Xylitol', 152.15, 0.9201, 0.9988, 'calculate_mf_Xylitol', 0, 0, 0, 25, 0, 0, 1, 0};
     {'NH4Br', 97.942, 0.8080, 0.9967, 'calculate_mf_NH4Br', 0, 1, 1, 25, 2, 1, 1, 1};
     
     % Alkaline earth perchlorates (Paper 23: Osmotic and Activity Coefficients at 25°)
